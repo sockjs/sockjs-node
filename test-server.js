@@ -1,4 +1,5 @@
 var http = require('http');
+var url = require('url');
 
 var sockjs = require('./lib/sockjs');
 
@@ -14,11 +15,25 @@ sjs_echo.on('open', function(conn){
     });
 });
 
+var sjs_close = new sockjs.Server();
+sjs_close.on('open', function(conn){
+                 console.log('    [+] clos open', conn.session);
+                 conn.close(3000, "Server request");
+                 conn.on('close', function(e) {
+                             console.log('    [-] clos close', conn.session, e);
+                         });
+            });
+
+
 var default_handler = function(req, res) {
-    console.log('404', req.url);
+    res.statusCode = 404;
+    if (url.parse(req.url).pathname === '/500_error') {
+        res.statusCode = 500;
+    }
+    console.log(res.statusCode, req.url);
     if (res.writeHead) {
-        res.writeHead(404, {});
-        res.end("404 - Not Found");
+        res.writeHead(res.statusCode);
+        res.end("Error");
     } else{
         res.end();
     }
@@ -34,4 +49,6 @@ server.addListener('upgrade', default_handler);
 
 
 sjs_echo.installHandlers(server, {prefix:'[/]echo'});
+sjs_close.installHandlers(server, {prefix:'[/]close'});
+
 server.listen(port, host);
