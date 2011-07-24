@@ -1,3 +1,4 @@
+crypto = require('crypto')
 
 exports.array_intersection = array_intersection = (arr_a, arr_b) ->
     r = []
@@ -52,3 +53,8 @@ exports.buffer_concat = (buf_a, buf_b) ->
     buf_a.copy(dst)
     buf_b.copy(dst, buf_a.length)
     return dst
+
+exports.md5_hex = (data) ->
+    return crypto.createHash('md5')
+            .update(data)
+            .digest('hex')

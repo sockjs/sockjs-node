@@ -1,9 +1,11 @@
 events = require('events')
 webjs = require('./webjs')
-$ = require('jquery');
+$ = require('jquery')
 
-trans_websocket = require('./trans-websocket');
-trans_jsonp = require('./trans-jsonp');
+trans_websocket = require('./trans-websocket')
+trans_jsonp = require('./trans-jsonp')
+trans_iframe = require('./trans-iframe')
+trans_eventsource = require('./trans-eventsource')
 
 
 app =
@@ -15,6 +17,8 @@ app =
 $.extend(app, webjs.generic_app)
 $.extend(app, trans_websocket.app)
 $.extend(app, trans_jsonp.app)
+$.extend(app, trans_iframe.app)
+$.extend(app, trans_eventsource.app)
 
 
 class Server extends events.EventEmitter
@@ -22,6 +26,8 @@ class Server extends events.EventEmitter
         @options =
             prefix: ''
             origins: ['*:*']
+        if @options.sockjs_url
+            throw "options.sockjs_url is required!"
         if user_options
             $.extend(@options, user_options)
 
@@ -37,7 +43,9 @@ class Server extends events.EventEmitter
             ['GET', p(''), ['welcome_screen']],
             ['GET', t('/websocket'), ['websocket']],
             ['GET', t('/jsonp'), ['h_no_cache','jsonp']],
-            ['POST', t('/send'), ['expect', 'jsonp_send', 'expose']],
+            ['POST',t('/send'), ['expect', 'jsonp_send', 'expose']],
+            ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
+            ['GET', t('/eventsource'), ['eventsource']],
         ]
         webjs_handler = new webjs.WebJS(app, dispatcher)
 

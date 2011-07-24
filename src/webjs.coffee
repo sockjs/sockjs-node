@@ -120,7 +120,7 @@ exports.generic_app =
             return content
         if not res.getHeader('Content-Type')
             res.setHeader('Content-Type', 'text/plain')
-        res.setHeader('Content-length', content.length)
+        res.setHeader('Content-Length', content.length)
         res.writeHead(res.statusCode)
         res.end(content, 'utf8')
         return true
@@ -139,7 +139,8 @@ exports.generic_app =
         throw {status:0}
 
     cache_for: (req, res, content) ->
-        res.setHeader('Cache-Control', 'max-age='+res.cache_for+', must-revalidate')
+        # See: http://code.google.com/speed/page-speed/docs/caching.html
+        res.setHeader('Cache-Control', 'public, max-age='+res.cache_for)
         exp = new Date()
         exp.setTime(exp.getTime() + res.cache_for *1000)
         res.setHeader('Expires', exp.toGMTString())
@@ -147,19 +148,6 @@ exports.generic_app =
 
     h_no_cache: (req, res, content) ->
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        return content
-
-    r_compress: (req, res, content) ->
-        if res.finished
-            return content
-        write = res.write
-        res.write = (payload) ->
-            console.log("write!")
-            write.call(@, payload)
-        writeHead = res.writeHead
-        res.writeHead = (code, headers, payload) ->
-            console.log("writeHead!")
-            writeHead.call(@, code, headers, payload)
         return content
 
     expect: (req, res, _data, next_filter) ->

@@ -94,6 +94,13 @@ class ConnectionTransport extends Transport
             @connection = @response = undefined
             super
 
+    doClose: ->
+        if typeof @connection isnt 'undefined'
+            try
+                @connection.end()
+            catch x
+
+
 class PollingTransport extends Transport
     timeout_ms: 15000
 
