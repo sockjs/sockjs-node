@@ -28,6 +28,21 @@ sjs_close.on('open', function(conn){
                          });
             });
 
+var sjs_ticker = new sockjs.Server(sockjs_opts);
+sjs_ticker.on('open', function(conn){
+    console.log('    [+] ticker open', conn.session);
+    var tref;
+    var schedule = function() {
+        conn.send('tick!');
+        tref = setTimeout(schedule, 1000);
+    };
+    tref = setTimeout(schedule, 1000);
+    conn.on('close', function(e) {
+        clearTimeout(tref);
+        console.log('    [-] ticker close', conn.session, e);
+    });
+});
+
 
 var default_handler = function(req, res) {
     res.statusCode = 404;
@@ -54,5 +69,6 @@ server.addListener('upgrade', default_handler);
 
 sjs_echo.installHandlers(server, {prefix:'[/]echo'});
 sjs_close.installHandlers(server, {prefix:'[/]close'});
+sjs_ticker.installHandlers(server, {prefix:'[/]ticker'});
 
 server.listen(port, host);

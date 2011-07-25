@@ -7,6 +7,7 @@ iframe_template = """
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <script>
+   document.domain = document.domain;
     _sockjs_onload = function(){SockJS.bootstrap_iframe();};
   </script>
   <script src="{{ sockjs_url }}"></script>

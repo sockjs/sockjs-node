@@ -6,6 +6,7 @@ trans_websocket = require('./trans-websocket')
 trans_jsonp = require('./trans-jsonp')
 trans_iframe = require('./trans-iframe')
 trans_eventsource = require('./trans-eventsource')
+trans_htmlfile = require('./trans-htmlfile')
 
 
 app =
@@ -19,6 +20,7 @@ $.extend(app, trans_websocket.app)
 $.extend(app, trans_jsonp.app)
 $.extend(app, trans_iframe.app)
 $.extend(app, trans_eventsource.app)
+$.extend(app, trans_htmlfile.app)
 
 
 class Server extends events.EventEmitter
@@ -46,6 +48,7 @@ class Server extends events.EventEmitter
             ['POST',t('/send'), ['expect', 'jsonp_send', 'expose']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['GET', t('/eventsource'), ['eventsource']],
+            ['GET', t('/htmlfile'), ['h_no_cache', 'htmlfile']],
         ]
         webjs_handler = new webjs.WebJS(app, dispatcher)
 

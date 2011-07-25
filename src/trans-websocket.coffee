@@ -1,3 +1,5 @@
+# http://tools.ietf.org/html/draft-hixie-thewebsocketprotocol-76
+#
 crypto = require('crypto')
 
 utils = require('./utils')

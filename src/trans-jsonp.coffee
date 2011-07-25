@@ -31,7 +31,7 @@ exports.app =
                 message: '"callback" parameter required'
             }
 
-        res.setHeader('Content-type', 'application/javascript; charset=UTF-8')
+        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.statusCode = 200
 
         jsonp = transport.Transport.bySession(req.session)
@@ -46,15 +46,21 @@ exports.app =
                 status: 500
                 message: 'payload expected'
             }
-        if not('d' of query)
+        if typeof query is 'string'
+            d = JSON.parse(query)
+        else
+            d = query.d
+        if typeof d is 'string'
+            d = JSON.parse(d)
+        if not d or d.__proto__.constructor isnt Array
             throw {
                 status: 500
-                message: '"d" expected'
+                message: 'payload expected'
             }
         jsonp = transport.Transport.bySession(req.session)
         if jsonp is null
             throw {status: 404}
-        for message in JSON.parse(query.d)
+        for message in d
             jsonp.didMessage(message)
 
         res.setHeader('Content-type', 'text/plain')

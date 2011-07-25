@@ -27,4 +27,4 @@ class EventSource extends transport.ConnectionTransport
 exports.app =
     eventsource: (req, res) ->
         new EventSource(req, res)
-        return ''
+        return true
