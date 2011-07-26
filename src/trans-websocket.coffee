@@ -80,7 +80,7 @@ class WebHandshake
             @connection = undefined
 
     didMessage: (bin_data) ->
-        @buffer = utils.buffer_concat(@buffer, bin_data)
+        @buffer = utils.buffer_concat(@buffer, new Buffer(bin_data, 'binary'))
         if @sec is false or @buffer.length >= 8
             @gotEnough()
 
@@ -155,7 +155,7 @@ class WebSocketReceiver extends transport.ConnectionReceiver
         a = new Buffer((payload.length+2)*4)
         l  = 0
         l += a.write('\u0000', l, 'binary')
-        l += a.write(payload, l, 'utf-8')
+        l += a.write('' + payload, l, 'utf-8')
         l += a.write('\uffff', l, 'binary')
         super(a.slice(0, l), 'binary')
 
@@ -175,6 +175,5 @@ exports.app =
         location = (if origin and origin[0...5] is 'https' then 'wss' else 'ws')
         location += '://' + req.headers.host + req.url
 
-        head or= new Buffer(0)
-        new WebHandshake(req, connection, head, origin, location)
+        new WebHandshake(req, connection, head or '', origin, location)
         return true
