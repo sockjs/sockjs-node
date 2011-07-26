@@ -1,26 +1,28 @@
 transport = require('./transport')
 
-class JsonP extends transport.PollingTransport
+class JsonpReceiver extends transport.ResponseReceiver
     protocol: "jsonp"
 
-    constructor: (req) ->
-        super(req.session, req.sockjs_server)
+    constructor: (res, @callback) ->
+        super (res)
 
-    _register: (req) ->
-        @callback = if 'c' of req.query then req.query['c'] else req.query['callback']
+    _send: (p) ->
+        @session.unregister()
+        @response.write(@callback + "(" + p + ");\r\n")
+        @response.end()
+
+    doSendBulk: (messages) ->
+        @_send(JSON.stringify(messages))
+
+    doSend: ->
+        throw "UNSUPPORTED"
+
+    sendOpen: (payload) ->
+        @_send('undefined, "open"')
+
+    doClose: (s, r) ->
+        @_send(JSON.stringify({status:s, reason:r})+ ', "close"')
         super
-
-    writeOpen: ->
-        @rawWrite(@callback + "(undefined, 'open');\r\n")
-
-    writeHeartbeat: ->
-        @rawWrite(@callback + "(undefined, 'heartbeat');\r\n")
-
-    writeClose: ->
-        @rawWrite(@callback + "(undefined, 'close');\r\n")
-
-    writeMessages: (messages) ->
-        @rawWrite(@callback + "(" + JSON.stringify(messages) + ");\r\n")
 
 
 exports.app =
@@ -31,13 +33,18 @@ exports.app =
                 message: '"callback" parameter required'
             }
 
+        callback = if 'c' of req.query then req.query['c'] else req.query['callback']
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
-        res.statusCode = 200
+        res.writeHead(200)
 
-        jsonp = transport.Transport.bySession(req.session)
-        if jsonp is null
-            jsonp = new JsonP(req)
-        jsonp._register(req, res)
+        jsonp = new JsonpReceiver(res, callback)
+
+        session = transport.Session.bySessionId(req.session)
+        if not session
+            session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
+            jsonp.sendOpen()
+        else
+            session.register( jsonp )
         return true
 
     jsonp_send: (req, res, query) ->
@@ -57,7 +64,7 @@ exports.app =
                 status: 500
                 message: 'payload expected'
             }
-        jsonp = transport.Transport.bySession(req.session)
+        jsonp = transport.Session.bySessionId(req.session)
         if jsonp is null
             throw {status: 404}
         for message in d

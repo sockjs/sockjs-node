@@ -41,9 +41,7 @@ exports.escape_selected = (str, chars) ->
 
 # exports.random_string = (letters, max) ->
 #     chars = 'abcdefghijklmnopqrstuvwxyz0123456789_'
-#     if typeof max is 'undefined'
-#         max = chars.length
-
+#     max or= chars.length
 #     ret = for i in [0...letters]
 #             chars[Math.floor(Math.random() * max)]
 #     return ret.join('')

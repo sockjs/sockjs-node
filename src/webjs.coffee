@@ -82,15 +82,17 @@ exports.generic_app =
         return true
 
     handle_error: (req, res, x) ->
-        console.log('handle_error', x)
+        # console.log('handle_error', x.stack)
         if res.finished
             return x
         if typeof x is 'object' and 'status' of x
             res.writeHead(x.status, {})
             res.end("" + x.status + " " + x.message)
         else
-            res.writeHead(500, {})
-            res.end("500 - Internal Server Error")
+            try
+                res.writeHead(500, {})
+                res.end("500 - Internal Server Error")
+            catch y
             console.log('Caught error on "'+ req.method + ' ' + req.href + ''
                         '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
         return true

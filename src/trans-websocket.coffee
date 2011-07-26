@@ -62,12 +62,12 @@ class WebHandshake
 
     _setup: ->
         @close_cb = () => @didClose()
-        @connection.addListener('close', @close_cb)
+        @connection.addListener('end', @close_cb)
         @data_cb = (data) => @didMessage(data)
         @connection.addListener('data', @data_cb)
 
     _cleanup: ->
-        @connection.removeListener('close', @close_cb)
+        @connection.removeListener('end', @close_cb)
         @connection.removeListener('data', @data_cb)
         @close_cb = @data_cb = undefined
 
@@ -98,74 +98,66 @@ class WebHandshake
             catch x
                 @didClose()
                 return false
-        ws = new WebSocket(@req, @connection)
+
+        # websockets possess no session_id
+        session = transport.Session.bySessionIdOrNew(undefined, @req.sockjs_server)
+        session.register( new WebSocketReceiver(@connection) )
 
 
-
-class WebSocket extends transport.Transport
+class WebSocketReceiver extends transport.ConnectionReceiver
     protocol: "websocket"
 
-    constructor: (@req, @connection) ->
-        super(@req.session, @req.sockjs_server)
-        @_setup()
-        @_recv_buffer = new Buffer(0)
-        @didOpen()
+    constructor:  ->
+        @recv_buffer = new Buffer(0)
+        super
 
-    _setup: ->
-        @close_cb = () => @didClose(1001, "Socket closed")
-        @connection.addListener('close', @close_cb)
+    setUp: ->
         @data_cb = (data) => @didMessage(data)
         @connection.addListener('data', @data_cb)
+        super
 
-    _cleanup: ->
-        @connection.removeListener('close', @close_cb)
+    tearDown: ->
         @connection.removeListener('data', @data_cb)
-        @close_cb = @data_cb = undefined
+        @data_cb = undefined
+        super
 
-    doSend: (payload) ->
-        if typeof @connection is 'undefined'
-            return false
-        try
-            @connection.write('\u0000', 'binary')
-            @connection.write(''+payload, 'utf-8')
-            @connection.write('\uffff', 'binary')
-            return true
-        catch e
-            console.log(e.stack)
-            process.nextTick(() => @didClose(1001, "Socket closed (write)"))
-            return false
-
-    doClose: ->
-        @connection.end()
-
-    didClose: (a,b)->
-        if typeof @connection isnt 'undefined'
-            @_cleanup()
-            try
-                @connection.end()
-            catch x
-            @connection = undefined
-            super
+    didClose: (status, reason)->
+        s = @session
+        super
+        process.nextTick =>
+            # Reconnecting for websockets is inappropriate, fire the close
+            # event immediately.
+            s.didClose(status, reason)
 
     didMessage: (bin_data) ->
-        buf = @_recv_buffer = utils.buffer_concat(@_recv_buffer, new Buffer(bin_data, 'binary'))
+        if bin_data
+            @recv_buffer = utils.buffer_concat(@recv_buffer, new Buffer(bin_data, 'binary'))
+        buf = @recv_buffer
         # TODO: support length in framing
         if buf.length is 0
             return
         if buf[0] is 0x00
             for i in [1...buf.length]
                 if buf[i] is 0xff
-                    data = buf.slice(1, i).toString('utf8')
-                    @_recv_buffer = buf.slice(i+1)
-                    super(data)
-                    return @didMessage(new Buffer(0))
-            # not enough chars
+                    payload = buf.slice(1, i).toString('utf8')
+                    @recv_buffer = buf.slice(i+1)
+                    @session.didMessage(payload)
+                    return @didMessage()
+            # wait for more data
             return
         else if buf[0] is 0xff and buf[1] is 0x00
-                @didClose(1001, "Socket closed by the client")
+            @didClose(1001, "Socket closed by the client")
         else
             @didClose(1002, "Broken framing")
         return
+
+    doSend: (payload) ->
+        a = new Buffer((payload.length+2)*4)
+        l  = 0
+        l += a.write('\u0000', l, 'binary')
+        l += a.write(payload, l, 'utf-8')
+        l += a.write('\uffff', l, 'binary')
+        super(a.slice(0, l), 'binary')
 
 exports.app =
     websocket: (req, connection, head) ->
@@ -184,5 +176,5 @@ exports.app =
         location += '://' + req.headers.host + req.url
 
         head or= new Buffer(0)
-        ws = new WebHandshake(req, connection, head, origin, location)
+        new WebHandshake(req, connection, head, origin, location)
         return true

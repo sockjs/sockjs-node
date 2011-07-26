@@ -24,24 +24,16 @@ iframe_template = """
 iframe_template +=  Array(2048 - iframe_template.length).join('a')
 iframe_template += '\r\n'
 
-class HtmlFile extends transport.ConnectionTransport
+
+class HtmlFileReceiver extends transport.ResponseReceiver
     protocol: "htmlfile"
 
-    constructor: (req, res) ->
-        @callback = if 'c' of req.query then req.query['c'] else req.query['callback']
-        res.setHeader('Content-Type', 'text/html; charset=UTF-8')
-        res.writeHead(200)
-        res.write(iframe_template.replace(/{{ callback }}/g, @callback));
-        super
-        @didOpen()
-
-    send: (payload) ->
+    doSend: (payload) ->
         @response.write( '<script>p(' + JSON.stringify(payload) + ');</script>\r\n' )
 
-    doClose: (payload) ->
-        # + JSON.stringify({status:status, reason:reason}) + ',
+    doClose: (status, reason) ->
         @response.write( '<script>p(undefined, "close");</script>\r\n' )
-        process.nextTick => @didClose()
+        super
 
 exports.app =
     htmlfile: (req, res) ->
@@ -50,5 +42,11 @@ exports.app =
                 status: 500
                 message: '"callback" parameter required'
             }
-        new HtmlFile(req, res)
+        callback = if 'c' of req.query then req.query['c'] else req.query['callback']
+        res.setHeader('Content-Type', 'text/html; charset=UTF-8')
+        res.writeHead(200)
+        res.write(iframe_template.replace(/{{ callback }}/g, callback));
+
+        session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
+        session.register( new HtmlFileReceiver(res) )
         return true

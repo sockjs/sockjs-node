@@ -1,178 +1,182 @@
 events = require('events')
-utils = require('./utils')
+uuid = require('node-uuid')
 
-MAP = {}
-
-class Transport extends events.EventEmitter
-    constructor: (@session, @server) ->
-        @readyState = Transport.CONNECTING
-        if @session of MAP
-            @session = undefined
-            @close(2001, "Session is not unique")
-        else
-            MAP[@session] = @
-
-    didOpen: ->
-        if @readyState isnt Transport.CONNECTING
-            throw 'INVALID_STATE_ERR'
-        @readyState = Transport.OPEN
-        @server.emit('open', @)
-
-    didClose: (status, reason) ->
-        if @readyState isnt Transport.CONNECTING and
-           @readyState isnt Transport.OPEN and
-           @readyState isnt Transport.CLOSING
-            throw 'INVALID_STATE_ERR'
-        @readyState = Transport.CLOSED
-        if status is 1001 and @_close_status
-            @emit('close', {status:@_close_status, reason:@_close_reason})
-        else
-            @emit('close', {status:status, reason:reason})
-        if @session
-            delete MAP[@session]
-            @session = undefined
-
-    didMessage: (message) ->
-        if @readyState isnt Transport.OPEN
-            return false
-        @emit('message', {data: message})
-
-    close: (status=1000, reason="Normal closure") ->
-        if @readyState isnt Transport.CONNECTING and
-           @readyState isnt Transport.OPEN
-            return false
-        @readyState = Transport.CLOSING
-        @_close_status = status
-        @_close_reason = reason
-        @doClose()
-        return true
-
-    send: (payload) ->
-        @doSend(payload)
-
+class Transport
 
 Transport.CONNECTING = 0
 Transport.OPEN = 1
 Transport.CLOSING = 2
 Transport.CLOSED = 3
 
-Transport.bySession = (session) ->
-    return MAP[session] or null
+
+class MockSession
+    unregister: ->
+    didClose: ->
+    didMessage: ->
 
 
-class ConnectionTransport extends Transport
-    constructor: (req, res) ->
-        @connection = req.connection
-        @connection.setTimeout(0)
-        @connection.setNoDelay(true)
-        @connection.setEncoding('utf-8')
-        @connection.addListener('close', => @didClose(1001, "Socket closed"))
-        @response = res
-        super(req.session, req.sockjs_server)
+MAP = {}
+
+class Session extends events.EventEmitter
+    constructor: (@session_id, server) ->
+        @id  = uuid()
+        @send_buffer = []
+        @is_closing = false
+        @readyState = Transport.OPEN
+        if @session_id
+            MAP[@session_id] = @
+        @timeout_cb = => @didClose(1001, "Timeouted")
+        @to_tref = setTimeout(@timeout_cb, 5000)
+        server.emit('open', @)
+
+    register: (recv) ->
+        if @recv or @readyState isnt Transport.OPEN
+            recv.doClose(2010, "Other connection still open")
+            return
+        if @to_tref
+            clearTimeout(@to_tref)
+            @to_tref = undefined
+        @recv = recv
+        @recv.session = @
+        @tryFlush()
+
+    unregister: ->
+        @recv.session = new MockSession()
+        @recv = undefined
+        @to_tref = setTimeout(@timeout_cb, 5000)
+
+    didClose: (status, reason) ->
+        if @readyState isnt Transport.OPEN and
+           @readyState isnt Transport.CLOSING
+            throw 'INVALID_STATE_ERR'
+        if @recv
+            throw 'RECV_STILL_THERE'
+        @readyState = Transport.CLOSED
+        if @to_tref
+            clearTimeout(@to_tref)
+            @to_tref = undefined
+        if status is 1001 and @close_data
+            @emit('close', @close_data)
+        else
+            @emit('close', {status:status, reason:reason})
+        if @session_id
+            delete MAP[@session_id]
+            @session_id = undefined
+
+    didMessage: (payload) ->
+        if @readyState is Transport.OPEN
+            @emit('message', {data: payload})
+        return
+
+    send: (payload) ->
+        if @readyState isnt Transport.OPEN
+            throw 'INVALID_STATE_ERR'
+        @send_buffer.push( payload )
+        if @recv
+            @tryFlush()
+
+    tryFlush: ->
+        if @send_buffer.length > 0
+            sb = @send_buffer
+            @send_buffer = []
+            @recv.doSendBulk(sb)
+        return
+
+    close: (status=1000, reason="Normal closure") ->
+        if @readyState isnt Transport.OPEN
+            return false
+        @readyState = Transport.CLOSING
+        @close_reason = {status:status, reason:reason}
+        if @recv
+            @recv.doClose()
+
+    toString: ->
+        r = ['#'+@id]
+        if @session_id
+            r.push( @session_id )
+        if @recv
+            r.push( @recv.protocol )
+        return r.join('/')
 
 
-    rawWrite: (payload) ->
-        if typeof @connection isnt 'undefined'
+Session.bySessionId = (session_id) ->
+    return MAP[session_id] or null
+
+Session.bySessionIdOrNew = (session_id, server) ->
+    session = Session.bySessionId(session_id)
+    if not session
+        session = new Session(session_id, server)
+    return session
+
+
+class GenericReceiver
+    constructor: (@thingy) ->
+        @session = new MockSession()
+        @setUp(@thingy)
+
+    setUp: ->
+        @thingy_end_cb = () => @didClose(1001, "Socket closed")
+        @thingy.addListener('end', @thingy_end_cb)
+
+    tearDown: ->
+        @thingy.removeListener('end', @thingy_end_cb)
+        @thingy_end_cb = undefined
+
+    didClose: (status, reason) ->
+        if @thingy
+            @tearDown(@thingy)
             try
-                @connection.write(payload, 'utf8')
-                return true
-            catch e
-                process.nextTick( => @didClose(1001, "Socket closed"))
-        return false
+                @thingy.end()
+            catch x
+            @thingy = undefined
+        @session.unregister(status, reason)
+
+    doSendBulk: (messages) ->
+        for msg in messages
+            @doSend(msg)
+
+
+class ConnectionReceiver extends GenericReceiver
+    constructor: (@connection) ->
+        try
+            @connection.setKeepAlive(true, 5000)
+        catch x
+        super @connection
+
+    doSend: (payload, encoding='utf-8') ->
+        if not @connection
+            return false
+        try
+            @connection.write(payload, encoding)
+            return true
+        catch e
+            process.nextTick(() => @didClose(1001, "Socket closed (write)"))
+            return false
 
     didClose: ->
-        # Protect against being triggered multiple times.
-        if typeof @connection isnt 'undefined'
-            try
-                @connection.end()
-            catch x
-            try
-                # According to docs 'response.end' must be called once
-                # http://nodejs.org/docs/v0.4.9/api/all.html#response.end
-                @response.end()
-            catch x
-            @connection = @response = undefined
-            super
+        super
+        @connection = undefined
 
     doClose: ->
-        if typeof @connection isnt 'undefined'
-            try
-                @connection.end()
-            catch x
+        if @connection then @connection.end()
 
 
-class PollingTransport extends Transport
-    timeout_ms: 15000
-
-    constructor: ->
-        @buffer = []
-        super
-        @close_cb = () => @didClose(1001, "Browser isn't polling")
-        @timeout_cb = () => @didTimeout()
-        @is_closing = false
-        @_unregister()
-
-    _register: (req, res) ->
-        if @req
-            # Previous request wasn't done yet, closing the previous socket.
-            @writeClose()
-        @req = req
-        @res = res
-        @req.addListener('close', @close_cb)
-        if @tref
-            clearTimeout(@tref)
-        @tref = setTimeout(@timeout_cb, @timeout_ms)
-        @_flush()
-
-    _unregister: ->
-        if @tref
-            clearTimeout(@tref)
-        if @req
-            @req.removeListener('close', @close_cb)
-        @req = @res = @tref = undefined
-        @tref = setTimeout(@close_cb, @timeout_ms / 2)
-        return true
-
-    rawWrite: (payload) ->
-        if not @res
-            throw "NO_REQUEST_WAITING_ERR"
-        @res.write(payload)
-        @res.end()
-        @_unregister()
-        return true
-
-    didTimeout: ->
-        @tref = undefined
-        @writeHeartbeat()
-
-    didClose: (a,b) ->
-        if @tref
-            @_unregister()
-            clearTimeout(@tref)
-            @tref = undefined
-            super
+class ResponseReceiver extends GenericReceiver
+    constructor: (@response) ->
+        super (@response)
 
     doSend: (payload) ->
-        @buffer.push( payload )
-        @_flush()
+        @response.write(payload)
 
-    _flush: ->
-        if @req
-            if @is_closing
-                @writeClose()
-                process.nextTick(=>@didClose(1001, "Socket closed"))
-             else
-                if @readyState is Transport.CONNECTING
-                    @writeOpen()
-                    @didOpen()
-                else
-                    if @buffer.length > 0
-                        @writeMessages(@buffer)
-                        @buffer = []
+    didClose: ->
+        @response = undefined
+        super
+
     doClose: ->
-        @is_closing = true
-        @_flush()
+        if @response then @response.end()
+
 
 exports.Transport = Transport
-exports.ConnectionTransport = ConnectionTransport
-exports.PollingTransport = PollingTransport
+exports.Session = Session
+exports.ConnectionReceiver = ConnectionReceiver
+exports.ResponseReceiver = ResponseReceiver
