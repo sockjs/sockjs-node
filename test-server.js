@@ -9,28 +9,30 @@ var sockjs_opts = {
 
 var sjs_echo = new sockjs.Server(sockjs_opts);
 sjs_echo.on('open', function(conn){
-    console.log('    [+] echo open', conn.session);
+    console.log('    [+] echo open    ' + conn);
     conn.on('close', function(e) {
-        console.log('    [-] echo close', conn.session, e);
+        console.log('    [-] echo close   ' + conn, e);
     });
     conn.on('message', function(e) {
-        console.log('    [ ] echo message', conn.session, JSON.stringify(e.data.slice(0,128)));
+        console.log('    [ ] echo message ' + conn,
+                    JSON.stringify(e.data.slice(0,64))+
+                    ((e.data.length > 64) ? '...' : ''));
         conn.send(e.data);
     });
 });
 
 var sjs_close = new sockjs.Server(sockjs_opts);
 sjs_close.on('open', function(conn){
-                 console.log('    [+] clos open', conn.session);
+                 console.log('    [+] clos open    ' + conn);
                  conn.close(3000, "Server request");
                  conn.on('close', function(e) {
-                             console.log('    [-] clos close', conn.session, e);
+                             console.log('    [-] clos close   ' + conn, e);
                          });
             });
 
 var sjs_ticker = new sockjs.Server(sockjs_opts);
 sjs_ticker.on('open', function(conn){
-    console.log('    [+] ticker open', conn.session);
+    console.log('    [+] ticker open   ' + conn);
     var tref;
     var schedule = function() {
         conn.send('tick!');
@@ -39,7 +41,24 @@ sjs_ticker.on('open', function(conn){
     tref = setTimeout(schedule, 1000);
     conn.on('close', function(e) {
         clearTimeout(tref);
-        console.log('    [-] ticker close', conn.session, e);
+        console.log('    [-] ticker close   ' + conn, e);
+    });
+});
+
+var broadcast = {};
+var sjs_broadcast = new sockjs.Server(sockjs_opts);
+sjs_broadcast.on('open', function(conn){
+    console.log('    [+] broadcast open ' + conn);
+    broadcast[conn.id] = conn;
+    conn.on('close', function(e) {
+        delete broadcast[conn.id];
+        console.log('    [-] broadcast close' + conn, e);
+    });
+    conn.on('message', function(e) {
+        console.log('    [-] broadcast message', e);
+        for(var id in broadcast) {
+            broadcast[id].send(e.data);
+        }
     });
 });
 
@@ -70,5 +89,6 @@ server.addListener('upgrade', default_handler);
 sjs_echo.installHandlers(server, {prefix:'[/]echo'});
 sjs_close.installHandlers(server, {prefix:'[/]close'});
 sjs_ticker.installHandlers(server, {prefix:'[/]ticker'});
+sjs_broadcast.installHandlers(server, {prefix:'[/]broadcast'});
 
 server.listen(port, host);
