@@ -6,22 +6,19 @@ class JsonpReceiver extends transport.ResponseReceiver
     constructor: (res, @callback) ->
         super (res)
 
-    _send: (p) ->
+    doSendBulk: (messages) ->
+        @doSend(JSON.stringify(messages))
+
+    doSend: (p) ->
         @session.unregister()
-        @response.write(@callback + "(" + p + ");\r\n")
+        super(@callback + "(" + p + ");\r\n")
         @response.end()
 
-    doSendBulk: (messages) ->
-        @_send(JSON.stringify(messages))
-
-    doSend: ->
-        throw "UNSUPPORTED"
-
     sendOpen: (payload) ->
-        @_send('undefined, "open"')
+        @doSend('undefined, "open"')
 
     doClose: (s, r) ->
-        @_send(JSON.stringify({status:s, reason:r})+ ', "close"')
+        @doSend(JSON.stringify({status:s, reason:r})+ ', "close"')
         super
 
 

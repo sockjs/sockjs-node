@@ -166,7 +166,9 @@ class ResponseReceiver extends GenericReceiver
         super (@response)
 
     doSend: (payload) ->
-        @response.write(payload)
+        try
+            @response.write(payload)
+        catch x
 
     didClose: ->
         @response = undefined

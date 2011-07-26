@@ -29,7 +29,7 @@ class HtmlFileReceiver extends transport.ResponseReceiver
     protocol: "htmlfile"
 
     doSend: (payload) ->
-        @response.write( '<script>p(' + JSON.stringify(payload) + ');</script>\r\n' )
+        super( '<script>p(' + JSON.stringify(payload) + ');</script>\r\n' )
 
     doClose: (status, reason) ->
         @response.write( '<script>p(undefined, "close");</script>\r\n' )

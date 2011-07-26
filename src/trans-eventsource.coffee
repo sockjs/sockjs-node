@@ -10,7 +10,9 @@ class EventSourceReceiver extends transport.ResponseReceiver
         data = ['data: >',
                 utils.escape_selected(payload, '\r\n\x00'),
                 '\r\n\r\n']
-        @response.connection.write( data.join(''))
+        try
+            @response.connection.write( data.join(''))
+        catch x
 
     doClose: ->
         if @response then @response.connection.end()
