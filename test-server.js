@@ -15,9 +15,10 @@ sjs_echo.on('open', function(conn){
         console.log('    [-] echo close   ' + conn, e);
     });
     conn.on('message', function(e) {
+                var d  = JSON.stringify(e.data);
         console.log('    [ ] echo message ' + conn,
-                    JSON.stringify(e.data.slice(0,64))+
-                    ((e.data.length > 64) ? '...' : ''));
+                    d.slice(0,64)+
+                    ((d.length > 64) ? '...' : ''));
         conn.send(e.data);
     });
 });

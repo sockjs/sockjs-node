@@ -33,9 +33,6 @@ class HtmlFileReceiver extends transport.ResponseReceiver
     doSendFrame: (payload) ->
         super( '<script>p(' + JSON.stringify(payload) + ');</script>\r\n' )
 
-    doClose: (status, reason) ->
-        @response.write( '<script>p(undefined, "close");</script>\r\n' )
-        super
 
 exports.app =
     htmlfile: (req, res) ->

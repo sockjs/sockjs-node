@@ -14,9 +14,6 @@ class EventSourceReceiver extends transport.ResponseReceiver
             @response.connection.write( data.join(''))
         catch x
 
-    doClose: (status, reason) ->
-        if @response then @response.connection.end()
-
 exports.app =
     eventsource: (req, res) ->
         headers = [
