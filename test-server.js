@@ -5,6 +5,7 @@ var sockjs = require('./lib/sockjs');
 
 var sockjs_opts = {
     sockjs_url: "http://172.16.173.128:8000/sockjs.js"
+//    sockjs_url: "http://test.popcnt.org/sockjs.js"
 };
 
 var sjs_echo = new sockjs.Server(sockjs_opts);
@@ -24,7 +25,7 @@ sjs_echo.on('open', function(conn){
 var sjs_close = new sockjs.Server(sockjs_opts);
 sjs_close.on('open', function(conn){
                  console.log('    [+] clos open    ' + conn);
-                 conn.close(3000, "Server request");
+                 conn.close(3000, "Go away!");
                  conn.on('close', function(e) {
                              console.log('    [-] clos close   ' + conn, e);
                          });

@@ -10,25 +10,27 @@ iframe_template = """
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <script>
     document.domain = document.domain;
-    is_closed = false
-    function p(c,t){
-        if (!is_closed) {
-            parent.{{ callback }}(c, t);
-        }
-        if (t == 'close') is_closed = true;
-    };
   </script>
-</head><body onload="p(undefined, 'close');"><h2>Don't panic!</h2>
-<script>p(undefined, 'open');</script>
+</head><body><h2>Don't panic!</h2>
+  <script>
+    function p(d){
+        // Sniff!
+        if (d[0] === 'c') {
+            document.body.onload = null;
+        }
+        parent.{{ callback }}(d);
+    };
+    document.body.onload = function() {p('c[1006, "Html iframe connection broken"]');};
+  </script>
 """
-iframe_template +=  Array(2048 - iframe_template.length).join('a')
+iframe_template +=  Array(512 - iframe_template.length).join('a')
 iframe_template += '\r\n'
 
 
 class HtmlFileReceiver extends transport.ResponseReceiver
     protocol: "htmlfile"
 
-    doSend: (payload) ->
+    doSendFrame: (payload) ->
         super( '<script>p(' + JSON.stringify(payload) + ');</script>\r\n' )
 
     doClose: (status, reason) ->

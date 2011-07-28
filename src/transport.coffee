@@ -8,11 +8,8 @@ Transport.OPEN = 1
 Transport.CLOSING = 2
 Transport.CLOSED = 3
 
-
-class MockSession
-    unregister: ->
-    didClose: ->
-    didMessage: ->
+closeFrame = (status, reason) ->
+    return 'c' + JSON.stringify([status, reason])
 
 
 MAP = {}
@@ -22,46 +19,67 @@ class Session extends events.EventEmitter
         @id  = uuid()
         @send_buffer = []
         @is_closing = false
-        @readyState = Transport.OPEN
+        @readyState = Transport.CONNECTING
         if @session_id
             MAP[@session_id] = @
-        @timeout_cb = => @didClose(1001, "Timeouted")
+        @timeout_cb = => @didTimeout()
         @to_tref = setTimeout(@timeout_cb, 5000)
-        server.emit('open', @)
+        @emit_open = =>
+            @emit_open = null
+            server.emit('open', @)
 
     register: (recv) ->
-        if @recv or @readyState isnt Transport.OPEN
-            recv.doClose(2010, "Other connection still open")
+        if @recv
+            recv.doSendFrame(closeFrame(2010, "Another connection still open"))
             return
         if @to_tref
             clearTimeout(@to_tref)
-            @to_tref = undefined
+            @to_tref = null
+        if @readyState is Transport.CLOSING
+            recv.doSendFrame(@close_frame)
+            @to_tref = setTimeout(@timeout_cb, 5000)
+            return
+        # Registering. From now on 'unregister' is responsible for
+        # setting the timer.
         @recv = recv
         @recv.session = @
+
+        # first, send the open frame
+        if @readyState is Transport.CONNECTING
+            @recv.doSendFrame('o')
+            @readyState = Transport.OPEN
+            # Emit the open event, but not right now
+            process.nextTick @emit_open
+
+        # At this point the transport might have gotten away (jsonp).
+        if not @recv
+            return
         @tryFlush()
+        return
 
     unregister: ->
-        @recv.session = new MockSession()
-        @recv = undefined
+        @recv.session = null
+        @recv = null
         @to_tref = setTimeout(@timeout_cb, 5000)
 
-    didClose: (status, reason) ->
-        if @readyState isnt Transport.OPEN and
+    tryFlush: ->
+        if @send_buffer.length > 0
+            [sb, @send_buffer] = [@send_buffer, []]
+            @recv.doSendBulk(sb)
+        return
+
+    didTimeout: ->
+        if @readyState isnt Transport.CONNECTING and
+           @readyState isnt Transport.OPEN and
            @readyState isnt Transport.CLOSING
-            throw 'INVALID_STATE_ERR'
+            throw Error('INVALID_STATE_ERR')
         if @recv
-            throw 'RECV_STILL_THERE'
+            throw Error('RECV_STILL_THERE')
         @readyState = Transport.CLOSED
-        if @to_tref
-            clearTimeout(@to_tref)
-            @to_tref = undefined
-        if status is 1001 and @close_data
-            @emit('close', @close_data)
-        else
-            @emit('close', {status:status, reason:reason})
+        @emit('close', {status: 1001, reason: "Session timeouted"})
         if @session_id
             delete MAP[@session_id]
-            @session_id = undefined
+            @session_id = null
 
     didMessage: (payload) ->
         if @readyState is Transport.OPEN
@@ -70,25 +88,21 @@ class Session extends events.EventEmitter
 
     send: (payload) ->
         if @readyState isnt Transport.OPEN
-            throw 'INVALID_STATE_ERR'
+            throw Error('INVALID_STATE_ERR')
         @send_buffer.push( payload )
         if @recv
             @tryFlush()
-
-    tryFlush: ->
-        if @send_buffer.length > 0
-            sb = @send_buffer
-            @send_buffer = []
-            @recv.doSendBulk(sb)
-        return
 
     close: (status=1000, reason="Normal closure") ->
         if @readyState isnt Transport.OPEN
             return false
         @readyState = Transport.CLOSING
-        @close_reason = {status:status, reason:reason}
+        @close_frame = closeFrame(status, reason)
         if @recv
-            @recv.doClose()
+            # Go away.
+            @recv.doSendFrame(@close_frame)
+            if @recv
+                @unregister
 
     toString: ->
         r = ['#'+@id]
@@ -111,16 +125,15 @@ Session.bySessionIdOrNew = (session_id, server) ->
 
 class GenericReceiver
     constructor: (@thingy) ->
-        @session = new MockSession()
         @setUp(@thingy)
 
     setUp: ->
-        @thingy_end_cb = () => @didClose(1001, "Socket closed")
+        @thingy_end_cb = () => @didClose(1006, "Connection closed")
         @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
         @thingy.removeListener('end', @thingy_end_cb)
-        @thingy_end_cb = undefined
+        @thingy_end_cb = null
 
     didClose: (status, reason) ->
         if @thingy
@@ -128,14 +141,18 @@ class GenericReceiver
             try
                 @thingy.end()
             catch x
-            @thingy = undefined
-        @session.unregister(status, reason)
+            @thingy = null
+        if @session
+            @session.unregister(status, reason)
 
     doSendBulk: (messages) ->
-        for msg in messages
-            @doSend(msg)
+        if messages.length is 1
+            @doSendFrame('m' + JSON.stringify(messages[0]))
+        else
+            @doSendFrame('a' + JSON.stringify(messages))
 
 
+# Write stuff directly to connection.
 class ConnectionReceiver extends GenericReceiver
     constructor: (@connection) ->
         try
@@ -143,39 +160,38 @@ class ConnectionReceiver extends GenericReceiver
         catch x
         super @connection
 
-    doSend: (payload, encoding='utf-8') ->
+    doSendFrame: (payload, encoding='utf-8') ->
         if not @connection
             return false
         try
             @connection.write(payload, encoding)
             return true
         catch e
-            process.nextTick(() => @didClose(1001, "Socket closed (write)"))
-            return false
+        return false
 
     didClose: ->
         super
-        @connection = undefined
-
-    doClose: ->
-        if @connection then @connection.end()
+        @connection = null
 
 
+# Write stuff to response, using chunked encoding if possible.
 class ResponseReceiver extends GenericReceiver
     constructor: (@response) ->
+        try
+            @response.connection.setKeepAlive(true, 5000)
+        catch x
         super (@response)
 
-    doSend: (payload) ->
+    doSendFrame: (payload) ->
         try
             @response.write(payload)
+            return true
         catch x
+        return false
 
     didClose: ->
-        @response = undefined
         super
-
-    doClose: ->
-        if @response then @response.end()
+        @response = null
 
 
 exports.Transport = Transport

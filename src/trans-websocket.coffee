@@ -121,14 +121,6 @@ class WebSocketReceiver extends transport.ConnectionReceiver
         @data_cb = undefined
         super
 
-    didClose: (status, reason)->
-        s = @session
-        super
-        process.nextTick =>
-            # Reconnecting for websockets is inappropriate, fire the close
-            # event immediately.
-            s.didClose(status, reason)
-
     didMessage: (bin_data) ->
         if bin_data
             @recv_buffer = utils.buffer_concat(@recv_buffer, new Buffer(bin_data, 'binary'))
@@ -141,7 +133,8 @@ class WebSocketReceiver extends transport.ConnectionReceiver
                 if buf[i] is 0xff
                     payload = buf.slice(1, i).toString('utf8')
                     @recv_buffer = buf.slice(i+1)
-                    @session.didMessage(payload)
+                    if @session
+                        @session.didMessage(payload)
                     return @didMessage()
             # wait for more data
             return
@@ -151,8 +144,9 @@ class WebSocketReceiver extends transport.ConnectionReceiver
             @didClose(1002, "Broken framing")
         return
 
-    doSend: (payload) ->
-        a = new Buffer((payload.length+2)*4)
+    doSendFrame: (payload) ->
+        # 6 bytes for every char shall be enough for utf8
+        a = new Buffer((payload.length+2)*6)
         l  = 0
         l += a.write('\u0000', l, 'binary')
         l += a.write('' + payload, l, 'utf-8')

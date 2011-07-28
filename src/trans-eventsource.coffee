@@ -5,16 +5,16 @@ transport = require('./transport')
 class EventSourceReceiver extends transport.ResponseReceiver
     protocol: "eventsource"
 
-    doSend: (payload) ->
+    doSendFrame: (payload) ->
         # Beware of leading whitespace
-        data = ['data: >',
+        data = ['data: ',
                 utils.escape_selected(payload, '\r\n\x00'),
                 '\r\n\r\n']
         try
             @response.connection.write( data.join(''))
         catch x
 
-    doClose: ->
+    doClose: (status, reason) ->
         if @response then @response.connection.end()
 
 exports.app =

@@ -6,20 +6,15 @@ class JsonpReceiver extends transport.ResponseReceiver
     constructor: (res, @callback) ->
         super (res)
 
-    doSendBulk: (messages) ->
-        @doSend(JSON.stringify(messages))
-
-    doSend: (p) ->
-        @session.unregister()
-        super(@callback + "(" + p + ");\r\n")
+    doSendFrame: (payload) ->
+        # Yes, JSONed twice, there isn't a a better way, we must pass
+        # a string back, and the script, will be evaled() by the
+        # browser.
+        if @session
+            @session.unregister()
+        r = super(@callback + "(" + JSON.stringify(payload) + ");\r\n")
         @response.end()
-
-    sendOpen: (payload) ->
-        @doSend('undefined, "open"')
-
-    doClose: (s, r) ->
-        @doSend(JSON.stringify({status:s, reason:r})+ ', "close"')
-        super
+        return r
 
 
 exports.app =
@@ -34,14 +29,8 @@ exports.app =
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
-        jsonp = new JsonpReceiver(res, callback)
-
-        session = transport.Session.bySessionId(req.session)
-        if not session
-            session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
-            jsonp.sendOpen()
-        else
-            session.register( jsonp )
+        session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
+        session.register( new JsonpReceiver(res, callback) )
         return true
 
     jsonp_send: (req, res, query) ->
