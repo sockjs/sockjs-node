@@ -3,12 +3,10 @@ var url = require('url');
 
 var sockjs = require('./lib/sockjs');
 
-var sockjs_opts = {
-    sockjs_url: "http://172.16.173.128:8000/sockjs.js"
-//    sockjs_url: "http://test.popcnt.org/sockjs.js"
-};
+var config = require('./config');
+console.log(" [*] config:", config.sockjs_opts);
 
-var sjs_echo = new sockjs.Server(sockjs_opts);
+var sjs_echo = new sockjs.Server(config.sockjs_opts);
 sjs_echo.on('open', function(conn){
     console.log('    [+] echo open    ' + conn);
     conn.on('close', function(e) {
@@ -23,7 +21,7 @@ sjs_echo.on('open', function(conn){
     });
 });
 
-var sjs_close = new sockjs.Server(sockjs_opts);
+var sjs_close = new sockjs.Server(config.sockjs_opts);
 sjs_close.on('open', function(conn){
                  console.log('    [+] clos open    ' + conn);
                  conn.close(3000, "Go away!");
@@ -32,7 +30,7 @@ sjs_close.on('open', function(conn){
                          });
             });
 
-var sjs_ticker = new sockjs.Server(sockjs_opts);
+var sjs_ticker = new sockjs.Server(config.sockjs_opts);
 sjs_ticker.on('open', function(conn){
     console.log('    [+] ticker open   ' + conn);
     var tref;
@@ -48,7 +46,7 @@ sjs_ticker.on('open', function(conn){
 });
 
 var broadcast = {};
-var sjs_broadcast = new sockjs.Server(sockjs_opts);
+var sjs_broadcast = new sockjs.Server(config.sockjs_opts);
 sjs_broadcast.on('open', function(conn){
     console.log('    [+] broadcast open ' + conn);
     broadcast[conn.id] = conn;
