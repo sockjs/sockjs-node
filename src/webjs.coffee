@@ -159,11 +159,11 @@ exports.generic_app =
             data.push(d.toString('utf8'))
         req.on 'end', ->
             data = data.join('')
-            switch req.headers['content-type'].split(';')[0]
+            switch (req.headers['content-type'] or '').split(';')[0]
                 when 'application/x-www-form-urlencoded'
                     q = querystring.parse(data)
                     break
-                when 'text/plain'
+                when 'text/plain', ''
                     q = data
                 else
                     console.log("unsupported content-type", req.headers['content-type'])
@@ -177,8 +177,8 @@ exports.generic_app =
             data.push(d.toString('utf8'))
         req.on 'end', ->
             data = data.join('')
-            switch req.headers['content-type'].split(';')[0]
-                when 'text/plain', 'T', 'application/json', 'application/xml'
+            switch (req.headers['content-type'] or '').split(';')[0]
+                when 'text/plain', 'T', 'application/json', 'application/xml', ''
                     q = data
                 else
                     console.log("unsupported content-type", req.headers['content-type'])
