@@ -4,6 +4,7 @@ crypto = require('crypto')
 
 utils = require('./utils')
 transport = require('./transport')
+websocket2 = require('./trans-websocket2')
 
 validateCrypto = (req_headers, nonce) ->
     k1 = req_headers['sec-websocket-key1']
@@ -30,21 +31,21 @@ validateCrypto = (req_headers, nonce) ->
     return md5.digest('binary')
 
 
-class WebHandshake
+class WebHandshakeHixie76
     constructor: (@req, @connection, head, origin, location) ->
         @sec = ('sec-websocket-key1' of @req.headers)
         wsp = (@sec and ('sec-websocket-protocol' of @req.headers))
         prefix = if @sec then 'Sec-' else ''
         blob = [
             'HTTP/1.1 101 WebSocket Protocol Handshake',
-            'Upgrade: WebSocket',
+            'Upgrade: websocket',
             'Connection: Upgrade'
             prefix + 'WebSocket-Origin: ' + origin,
             prefix + 'WebSocket-Location: ' + location,
         ]
         if wsp
             blob.push('Sec-WebSocket-Protocol: ' +
-                    @req.headers['sec-websocket-protocol'])
+                    @req.headers['sec-websocket-protocol'].split(',')[0])
 
         @_setup()
         try
@@ -122,6 +123,7 @@ class WebSocketReceiver extends transport.ConnectionReceiver
         super
 
     didMessage: (bin_data) ->
+        console.log('did_message', escape(bin_data))
         if bin_data
             @recv_buffer = utils.buffer_concat(@recv_buffer, new Buffer(bin_data, 'binary'))
         buf = @recv_buffer
@@ -155,7 +157,7 @@ class WebSocketReceiver extends transport.ConnectionReceiver
 
 exports.app =
     websocket: (req, connection, head) ->
-        if req.headers.upgrade isnt 'WebSocket'
+        if req.headers.upgrade.toLowerCase() isnt 'websocket'
             throw {
                 status: 406
                 message: "Can upgrade only to websockets."
@@ -169,5 +171,10 @@ exports.app =
         location = (if origin and origin[0...5] is 'https' then 'wss' else 'ws')
         location += '://' + req.headers.host + req.url
 
-        new WebHandshake(req, connection, head or '', origin, location)
+
+        if req.headers['sec-websocket-version'] is '8'
+            new websocket2.WebHandshake8(req, connection, head or '', origin, location)
+        else
+            new WebHandshakeHixie76(req, connection, head or '', origin, location)
         return true
+

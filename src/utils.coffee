@@ -56,3 +56,8 @@ exports.md5_hex = (data) ->
     return crypto.createHash('md5')
             .update(data)
             .digest('hex')
+
+exports.sha1_base64 = (data) ->
+    return crypto.createHash('sha1')
+            .update(data)
+            .digest('base64')
