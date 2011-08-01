@@ -23,8 +23,10 @@ iframe_template = """
     document.body.onload = function() {p('c[1006, "Html iframe connection broken"]');};
   </script>
 """
-iframe_template +=  Array(512 - iframe_template.length).join('a')
-iframe_template += '\r\n'
+# Safari needs at least 1024 bytes to parse the website. Relevant:
+# http://code.google.com/p/browsersec/wiki/Part2#Survey_of_content_sniffing_behaviors
+iframe_template +=  Array(1024 - iframe_template.length).join(' ')
+iframe_template += '\r\n\r\n'
 
 
 class HtmlFileReceiver extends transport.ResponseReceiver

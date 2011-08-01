@@ -60,12 +60,21 @@ class Session extends events.EventEmitter
     unregister: ->
         @recv.session = null
         @recv = null
+        if @to_tref
+            clearTimeout(@to_tref)
         @to_tref = setTimeout(@timeout_cb, 5000)
 
     tryFlush: ->
         if @send_buffer.length > 0
             [sb, @send_buffer] = [@send_buffer, []]
             @recv.doSendBulk(sb)
+        else
+            if @recv.doKeepalive
+                if @to_tref
+                    clearTimeout(@to_tref)
+                x = =>@recv.doKeepalive()
+                # We have a timeout for konqeror - 15 seconds.
+                @to_tref = setTimeout(x, 13000)
         return
 
     didTimeout: ->
