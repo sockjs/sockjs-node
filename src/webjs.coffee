@@ -120,9 +120,10 @@ exports.generic_app =
     expose: (req, res, content) ->
         if res.finished
             return content
-        if not res.getHeader('Content-Type')
+        if content and not res.getHeader('Content-Type')
             res.setHeader('Content-Type', 'text/plain')
-        res.setHeader('Content-Length', content.length)
+        if content
+            res.setHeader('Content-Length', content.length)
         res.writeHead(res.statusCode)
         res.end(content, 'utf8')
         return true
@@ -152,7 +153,7 @@ exports.generic_app =
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
         return content
 
-    expect: (req, res, _data, next_filter) ->
+    expect_form: (req, res, _data, next_filter) ->
         data = []
         req.on 'data', (d) ->
             data.push(d.toString('utf8'))
@@ -162,6 +163,21 @@ exports.generic_app =
                 when 'application/x-www-form-urlencoded'
                     q = querystring.parse(data)
                     break
+                when 'text/plain'
+                    q = data
+                else
+                    console.log("unsupported content-type", req.headers['content-type'])
+                    q = undefined
+            next_filter(q)
+        throw {status:0}
+
+    expect_xhr: (req, res, _data, next_filter) ->
+        data = []
+        req.on 'data', (d) ->
+            data.push(d.toString('utf8'))
+        req.on 'end', ->
+            data = data.join('')
+            switch req.headers['content-type'].split(';')[0]
                 when 'text/plain', 'T', 'application/json', 'application/xml'
                     q = data
                 else

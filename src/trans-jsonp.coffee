@@ -59,5 +59,6 @@ exports.app =
         for message in d
             jsonp.didMessage(message)
 
-        res.setHeader('Content-type', 'text/plain')
-        return 'ok'
+        res.writeHead(200)
+        res.end()
+        return true
