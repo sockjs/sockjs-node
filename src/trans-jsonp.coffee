@@ -60,5 +60,5 @@ exports.app =
             jsonp.didMessage(message)
 
         res.writeHead(200)
-        res.end()
+        res.end('ok')
         return true
