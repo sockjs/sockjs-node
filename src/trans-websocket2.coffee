@@ -55,7 +55,6 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
         if bin_data
             @recv_buffer = utils.buffer_concat(@recv_buffer, new Buffer(bin_data, 'binary'))
         buf = @recv_buffer
-        console.log('len', buf.length)
         # TODO: support length in framing
         if buf.length < 2
             return
@@ -72,12 +71,10 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
             length = (buf[1] & 0x7F)
             l = 2
         else if (buf[1] & 0x7F) is 126
-            console.log('xxx 16')
             if buf.length < 4 then return
             length = (buf[2] << 8) | (buf[3] << 0)
             l = 4
         else if (buf[1] & 0x7F) is 127
-            console.log('xxx 64')
             if buf.length < 10 then return
             length = (buf[2] << 56) | (buf[3] << 48) |
                      (buf[4] << 40) | (buf[5] << 32) |
@@ -100,7 +97,7 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
                 payload[i] = payload[i] ^ key[i % 4]
         @recv_buffer = buf.slice(l + length)
         payload = payload.toString('utf-8')
-        console.log('ok', masking, length)
+        #console.log('ok', masking, length)
         @session.didMessage(JSON.parse(payload))
         if @recv_buffer
             return @didMessage()
@@ -108,7 +105,6 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
 
     doSendFrame: (payload) ->
         payload = new Buffer(payload, 'utf-8')
-        console.log('send', payload.length)
         pl = payload.length
         # 6 bytes for every char shall be enough for utf8
         a = new Buffer(pl+14)

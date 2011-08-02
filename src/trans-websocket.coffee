@@ -123,7 +123,6 @@ class WebSocketReceiver extends transport.ConnectionReceiver
         super
 
     didMessage: (bin_data) ->
-        console.log('did_message', escape(bin_data))
         if bin_data
             @recv_buffer = utils.buffer_concat(@recv_buffer, new Buffer(bin_data, 'binary'))
         buf = @recv_buffer
