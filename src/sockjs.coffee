@@ -7,7 +7,6 @@ trans_jsonp = require('./trans-jsonp')
 trans_xhr = require('./trans-xhr')
 trans_iframe = require('./trans-iframe')
 trans_eventsource = require('./trans-eventsource')
-trans_htmlfile = require('./trans-htmlfile')
 
 
 app =
@@ -22,7 +21,6 @@ $.extend(app, trans_jsonp.app)
 $.extend(app, trans_xhr.app)
 $.extend(app, trans_iframe.app)
 $.extend(app, trans_eventsource.app)
-$.extend(app, trans_htmlfile.app)
 
 
 class Server extends events.EventEmitter
@@ -50,7 +48,6 @@ class Server extends events.EventEmitter
             ['POST',t('/jsonp_send'), ['expect_form', 'jsonp_send']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['GET', t('/eventsource'), ['eventsource']],
-            ['GET', t('/htmlfile'), ['h_no_cache', 'htmlfile']],
             ['POST', t('/xhr'), ['xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
             ['POST', t('/xhr_send'), ['xhr_cors', 'expect_xhr', 'xhr_send']],
