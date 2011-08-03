@@ -48,9 +48,11 @@ class Server extends events.EventEmitter
             ['POST',t('/jsonp_send'), ['expect_form', 'jsonp_send']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['GET', t('/eventsource'), ['eventsource']],
-            ['POST', t('/xhr'), ['xhr_cors', 'xhr_poll']],
+            ['POST',    t('/xhr'), ['xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
-            ['POST', t('/xhr_send'), ['xhr_cors', 'expect_xhr', 'xhr_send']],
+            ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
+            ['OPTIONS', t('/xhr_streaming'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
+            ['POST',    t('/xhr_send'), ['xhr_cors', 'expect_xhr', 'xhr_send']],
             ['OPTIONS', t('/xhr_send'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
         ]
         webjs_handler = new webjs.WebJS(app, dispatcher)

@@ -1,17 +1,58 @@
 transport = require('./transport')
 
-class XhrReceiver extends transport.ResponseReceiver
+class XhrPollingReceiver extends transport.ResponseReceiver
     protocol: "xhr"
 
     doSendFrame: (payload) ->
         if @session
             @session.unregister()
-        r = super(payload)
-        @response.end()
+        if payload isnt 'o'
+            r = super(payload + '\x00')
+            @response.end()
+            return r
+        else
+            # On purpose, after the first response 'o', wait a while
+            # before closing a connection. This will allow sockjs to
+            # detect if the browser has xhr-streaming capabilities.
+            # Opera delivers XHR onreadystatechange signal 3 only once,
+            # thus the need to send two zeroes.
+            write = (payload) =>
+                try
+                    @response.write(payload + '\x00')
+                catch x
+            write("")  # single \x00,
+            fun2 = =>
+                write("")
+                @response.end()
+            fun = =>
+                write("o")
+                setTimeout(fun2, 150)
+            setTimeout(fun, 150)
+            return true
+
+    doKeepalive: () ->
+        @doSendFrame("h")
+
+
+class XhrStreamingReceiver extends transport.ResponseReceiver
+    protocol: "xhr"
+
+    constructor: ->
+        @send_bytes = 0
+        super
+
+    doSendFrame: (payload) ->
+        @send_bytes += payload.length + 1
+        if @send_bytes > 128*1024
+            if @session
+                @session.unregister()
+        r = super(payload + '\x00')
+        if @send_bytes > 128*1024
+            @response.end()
         return r
 
     doKeepalive: () ->
-        @doSendFrame("")
+        @doSendFrame("h")
 
 
 exports.app =
@@ -21,7 +62,7 @@ exports.app =
 
         session = transport.Session.bySessionIdOrNew(req.session,
                                                      req.sockjs_server)
-        session.register( new XhrReceiver(res) )
+        session.register( new XhrPollingReceiver(res) )
         return true
 
     xhr_options: (req, res) ->
@@ -53,8 +94,21 @@ exports.app =
         res.end()
         return true
 
-    'xhr_cors': (req, res, content) ->
+    xhr_cors: (req, res, content) ->
         origin = req.headers['origin'] or '*'
         res.setHeader('Access-Control-Allow-Origin', origin)
         res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
         return content
+
+    xhr_streaming: (req, res, _, next_filter) ->
+        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
+        res.writeHead(200)
+
+        # IE requires 2KB prefix:
+        #  http://blogs.msdn.com/b/ieinternals/archive/2010/04/06/comet-streaming-in-internet-explorer-with-xmlhttprequest-and-xdomainrequest.aspx
+        res.write(Array(2048).join('h') + '\x00')
+
+        session = transport.Session.bySessionIdOrNew(req.session,
+                                                     req.sockjs_server)
+        session.register( new XhrStreamingReceiver(res) )
+        return true
