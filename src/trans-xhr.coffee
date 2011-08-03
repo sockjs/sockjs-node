@@ -1,4 +1,5 @@
 transport = require('./transport')
+utils = require('./utils')
 
 class XhrPollingReceiver extends transport.ResponseReceiver
     protocol: "xhr"
@@ -7,7 +8,7 @@ class XhrPollingReceiver extends transport.ResponseReceiver
         if @session
             @session.unregister()
         if payload isnt 'o'
-            r = super(payload + '\x00')
+            r = super(payload + '\n')
             @response.end()
             return r
         else
@@ -18,16 +19,21 @@ class XhrPollingReceiver extends transport.ResponseReceiver
             # thus the need to send two zeroes.
             write = (payload) =>
                 try
-                    @response.write(payload + '\x00')
+                    return @response.write(payload + '\n')
                 catch x
-            write("")  # single \x00,
-            fun2 = =>
-                write("")
-                @response.end()
-            fun = =>
-                write("o")
-                setTimeout(fun2, 150)
-            setTimeout(fun, 150)
+                return  true
+            ondrain = =>
+                @response.connection.removeListener('drain', ondrain)
+                utils.timeout_chain([
+                    [150, => write("o")],
+                    [150, => write(""); @response.end()],
+                ])
+            # IE requires 2KB prefix, thus waiting on ondrain
+            r = write(Array(2048).join('h') + '\n')
+            if r is false
+                @response.connection.addListener('drain', ondrain)
+            else
+                ondrain()
             return true
 
     doKeepalive: () ->
@@ -46,7 +52,7 @@ class XhrStreamingReceiver extends transport.ResponseReceiver
         if @send_bytes > 128*1024
             if @session
                 @session.unregister()
-        r = super(payload + '\x00')
+        r = super(payload + '\n')
         if @send_bytes > 128*1024
             @response.end()
         return r
@@ -106,7 +112,7 @@ exports.app =
 
         # IE requires 2KB prefix:
         #  http://blogs.msdn.com/b/ieinternals/archive/2010/04/06/comet-streaming-in-internet-explorer-with-xmlhttprequest-and-xdomainrequest.aspx
-        res.write(Array(2048).join('h') + '\x00')
+        res.write(Array(2048).join('h') + '\n')
 
         session = transport.Session.bySessionIdOrNew(req.session,
                                                      req.sockjs_server)

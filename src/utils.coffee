@@ -61,3 +61,12 @@ exports.sha1_base64 = (data) ->
     return crypto.createHash('sha1')
             .update(data)
             .digest('base64')
+
+exports.timeout_chain = (arr) ->
+    arr = arr.slice(0)
+    if not arr.length then return
+    [timeout, user_fun] = arr.shift()
+    fun = =>
+        user_fun()
+        exports.timeout_chain(arr)
+    setTimeout(fun, timeout)
