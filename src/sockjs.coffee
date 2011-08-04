@@ -47,7 +47,7 @@ class Server extends events.EventEmitter
             ['GET', t('/jsonp'), ['h_no_cache','jsonp']],
             ['POST',t('/jsonp_send'), ['expect_form', 'jsonp_send']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
-            ['GET', t('/eventsource'), ['eventsource']],
+            ['GET', t('/eventsource'), ['h_no_cache', 'eventsource']],
             ['POST',    t('/xhr'), ['xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
             ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
