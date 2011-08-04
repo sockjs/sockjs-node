@@ -77,10 +77,7 @@ var default_handler = function(req, res) {
     }
 };
 
-var port = 9999;
-var host = "0.0.0.0";
-
-console.log(" [*] Listening on", host +':'+port);
+console.log(" [*] Listening on", config.host +':'+config.port);
 var server = http.createServer();
 server.addListener('request', default_handler);
 server.addListener('upgrade', default_handler);
@@ -91,4 +88,4 @@ sjs_close.installHandlers(server, {prefix:'[/]close'});
 sjs_ticker.installHandlers(server, {prefix:'[/]ticker'});
 sjs_broadcast.installHandlers(server, {prefix:'[/]broadcast'});
 
-server.listen(port, host);
+server.listen(config.port, config.host);
