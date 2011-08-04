@@ -12,6 +12,8 @@ closeFrame = (status, reason) ->
     return 'c' + JSON.stringify([status, reason])
 
 
+keepalive_delay = 25000
+
 MAP = {}
 
 class Session extends events.EventEmitter
@@ -69,12 +71,14 @@ class Session extends events.EventEmitter
             [sb, @send_buffer] = [@send_buffer, []]
             @recv.doSendBulk(sb)
         else
-            if @recv.doKeepalive
-                if @to_tref
-                    clearTimeout(@to_tref)
-                x = =>@recv.doKeepalive()
-                # We have a timeout for konqeror - 15 seconds.
-                @to_tref = setTimeout(x, 13000)
+            if @to_tref
+                clearTimeout(@to_tref)
+            x = =>
+                if @recv
+                    @to_tref = setTimeout(x, keepalive_delay)
+                    @recv.doSendFrame("h")
+            # We have a timeout for konqeror - 35 seconds.
+            @to_tref = setTimeout(x, keepalive_delay)
         return
 
     didTimeout: ->

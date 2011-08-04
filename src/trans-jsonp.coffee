@@ -16,9 +16,6 @@ class JsonpReceiver extends transport.ResponseReceiver
         @response.end()
         return r
 
-    doKeepalive: () ->
-        @doSendFrame("")
-
 
 exports.app =
     jsonp: (req, res, _, next_filter) ->
