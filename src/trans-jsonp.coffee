@@ -59,6 +59,7 @@ exports.app =
         for message in d
             jsonp.didMessage(message)
 
+        res.setHeader('Content-Length', '2')
         res.writeHead(200)
         res.end('ok')
         return true

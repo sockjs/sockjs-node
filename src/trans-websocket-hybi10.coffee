@@ -12,7 +12,7 @@ class WebHandshake8
         blob = [
             'HTTP/1.1 101 Switching Protocols',
             'Upgrade: websocket',
-            'Connection: Upgrade'
+            'Connection: Upgrade',
             'Sec-WebSocket-Accept: ' + key_accept,
         ]
         if @req.headers['sec-websocket-protocol']

@@ -38,7 +38,7 @@ class WebHandshakeHixie76
         blob = [
             'HTTP/1.1 101 WebSocket Protocol Handshake',
             'Upgrade: websocket',
-            'Connection: Upgrade'
+            'Connection: Upgrade',
             prefix + 'WebSocket-Origin: ' + origin,
             prefix + 'WebSocket-Location: ' + location,
         ]
