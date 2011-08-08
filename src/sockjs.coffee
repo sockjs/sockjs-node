@@ -5,7 +5,7 @@ $ = require('jquery')
 trans_websocket = require('./trans-websocket')
 trans_jsonp = require('./trans-jsonp')
 trans_xhr = require('./trans-xhr')
-trans_iframe = require('./trans-iframe')
+iframe = require('./iframe')
 trans_eventsource = require('./trans-eventsource')
 
 
@@ -16,10 +16,11 @@ app =
         return true
 
 $.extend(app, webjs.generic_app)
+$.extend(app, iframe.app)
+
 $.extend(app, trans_websocket.app)
 $.extend(app, trans_jsonp.app)
 $.extend(app, trans_xhr.app)
-$.extend(app, trans_iframe.app)
 $.extend(app, trans_eventsource.app)
 
 

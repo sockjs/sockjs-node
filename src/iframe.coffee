@@ -38,5 +38,4 @@ exports.app =
 
         res.setHeader('Content-Type', 'text/html; charset=UTF-8')
         res.setHeader('ETag', quoted_md5)
-        res.cache_for = 365 * 24 * 60 * 60 # one year.
         return content
