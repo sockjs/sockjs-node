@@ -11,8 +11,13 @@ trans_eventsource = require('./trans-eventsource')
 
 app =
     welcome_screen: (req, res) ->
-        res.writeHead(200, {})
+        res.writeHead(200)
         res.end("Welcome to SockJS!")
+        return true
+
+    disabled_transport: (req, res) ->
+        res.writeHead(404)
+        res.end("Transport disabled.")
         return true
 
 $.extend(app, webjs.generic_app)
@@ -29,6 +34,7 @@ class Server extends events.EventEmitter
         @options =
             prefix: ''
             origins: ['*:*']
+            disabled_transports: []
         if @options.sockjs_url
             throw "options.sockjs_url is required!"
         if user_options
@@ -42,20 +48,31 @@ class Server extends events.EventEmitter
 
         p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
+        opts_filters = ['xhr_cors', 'xhr_options', 'cache_for', 'expose']
         dispatcher = [
             ['GET', p(''), ['welcome_screen']],
-            ['GET', t('/websocket'), ['websocket']],
+            ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['GET', t('/jsonp'), ['h_no_cache','jsonp']],
             ['POST',t('/jsonp_send'), ['expect_form', 'jsonp_send']],
-            ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
-            ['GET', t('/eventsource'), ['h_no_cache', 'eventsource']],
             ['POST',    t('/xhr'), ['xhr_cors', 'xhr_poll']],
-            ['OPTIONS', t('/xhr'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
-            ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
-            ['OPTIONS', t('/xhr_streaming'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
+            ['OPTIONS', t('/xhr'), opts_filters],
             ['POST',    t('/xhr_send'), ['xhr_cors', 'expect_xhr', 'xhr_send']],
-            ['OPTIONS', t('/xhr_send'), ['xhr_cors', 'xhr_options', 'cache_for', 'expose']],
+            ['OPTIONS', t('/xhr_send'), opts_filters],
         ]
+        maybe_add_transport = (name, urls) ->
+            if options.disabled_transports.indexOf(name) isnt -1
+                # modify urls to return 404
+                urls = for url in urls
+                    [method, url, filters] = url
+                    [method, url, ['cache_for', 'disabled_transport']]
+            dispatcher = dispatcher.concat(urls)
+        maybe_add_transport('websocket',[
+                ['GET', t('/websocket'), ['websocket']]])
+        maybe_add_transport('eventsource',[
+                ['GET', t('/eventsource'), ['h_no_cache', 'eventsource']]])
+        maybe_add_transport('xhr-streaming',[
+                ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
+                ['OPTIONS', t('/xhr_streaming'), opts_filters]])
         webjs_handler = new webjs.WebJS(app, dispatcher)
 
         install_handler = (ee, event, handler) ->
