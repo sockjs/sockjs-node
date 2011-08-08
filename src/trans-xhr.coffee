@@ -72,7 +72,6 @@ exports.app =
         return true
 
     xhr_options: (req, res) ->
-        res.cache_for = 365 * 24 * 60 * 60 # one year.
         res.statusCode = 204    # No content
         res.setHeader('Allow', 'OPTIONS, POST')
         res.setHeader('Access-Control-Max-Age', res.cache_for)

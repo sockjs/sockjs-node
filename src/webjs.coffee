@@ -46,11 +46,19 @@ class WebJS
 
             if typeof res.writeHead is "undefined"
                 # TODO: this is quite obviously wrong.
+                headers = []
                 res.writeHead = (status, headers, content) ->
+                    r = []
+                    r.push('HTTP/'+req.httpVersion+ ' '+status+' '+http.STATUS_CODES[status])
+                    r = r.concat(headers)
+                    r.push('')
+                    if content
+                        r.push(content)
                     try
-                        req.write(''+status +'\r\n\r\n'+content)
+                        res.write(r.join('\r\n'))
                     catch e
                         null
+                res.setHeader = (k, v) -> headers.push(k+': '+v)
             req.start_date = new Date()
             funs = funs[0..]
             funs.push('log')
@@ -142,10 +150,11 @@ exports.generic_app =
         throw {status:0}
 
     cache_for: (req, res, content) ->
+        res.cache_for = res.cache_for or 365 * 24 * 60 * 60 # one year.
         # See: http://code.google.com/speed/page-speed/docs/caching.html
-        res.setHeader('Cache-Control', 'public, max-age='+res.cache_for)
+        res.setHeader('Cache-Control', 'public, max-age=' + res.cache_for)
         exp = new Date()
-        exp.setTime(exp.getTime() + res.cache_for *1000)
+        exp.setTime(exp.getTime() + res.cache_for * 1000)
         res.setHeader('Expires', exp.toGMTString())
         return content
 
