@@ -47,9 +47,10 @@ class WebJS
             if typeof res.writeHead is "undefined"
                 # TODO: this is quite obviously wrong.
                 headers = []
-                res.writeHead = (status, headers, content) ->
+                res.writeHead = (status, user_headers, content) ->
                     r = []
                     r.push('HTTP/'+req.httpVersion+ ' '+status+' '+http.STATUS_CODES[status])
+                    r = r.concat(user_headers)
                     r = r.concat(headers)
                     r.push('')
                     if content
@@ -58,6 +59,7 @@ class WebJS
                         res.write(r.join('\r\n'))
                     catch e
                         null
+
                 res.setHeader = (k, v) -> headers.push(k+': '+v)
             req.start_date = new Date()
             funs = funs[0..]
