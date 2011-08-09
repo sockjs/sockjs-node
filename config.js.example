@@ -1,5 +1,5 @@
 exports.sockjs_opts = {
-    sockjs_url: "http://127.0.0.1:8000/sockjs.js"
+    sockjs_url: "http://127.0.0.1:8000/lib/sockjs.js"
 };
 
 exports.port = 9999
