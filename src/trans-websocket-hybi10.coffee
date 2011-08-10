@@ -62,9 +62,14 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
             console.error('fin flag not set')
             @didClose(1002, "Fin flag not set")
             return
-        if (buf[0] & 0xF) isnt 1
-            console.error('not a text frame', buf[0] & 0xF)
-            @didClose(1002, "not a text frame")
+        opcode = buf[0] & 0xF
+        if opcode isnt 1 and opcode isnt 8
+            console.error('not a text nor close frame', buf[0] & 0xF)
+            @didClose(1002, "not a text nor close frame")
+            return
+        if opcode is 8 and not ((buf[1] & 0x7F) < 126)
+            console.error('wrong length for close frame')
+            @didClose(1002, 'wrong length for close frame')
             return
         masking = not(not(buf[1] & 128))
         if (buf[1] & 0x7F) < 126
@@ -96,11 +101,22 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
             for i in [0...length]
                 payload[i] = payload[i] ^ key[i % 4]
         @recv_buffer = buf.slice(l + length)
-        payload = payload.toString('utf-8')
         #console.log('ok', masking, length)
-        @session.didMessage(JSON.parse(payload))
-        if @recv_buffer
-            return @didMessage()
+        if opcode is 1
+            payload_str = payload.toString('utf-8')
+            @session.didMessage(JSON.parse(payload_str))
+            if @recv_buffer
+                return @didMessage()
+        else if opcode is 8
+            if payload.length >= 2
+                status = (payload[0] << 8) | (payload[1] << 0)
+            else
+                status = 1002
+            if payload.length > 2
+                reason = payload.slice(2).toString('utf-8')
+            else
+                reason = "Connection cosed by user"
+            @didClose(status, reason)
         return
 
     doSendFrame: (payload) ->
