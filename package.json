@@ -1,10 +1,13 @@
 {
-	"name": "sockjs",
-	"version": "0.0.1",
+        "name": "sockjs",
+        "author": "Marek Majkowski",
+        "version": "0.0.0-rc1",
+        "repository": {"type": "git",
+                       "url": "https://github.com/majek/sockjs-client.git"},
         "dependencies": {
                 "coffee-script": "1.1.1",
                 "jquery": "1.5.1",
                 "node-uuid": "1.2.0"
         },
-    "main": "index"
+        "main": "index"
 }
