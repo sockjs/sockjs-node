@@ -10,13 +10,19 @@ serve:
 	    sleep 0.1;						\
 	done
 
+# Release process:
+#   1) commit everything
+#   2) amend version in package.json
+#   3) run 'make tag' and run suggested 'git push' variants
+#   4) run 'npm publish'
+
 RVER:=$(shell grep "version" package.json|tr '\t"' ' \t'|cut -f 4)
 VER:=$(shell ./VERSION-GEN)
 
 .PHONY: tag
 tag: all
 	-git tag -d v$(RVER)
-	git commit package.json -m "Release $(RVER)"
+	git commit $(TAG_OPTS) package.json -m "Release $(RVER)"
 	git tag -a v$(RVER) -m "Release $(RVER)"
 	@echo ' [*] Now run'
 	@echo 'git push; git push --tag'
