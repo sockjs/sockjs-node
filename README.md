@@ -50,7 +50,8 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option specifies
    its url (if you're unsure, point it to
-   [the latest minified SockJS client release](http://majek.github.com/sockjs-client/sockjs-latest.min.js)).</dd>
+   <a href="http://majek.github.com/sockjs-client/sockjs-latest.min.js">
+   the latest minified SockJS client release</a>).</dd>
 
 <dt>prefix</dt>
 <dd>A url prefix for the server. All http requests which paths begins
@@ -102,8 +103,8 @@ A `Connection` instance has following methods and properties:
 
 <dt>send(message)</dt>
 <dd>Sends a message over opened connection. It's illegal to send a
-   message after the connection was closed (either by `close` method
-   or `close` event).</dd>
+   message after the connection was closed (either by 'close' method
+   or 'close' event).</dd>
 
 <dt>close([status], [reason])</dt>
 <dd>Asks the remote client to disconnect. 'status' and 'reason'
@@ -117,7 +118,7 @@ and emits following events:
 
 <dl>
 <dt>message(event)</dt>
-<dd>A message arrived on the connection. Data is available at `event.data`.</dd>
+<dd>A message arrived on the connection. Data is available at 'event.data'.</dd>
 
 <dt>close(event)</dt>
 <dd>Connection was closed. This event is triggered exactly once for
@@ -130,11 +131,11 @@ For example:
 sjs.on('open', function(conn) {
     console.log('open' + conn);
     conn.on('close', function(e) {
-        console.log('close   ' + conn, e);
+        console.log('close ' + conn, e);
     });
     conn.on('message', function(e) {
         console.log('message ' + conn,
-                    JSON.stringify(e.data));
+                    e.data);
     });
 });
 ```
