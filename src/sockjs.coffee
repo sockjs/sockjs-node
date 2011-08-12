@@ -36,7 +36,7 @@ class Server extends events.EventEmitter
             origins: ['*:*']
             disabled_transports: []
         if @options.sockjs_url
-            throw "options.sockjs_url is required!"
+            throw new Error("options.sockjs_url is required!")
         if user_options
             $.extend(@options, user_options)
 
@@ -58,6 +58,8 @@ class Server extends events.EventEmitter
             ['OPTIONS', t('/xhr'), opts_filters],
             ['POST',    t('/xhr_send'), ['xhr_cors', 'expect_xhr', 'xhr_send']],
             ['OPTIONS', t('/xhr_send'), opts_filters],
+            ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
+            ['OPTIONS', t('/xhr_streaming'), opts_filters],
         ]
         maybe_add_transport = (name, urls) ->
             if options.disabled_transports.indexOf(name) isnt -1
@@ -70,9 +72,6 @@ class Server extends events.EventEmitter
                 ['GET', t('/websocket'), ['websocket']]])
         maybe_add_transport('eventsource',[
                 ['GET', t('/eventsource'), ['h_no_cache', 'eventsource']]])
-        maybe_add_transport('xhr-streaming',[
-                ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
-                ['OPTIONS', t('/xhr_streaming'), opts_filters]])
         webjs_handler = new webjs.WebJS(app, dispatcher)
 
         install_handler = (ee, event, handler) ->
