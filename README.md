@@ -6,30 +6,141 @@ To install `sockjs-node` run:
     npm install sockjs
 
 
-A fully working echo server would look like:
+An echo SockJS server would look like:
 
     var http = require('http');
     var sockjs = require('sockjs');
 
-    var sockjs_opts = {sockjs_url: "http://127.0.0.1:8000/lib/sockjs.js"};
+    var sockjs_opts = {sockjs_url:
+        "http://majek.github.com/sockjs-client/sockjs-latest.min.js"};
 
-    var sjs_echo = new sockjs.Server(sockjs_opts);
-    sjs_echo.on('open', function(conn) {
+    var sjs = new sockjs.Server(sockjs_opts);
+    sjs.on('open', function(conn) {
         conn.on('message', function(e) {
             conn.send(e.data);
         });
     });
 
-    var normal_handler = function(req, res) {
-            res.writeHead(404);
-            res.end("Not found.");
-    };
 
     var server = http.createServer();
-    server.addListener('request', normal_handler);
-    server.addListener('upgrade', normal_handler);
+    server.addListener('request', function(req, res) {
+        res.writeHead(404);
+        res.end('404 not found');
+    });
+    server.addListener('upgrade', function(req, con) {
+        con.end();
+    });
 
-    sjs_echo.installHandlers(server, {prefix:'[/]echo'});
+    sjs.installHandlers(server, {prefix:'[/]echo'});
 
     server.listen(9999, '0.0.0.0');
 
+
+SockJS-node API
+---------------
+
+### Server class
+
+Server class on one side is generating an http handler, compatible
+with the common
+[Node.js http](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer)
+module.
+
+    var sjs = new sockjs.Server(options);
+
+Where `options` is a hash which can contain:
+
+sockjs_url (required)
+: Transports which don't support cross-domain communication natively
+   ('eventsource' to name one) use an iframe trick. A simple page is
+   served from the SockJS server (using its foreign domain) and is
+   placed in an invisible iframe. Code run from this iframe doesn't
+   need to worry about cross-domain issues, as it's being run from
+   domain local to the SockJS server. This iframe also does need to
+   load SockJS javascript client library, and this option specifies
+   its url (if you're unsure, point it to
+   [the latest minified SockJS client release](http://majek.github.com/sockjs-client/sockjs-latest.min.js)).
+
+prefix
+: A url prefix for the server. All http requests which paths begins
+   with selected prefix will be handled by SockJS. All other requests
+   will be passed through, to previously registered handlers.
+
+disabled_transports
+: A list of streaming transports that should not be handled by the
+   server. This may be useful, when it's known that the server stands
+   behind a proxy which doesn't like some streaming tranports, for
+   example websockets. Valid values are: 'websockets', 'eventsource'.
+
+
+### Server instance
+
+Once you have instanciated `Server` class you can hook it to the
+[http server instance](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer).
+
+    var http_server = http.createServer();
+    sjs.installHandlers(http_server, options);
+    http_server.listen(...);
+
+Where `options` can overwrite options set by `Server` class
+constructor.
+
+`Server` instance is an
+[EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
+and emits following event:
+
+open(connection)
+: A new connection has been successfully opened.
+
+All http requests that don't go under the path selected by `prefix`
+will remain unanswered and will be passed to previously registered
+handlers.
+
+### Connection instance
+
+A `Connection` instance has following methods and properties:
+
+readyState
+: A property describing a state of the connecion.
+
+send(message)
+: Sends a message over opened connection. It's illegal to send a
+   message after the connection was closed (either by `close` method
+   or `close` event).
+
+close([status], [reason])
+: Asks the remote client to disconnect. 'status' and 'reason'
+   parameters are optional and can be used to share the reason of
+   disconnection.
+
+A `Connection` instance is also an
+[EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
+and emits following events:
+
+message(event)
+: A message arrived on the connection. Data is available at `event.data`.
+
+close(event)
+: Connection was closed. This event is triggered exactly once for
+   every connection.
+
+For example:
+
+    sjs.on('open', function(conn) {
+                    console.log('open' + conn);
+                    conn.on('close', function(e) {
+                                console.log('close   ' + conn, e);
+                            });
+                    conn.on('message', function(e) {
+                                console.log('message ' + conn,
+                                            JSON.stringify(e.data));
+                            });
+                });
+
+### Examples
+
+If you want to see samples of running code, take a look at:
+
+ * [./examples/echo](https://github.com/majek/sockjs-node/tree/master/examples/echo)
+   directory, which contains a full example of a echo server.
+ * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/sockjs_test_server.js).
