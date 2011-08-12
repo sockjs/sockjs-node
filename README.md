@@ -8,20 +8,21 @@ To install `sockjs-node` run:
 
 An simplified echo SockJS server could look more or less like:
 
-    var http = require('http');
-    var sockjs = require('sockjs');
+```javascript
+var http = require('http');
+var sockjs = require('sockjs');
 
-    var echo = new sockjs.Server(sockjs_opts);
-    echo.on('open', function(conn) {
-        conn.on('message', function(e) {
-            conn.send(e.data);
-        });
+var echo = new sockjs.Server(sockjs_opts);
+echo.on('open', function(conn) {
+   conn.on('message', function(e) {
+        conn.send(e.data);
     });
+});
 
-    var server = http.createServer();
-    echo.installHandlers(server, {prefix:'[/]echo'});
-    server.listen(9999, '0.0.0.0');
-
+var server = http.createServer();
+echo.installHandlers(server, {prefix:'[/]echo'});
+server.listen(9999, '0.0.0.0');
+```
 
 SockJS-node API
 ---------------
@@ -65,9 +66,11 @@ disabled_transports
 Once you have instanciated `Server` class you can hook it to the
 [http server instance](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer).
 
-    var http_server = http.createServer();
-    sjs.installHandlers(http_server, options);
-    http_server.listen(...);
+```javascript
+var http_server = http.createServer();
+sjs.installHandlers(http_server, options);
+http_server.listen(...);
+```
 
 Where `options` can overwrite options set by `Server` class
 constructor.
@@ -76,8 +79,10 @@ constructor.
 [EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
 and emits following event:
 
-open(connection)
-: A new connection has been successfully opened.
+<dl>
+<dt>open(connection)</dt>
+<dd>A new connection has been successfully opened.</dd>
+</dl>
 
 All http requests that don't go under the path selected by `prefix`
 will remain unanswered and will be passed to previously registered
@@ -87,18 +92,20 @@ handlers.
 
 A `Connection` instance has following methods and properties:
 
-readyState
-: A property describing a state of the connecion.
+<dl>
+<dt>readyState</dt>
+<dd>A property describing a state of the connecion.</dd>
 
-send(message)
-: Sends a message over opened connection. It's illegal to send a
+<dt>send(message)</dt>
+<dd>Sends a message over opened connection. It's illegal to send a
    message after the connection was closed (either by `close` method
-   or `close` event).
+   or `close` event).</dd>
 
-close([status], [reason])
-: Asks the remote client to disconnect. 'status' and 'reason'
+<dt>close([status], [reason])</dt>
+<dd>Asks the remote client to disconnect. 'status' and 'reason'
    parameters are optional and can be used to share the reason of
-   disconnection.
+   disconnection.</dd>
+</dl>
 
 A `Connection` instance is also an
 [EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
@@ -113,47 +120,51 @@ close(event)
 
 For example:
 
-    sjs.on('open', function(conn) {
-                    console.log('open' + conn);
-                    conn.on('close', function(e) {
-                                console.log('close   ' + conn, e);
-                            });
-                    conn.on('message', function(e) {
-                                console.log('message ' + conn,
-                                            JSON.stringify(e.data));
-                            });
-                });
+```javascript
+sjs.on('open', function(conn) {
+                console.log('open' + conn);
+                conn.on('close', function(e) {
+                            console.log('close   ' + conn, e);
+                        });
+                conn.on('message', function(e) {
+                           console.log('message ' + conn,
+                                        JSON.stringify(e.data));
+                        });
+            });
+```
 
 ### Footnote
 
 A fully working echo server does need a bit more boilerplate (to
 handle unanswered requests), here it is:
 
-    var http = require('http');
-    var sockjs = require('sockjs');
+```javascript
+var http = require('http');
+var sockjs = require('sockjs');
 
-    var sockjs_opts = {sockjs_url:
-        "http://majek.github.com/sockjs-client/sockjs-latest.min.js"};
+var sockjs_opts = {sockjs_url:
+    "http://majek.github.com/sockjs-client/sockjs-latest.min.js"};
 
-    var sjs = new sockjs.Server(sockjs_opts);
-    sjs.on('open', function(conn) {
-        conn.on('message', function(e) {
-            conn.send(e.data);
-        });
+var sjs = new sockjs.Server(sockjs_opts);
+sjs.on('open', function(conn) {
+    conn.on('message', function(e) {
+        conn.send(e.data);
     });
+});
 
-    var server = http.createServer();
-    server.addListener('request', function(req, res) {
-        res.writeHead(404);
-        res.end('404 not found');
-    });
-    server.addListener('upgrade', function(req, con) {
-        con.end();
-    });
+var server = http.createServer();
+server.addListener('request', function(req, res) {
+    res.writeHead(404);
+    res.end('404 not found');
+});
+server.addListener('upgrade', function(req, con) {
+    con.end();
+});
 
-    sjs.installHandlers(server, {prefix:'[/]echo'});
+sjs.installHandlers(server, {prefix:'[/]echo'});
 
-    server.listen(9999, '0.0.0.0');
+server.listen(9999, '0.0.0.0');
+```
 
 ### Examples
 
