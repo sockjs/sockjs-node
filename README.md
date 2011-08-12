@@ -27,6 +27,11 @@ server.listen(9999, '0.0.0.0');
 SockJS-node API
 ---------------
 
+The API is highly influenced by the
+[HTML5 Websockets API](http://dev.w3.org/html5/websockets/). The goal
+is to follow it as closely as possible, but we're not there yet.
+
+
 ### Server class
 
 Server class on one side is generating an http handler, compatible
@@ -61,14 +66,14 @@ Where `options` is a hash which can contain:
 <dt>disabled_transports</dt>
 <dd>A list of streaming transports that should not be handled by the
    server. This may be useful, when it's known that the server stands
-   behind a proxy which doesn't like some streaming tranports, for
+   behind a proxy which doesn't like some streaming transports, for
    example websockets. Valid values are: 'websockets', 'eventsource'.</dd>
 </dl>
 
 
 ### Server instance
 
-Once you have instanciated `Server` class you can hook it to the
+Once you have instantiated `Server` class you can hook it to the
 [http server instance](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer).
 
 ```javascript
