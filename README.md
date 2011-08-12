@@ -14,7 +14,7 @@ var sockjs = require('sockjs');
 
 var echo = new sockjs.Server(sockjs_opts);
 echo.on('open', function(conn) {
-   conn.on('message', function(e) {
+    conn.on('message', function(e) {
         conn.send(e.data);
     });
 });
@@ -34,12 +34,15 @@ with the common
 [Node.js http](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer)
 module.
 
-    var sjs = new sockjs.Server(options);
+```javascript
+var sjs = new sockjs.Server(options);
+```
 
 Where `options` is a hash which can contain:
 
-sockjs_url (required)
-: Transports which don't support cross-domain communication natively
+<dl>
+<dt>sockjs_url (required)</dt>
+<dd>Transports which don't support cross-domain communication natively
    ('eventsource' to name one) use an iframe trick. A simple page is
    served from the SockJS server (using its foreign domain) and is
    placed in an invisible iframe. Code run from this iframe doesn't
@@ -47,18 +50,19 @@ sockjs_url (required)
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option specifies
    its url (if you're unsure, point it to
-   [the latest minified SockJS client release](http://majek.github.com/sockjs-client/sockjs-latest.min.js)).
+   [the latest minified SockJS client release](http://majek.github.com/sockjs-client/sockjs-latest.min.js)).</dd>
 
-prefix
-: A url prefix for the server. All http requests which paths begins
+<dt>prefix</dt>
+<dd>A url prefix for the server. All http requests which paths begins
    with selected prefix will be handled by SockJS. All other requests
-   will be passed through, to previously registered handlers.
+   will be passed through, to previously registered handlers.</dd>
 
-disabled_transports
-: A list of streaming transports that should not be handled by the
+<dt>disabled_transports</dt>
+<dd>A list of streaming transports that should not be handled by the
    server. This may be useful, when it's known that the server stands
    behind a proxy which doesn't like some streaming tranports, for
-   example websockets. Valid values are: 'websockets', 'eventsource'.
+   example websockets. Valid values are: 'websockets', 'eventsource'.</dd>
+</dl>
 
 
 ### Server instance
@@ -111,26 +115,28 @@ A `Connection` instance is also an
 [EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
 and emits following events:
 
-message(event)
-: A message arrived on the connection. Data is available at `event.data`.
+<dl>
+<dt>message(event)</dt>
+<dd>A message arrived on the connection. Data is available at `event.data`.</dd>
 
-close(event)
-: Connection was closed. This event is triggered exactly once for
-   every connection.
+<dt>close(event)</dt>
+<dd>Connection was closed. This event is triggered exactly once for
+   every connection.</dd>
+</dl>
 
 For example:
 
 ```javascript
 sjs.on('open', function(conn) {
-                console.log('open' + conn);
-                conn.on('close', function(e) {
-                            console.log('close   ' + conn, e);
-                        });
-                conn.on('message', function(e) {
-                           console.log('message ' + conn,
-                                        JSON.stringify(e.data));
-                        });
-            });
+    console.log('open' + conn);
+    conn.on('close', function(e) {
+        console.log('close   ' + conn, e);
+    });
+    conn.on('message', function(e) {
+        console.log('message ' + conn,
+                    JSON.stringify(e.data));
+    });
+});
 ```
 
 ### Footnote
