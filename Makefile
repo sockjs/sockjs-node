@@ -1,4 +1,4 @@
-.PHONY: all
+.PHONY: all serve clean
 
 all: src/*coffee
 	coffee -o lib/ -c src/*.coffee
@@ -9,6 +9,10 @@ serve:
 	    inotifywait -r -q -e modify .;			\
 	    sleep 0.1;						\
 	done
+
+clean:
+	rm -f lib/*.js
+
 
 # Release process:
 #   1) commit everything
