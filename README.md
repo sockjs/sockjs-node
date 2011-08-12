@@ -6,33 +6,20 @@ To install `sockjs-node` run:
     npm install sockjs
 
 
-An echo SockJS server would look like:
+An simplified echo SockJS server could look more or less like:
 
     var http = require('http');
     var sockjs = require('sockjs');
 
-    var sockjs_opts = {sockjs_url:
-        "http://majek.github.com/sockjs-client/sockjs-latest.min.js"};
-
-    var sjs = new sockjs.Server(sockjs_opts);
-    sjs.on('open', function(conn) {
+    var echo = new sockjs.Server(sockjs_opts);
+    echo.on('open', function(conn) {
         conn.on('message', function(e) {
             conn.send(e.data);
         });
     });
 
-
     var server = http.createServer();
-    server.addListener('request', function(req, res) {
-        res.writeHead(404);
-        res.end('404 not found');
-    });
-    server.addListener('upgrade', function(req, con) {
-        con.end();
-    });
-
-    sjs.installHandlers(server, {prefix:'[/]echo'});
-
+    echo.installHandlers(server, {prefix:'[/]echo'});
     server.listen(9999, '0.0.0.0');
 
 
@@ -136,6 +123,37 @@ For example:
                                             JSON.stringify(e.data));
                             });
                 });
+
+### Footnote
+
+A fully working echo server does need a bit more boilerplate (to
+handle unanswered requests), here it is:
+
+    var http = require('http');
+    var sockjs = require('sockjs');
+
+    var sockjs_opts = {sockjs_url:
+        "http://majek.github.com/sockjs-client/sockjs-latest.min.js"};
+
+    var sjs = new sockjs.Server(sockjs_opts);
+    sjs.on('open', function(conn) {
+        conn.on('message', function(e) {
+            conn.send(e.data);
+        });
+    });
+
+    var server = http.createServer();
+    server.addListener('request', function(req, res) {
+        res.writeHead(404);
+        res.end('404 not found');
+    });
+    server.addListener('upgrade', function(req, con) {
+        con.end();
+    });
+
+    sjs.installHandlers(server, {prefix:'[/]echo'});
+
+    server.listen(9999, '0.0.0.0');
 
 ### Examples
 
