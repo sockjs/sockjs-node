@@ -185,3 +185,22 @@ If you want to see samples of running code, take a look at:
  * [./examples/echo](https://github.com/majek/sockjs-node/tree/master/examples/echo)
    directory, which contains a full example of a echo server.
  * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/sockjs_test_server.js).
+
+
+Deployment and load balancing
+-----------------------------
+
+Often WebSockets don't play nicely with proxies and loadbalancers.
+Deploying SockJS server behind nginx or apache could be
+painful.
+
+Fortunetely recent versions of an excellent loadbalancer
+[HAProxy](http://haproxy.1wt.eu/) are able to proxy WebSocket
+connections. We propose to put HAProxy as a front line load balancer
+and use it to split SockJS traffic from normal HTTP data. Take a look
+at the sample
+[SockJS HAProxy configuration](https://github.com/majek/sockjs-node/blob/master/examples/haproxy.cfg).
+
+The config also shows how to use HAproxy balancing to split traffic
+between multiple Node.js servers. You can also do balancing using dns
+names.
