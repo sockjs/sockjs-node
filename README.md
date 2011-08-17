@@ -24,6 +24,19 @@ echo.installHandlers(server, {prefix:'[/]echo'});
 server.listen(9999, '0.0.0.0');
 ```
 
+Live QUnit tests and smoke tests
+--------------------------------
+
+[SockJS-client](https://github.com/majek/sockjs-client) comes with
+some QUnit tests and a few smoke tests that are using SockJS-node. At
+the moment they are deployed in few places:
+
+ * http://sockjs.popcnt.org/ (hosted in Europe)
+ * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets not working)
+ * https://sockjs.cloudfoundry.com/ (CloudFoundry SSL, websockets not working)
+ * http://sockjs.herokuapp.com/ (Heroku, websockets not working)
+
+
 SockJS-node API
 ---------------
 
