@@ -30,4 +30,3 @@ tag: all
 	git tag -a v$(RVER) -m "Release $(RVER)"
 	@echo ' [*] Now run'
 	@echo 'git push; git push --tag'
-
