@@ -48,17 +48,17 @@ class Server extends events.EventEmitter
 
         p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
-        opts_filters = ['xhr_cors', 'xhr_options', 'cache_for', 'expose']
+        opts_filters = ['h_sid', 'xhr_cors', 'xhr_options', 'cache_for', 'expose']
         dispatcher = [
             ['GET', p(''), ['welcome_screen']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
-            ['GET', t('/jsonp'), ['h_no_cache','jsonp']],
-            ['POST',t('/jsonp_send'), ['expect_form', 'jsonp_send']],
-            ['POST',    t('/xhr'), ['xhr_cors', 'xhr_poll']],
+            ['GET', t('/jsonp'), ['h_sid', 'h_no_cache','jsonp']],
+            ['POST',t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
+            ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), opts_filters],
-            ['POST',    t('/xhr_send'), ['xhr_cors', 'expect_xhr', 'xhr_send']],
+            ['POST',    t('/xhr_send'), ['h_sid', 'xhr_cors', 'expect_xhr', 'xhr_send']],
             ['OPTIONS', t('/xhr_send'), opts_filters],
-            ['POST',    t('/xhr_streaming'), ['xhr_cors', 'xhr_streaming']],
+            ['POST',    t('/xhr_streaming'), ['h_sid', 'xhr_cors', 'xhr_streaming']],
             ['OPTIONS', t('/xhr_streaming'), opts_filters],
         ]
         maybe_add_transport = (name, urls) ->
@@ -71,7 +71,7 @@ class Server extends events.EventEmitter
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
         maybe_add_transport('eventsource',[
-                ['GET', t('/eventsource'), ['h_no_cache', 'eventsource']]])
+                ['GET', t('/eventsource'), ['h_sid', 'h_no_cache', 'eventsource']]])
         webjs_handler = new webjs.WebJS(app, dispatcher)
 
         install_handler = (ee, event, handler) ->

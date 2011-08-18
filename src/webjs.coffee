@@ -1,6 +1,7 @@
 url = require('url')
 querystring = require('querystring')
 fs = require('fs')
+uuid = require('node-uuid')
 
 $ = require('jquery');
 
@@ -196,3 +197,14 @@ exports.generic_app =
                     q = undefined
             next_filter(q)
         throw {status:0}
+
+    h_sid: (req, res, data) ->
+        req.cookies = {}
+        if req.headers.cookie
+            for cookie in req.headers.cookie.split(';')
+                parts = cookie.split('=')
+                req.cookies[ parts[0].trim() ] = ( parts[1] || '' ).trim()
+        if res.setHeader
+            jsid = req.cookies['JSESSIONID'] or uuid()
+            res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; HttpOnly; path=/')
+        return data
