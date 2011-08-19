@@ -102,7 +102,10 @@ exports.app =
     xhr_cors: (req, res, content) ->
         origin = req.headers['origin'] or '*'
         res.setHeader('Access-Control-Allow-Origin', origin)
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+        headers = req.headers['access-control-request-headers']
+        if headers
+            res.setHeader('Access-Control-Allow-Headers', headers)
+        res.setHeader('Access-Control-Allow-Credentials', 'true')
         return content
 
     xhr_streaming: (req, res, _, next_filter) ->

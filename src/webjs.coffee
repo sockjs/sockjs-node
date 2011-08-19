@@ -1,7 +1,6 @@
 url = require('url')
 querystring = require('querystring')
 fs = require('fs')
-uuid = require('node-uuid')
 
 $ = require('jquery');
 
@@ -199,12 +198,18 @@ exports.generic_app =
         throw {status:0}
 
     h_sid: (req, res, data) ->
+        # Some load balancers do sticky sessions, but only if there is
+        # a JSESSIONID cookie. If this cookie isn't yet set, we shall
+        # set it to a dumb value. It doesn't really matter what, as
+        # session information is usually added by the load balancer.
         req.cookies = {}
         if req.headers.cookie
             for cookie in req.headers.cookie.split(';')
                 parts = cookie.split('=')
                 req.cookies[ parts[0].trim() ] = ( parts[1] || '' ).trim()
         if res.setHeader
-            jsid = req.cookies['JSESSIONID'] or uuid()
-            res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; HttpOnly; path=/')
+            # We need to set it every time, to give the loadbalancer
+            # opportunity to attach its own cookies.
+            jsid = req.cookies['JSESSIONID'] or 'a'
+            res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; path=/')
         return data

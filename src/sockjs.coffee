@@ -48,11 +48,11 @@ class Server extends events.EventEmitter
 
         p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
-        opts_filters = ['h_sid', 'xhr_cors', 'xhr_options', 'cache_for', 'expose']
+        opts_filters = ['h_sid', 'xhr_cors', 'cache_for', 'xhr_options', 'expose']
         dispatcher = [
             ['GET', p(''), ['welcome_screen']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
-            ['GET', t('/jsonp'), ['h_sid', 'h_no_cache','jsonp']],
+            ['GET', t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
             ['POST',t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
             ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), opts_filters],
