@@ -1,0 +1,10 @@
+0.0.2
+=====
+
+ * By default set JSESSIONID cookie, useful for load balancing. 
+
+
+0.0.1
+=====
+
+ * Initial release.
