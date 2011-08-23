@@ -7,6 +7,7 @@ trans_jsonp = require('./trans-jsonp')
 trans_xhr = require('./trans-xhr')
 iframe = require('./iframe')
 trans_eventsource = require('./trans-eventsource')
+trans_htmlfile = require('./trans-htmlfile')
 
 
 app =
@@ -27,6 +28,7 @@ $.extend(app, trans_websocket.app)
 $.extend(app, trans_jsonp.app)
 $.extend(app, trans_xhr.app)
 $.extend(app, trans_eventsource.app)
+$.extend(app, trans_htmlfile.app)
 
 
 class Server extends events.EventEmitter
@@ -52,14 +54,16 @@ class Server extends events.EventEmitter
         dispatcher = [
             ['GET', p(''), ['welcome_screen']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
-            ['GET', t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
-            ['POST',t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
+            ['GET',     t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
+            ['POST',    t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
             ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), opts_filters],
             ['POST',    t('/xhr_send'), ['h_sid', 'xhr_cors', 'expect_xhr', 'xhr_send']],
             ['OPTIONS', t('/xhr_send'), opts_filters],
             ['POST',    t('/xhr_streaming'), ['h_sid', 'xhr_cors', 'xhr_streaming']],
             ['OPTIONS', t('/xhr_streaming'), opts_filters],
+            ['GET',     t('/eventsource'), ['h_sid', 'h_no_cache', 'eventsource']],
+            ['GET',     t('/htmlfile'),    ['h_sid', 'h_no_cache', 'htmlfile']],
         ]
         maybe_add_transport = (name, urls) ->
             if options.disabled_transports.indexOf(name) isnt -1
@@ -70,8 +74,6 @@ class Server extends events.EventEmitter
             dispatcher = dispatcher.concat(urls)
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
-        maybe_add_transport('eventsource',[
-                ['GET', t('/eventsource'), ['h_sid', 'h_no_cache', 'eventsource']]])
         webjs_handler = new webjs.WebJS(app, dispatcher)
 
         install_handler = (ee, event, handler) ->
