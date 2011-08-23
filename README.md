@@ -64,7 +64,7 @@ var sjs = new sockjs.Server(options);
 Where `options` is a hash which can contain:
 
 <dl>
-<dt>sockjs_url (required)</dt>
+<dt>sockjs_url (string, required)</dt>
 <dd>Transports which don't support cross-domain communication natively
    ('eventsource' to name one) use an iframe trick. A simple page is
    served from the SockJS server (using its foreign domain) and is
@@ -76,12 +76,12 @@ Where `options` is a hash which can contain:
    <a href="http://majek.github.com/sockjs-client/sockjs-latest.min.js">
    the latest minified SockJS client release</a>).</dd>
 
-<dt>prefix</dt>
+<dt>prefix (string)</dt>
 <dd>A url prefix for the server. All http requests which paths begins
    with selected prefix will be handled by SockJS. All other requests
    will be passed through, to previously registered handlers.</dd>
 
-<dt>disabled_transports</dt>
+<dt>disabled_transports (list of strings)</dt>
 <dd>A list of streaming transports that should not be handled by the
    server. This may be useful, when it's known that the server stands
    behind a proxy which doesn't like some streaming transports, for
