@@ -36,9 +36,6 @@ class XhrPollingReceiver extends transport.ResponseReceiver
                 ondrain()
             return true
 
-    doKeepalive: () ->
-        @doSendFrame("h")
-
 
 class XhrStreamingReceiver extends transport.ResponseReceiver
     protocol: "xhr"
@@ -57,8 +54,6 @@ class XhrStreamingReceiver extends transport.ResponseReceiver
             @response.end()
         return r
 
-    doKeepalive: () ->
-        @doSendFrame("h")
 
 
 exports.app =
