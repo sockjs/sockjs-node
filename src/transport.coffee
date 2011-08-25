@@ -189,18 +189,27 @@ class ConnectionReceiver extends GenericReceiver
 
 # Write stuff to response, using chunked encoding if possible.
 class ResponseReceiver extends GenericReceiver
+    max_response_size: undefined
+
     constructor: (@response) ->
+        @curr_response_size = 0
         try
             @response.connection.setKeepAlive(true, 5000)
         catch x
         super (@response)
 
     doSendFrame: (payload) ->
+        @curr_response_size += payload.length
+        r = false
         try
             @response.write(payload)
-            return true
+            r = true
         catch x
-        return false
+        if @max_response_size and @curr_response_size >= @max_response_size
+            if @session
+                @session.unregister()
+            @response.end()
+        return r
 
     didClose: ->
         super

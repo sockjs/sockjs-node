@@ -39,21 +39,10 @@ class XhrPollingReceiver extends transport.ResponseReceiver
 
 class XhrStreamingReceiver extends transport.ResponseReceiver
     protocol: "xhr"
-
-    constructor: ->
-        @send_bytes = 0
-        super
+    max_response_size: 128*1024
 
     doSendFrame: (payload) ->
-        @send_bytes += payload.length + 1
-        if @send_bytes > 128*1024
-            if @session
-                @session.unregister()
-        r = super(payload + '\n')
-        if @send_bytes > 128*1024
-            @response.end()
-        return r
-
+        return super(payload + '\n')
 
 
 exports.app =
