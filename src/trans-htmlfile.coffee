@@ -31,7 +31,7 @@ class HtmlFileReceiver extends transport.ResponseReceiver
     protocol: "htmlfile"
 
     doSendFrame: (payload) ->
-        super( '<script>p(' + JSON.stringify(payload) + ');</script>\r\n' )
+        super( '<script>\np(' + JSON.stringify(payload) + ');\n</script>\r\n' )
 
 
 exports.app =
