@@ -4,6 +4,7 @@ transport = require('./transport')
 
 class EventSourceReceiver extends transport.ResponseReceiver
     protocol: "eventsource"
+    max_response_size: 128*1024
 
     doSendFrame: (payload) ->
         # Beware of leading whitespace
