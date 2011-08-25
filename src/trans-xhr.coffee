@@ -79,7 +79,9 @@ exports.app =
         for message in d
             jsonp.didMessage(message)
 
-        res.writeHead(200)
+        # FF assumes that the response is XML.
+        res.setHeader('Content-Type', 'text/plain')
+        res.writeHead(204)
         res.end()
         return true
 
