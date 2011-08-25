@@ -12,13 +12,10 @@ iframe_template = """
 </head><body><h2>Don't panic!</h2>
   <script>
     document.domain = document.domain;
-    function p(d){
-        if (d[0] === 'c') {
-            document.body.onload = null;
-        }
-        parent.{{ callback }}(d);
-    };
-    document.body.onload = function() {p('c[1006, "Html iframe connection broken"]');};
+    var c = parent.{{ callback }};
+    c.start();
+    function p(d) {c.message(d);};
+    window.onload = function() {c.stop();};
   </script>
 """
 # Safari needs at least 1024 bytes to parse the website. Relevant:
@@ -29,6 +26,7 @@ iframe_template += '\r\n\r\n'
 
 class HtmlFileReceiver extends transport.ResponseReceiver
     protocol: "htmlfile"
+    max_response_size: 128*1024
 
     doSendFrame: (payload) ->
         super( '<script>\np(' + JSON.stringify(payload) + ');\n</script>\r\n' )
