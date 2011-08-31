@@ -13,7 +13,7 @@ class JsonpReceiver extends transport.ResponseReceiver
         if @session
             @session.unregister()
         r = super(@callback + "(" + JSON.stringify(payload) + ");\r\n")
-        @response.end()
+        @didClose()
         return r
 
 
