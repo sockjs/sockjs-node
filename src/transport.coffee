@@ -206,9 +206,7 @@ class ResponseReceiver extends GenericReceiver
             r = true
         catch x
         if @max_response_size and @curr_response_size >= @max_response_size
-            if @session
-                @session.unregister()
-            @response.end()
+            @didClose()
         return r
 
     didClose: ->
