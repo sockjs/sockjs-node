@@ -151,9 +151,6 @@ class GenericReceiver
     didClose: (status, reason) ->
         if @thingy
             @tearDown(@thingy)
-            try
-                @thingy.end()
-            catch x
             @thingy = null
         if @session
             @session.unregister(status, reason)
@@ -184,6 +181,9 @@ class ConnectionReceiver extends GenericReceiver
 
     didClose: ->
         super
+        try
+            @connection.end()
+        catch x
         @connection = null
 
 
@@ -193,7 +193,7 @@ class ResponseReceiver extends GenericReceiver
         try
             @response.connection.setKeepAlive(true, 5000)
         catch x
-        super (@response)
+        super (@response.connection)
 
     doSendFrame: (payload) ->
         try
@@ -204,6 +204,9 @@ class ResponseReceiver extends GenericReceiver
 
     didClose: ->
         super
+        try
+            @response.end()
+        catch x
         @response = null
 
 

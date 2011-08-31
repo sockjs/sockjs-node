@@ -9,7 +9,7 @@ class XhrPollingReceiver extends transport.ResponseReceiver
             @session.unregister()
         if payload isnt 'o'
             r = super(payload + '\n')
-            @response.end()
+            @didClose()
             return r
         else
             # On purpose, after the first response 'o', wait a while
@@ -26,7 +26,7 @@ class XhrPollingReceiver extends transport.ResponseReceiver
                 @response.connection.removeListener('drain', ondrain)
                 utils.timeout_chain([
                     [150, => write("o")],
-                    [150, => write(""); @response.end()],
+                    [150, => write(""); @didClose()],
                 ])
             # IE requires 2KB prefix, thus waiting on ondrain
             r = write(Array(2048).join('h') + '\n')
@@ -54,7 +54,7 @@ class XhrStreamingReceiver extends transport.ResponseReceiver
                 @session.unregister()
         r = super(payload + '\n')
         if @send_bytes > 128*1024
-            @response.end()
+            @didClose()
         return r
 
     doKeepalive: () ->
