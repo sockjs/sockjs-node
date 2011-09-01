@@ -1,60 +1,19 @@
 transport = require('./transport')
 utils = require('./utils')
 
-class XhrPollingReceiver extends transport.ResponseReceiver
-    protocol: "xhr"
-
-    doSendFrame: (payload) ->
-        if @session
-            @session.unregister()
-        if payload isnt 'o'
-            r = super(payload + '\n')
-            @didClose()
-            return r
-        else
-            # On purpose, after the first response 'o', wait a while
-            # before closing a connection. This will allow sockjs to
-            # detect if the browser has xhr-streaming capabilities.
-            # Opera delivers XHR onreadystatechange signal 3 only once,
-            # thus the need to send two zeroes.
-            write = (payload) =>
-                try
-                    return @response.write(payload + '\n')
-                catch x
-                return  true
-            ondrain = =>
-                @response.connection.removeListener('drain', ondrain)
-                utils.timeout_chain([
-                    [150, => write("o")],
-                    [150, => write(""); @didClose()],
-                ])
-            # IE requires 2KB prefix, thus waiting on ondrain
-            r = write(Array(2048).join('h') + '\n')
-            if r is false
-                @response.connection.addListener('drain', ondrain)
-            else
-                ondrain()
-            return true
-
-
 class XhrStreamingReceiver extends transport.ResponseReceiver
-    protocol: "xhr"
+    protocol: "xhr-streaming"
     max_response_size: 128*1024
 
     doSendFrame: (payload) ->
         return super(payload + '\n')
 
+class XhrPollingReceiver extends XhrStreamingReceiver
+    protocol: "xhr"
+    max_response_size: 1
+
 
 exports.app =
-    xhr_poll: (req, res, _, next_filter) ->
-        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
-        res.writeHead(200)
-
-        session = transport.Session.bySessionIdOrNew(req.session,
-                                                     req.sockjs_server)
-        session.register( new XhrPollingReceiver(res) )
-        return true
-
     xhr_options: (req, res) ->
         res.statusCode = 204    # No content
         res.setHeader('Allow', 'OPTIONS, POST')
@@ -93,6 +52,15 @@ exports.app =
             res.setHeader('Access-Control-Allow-Headers', headers)
         res.setHeader('Access-Control-Allow-Credentials', 'true')
         return content
+
+    xhr_poll: (req, res, _, next_filter) ->
+        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
+        res.writeHead(200)
+
+        session = transport.Session.bySessionIdOrNew(req.session,
+                                                     req.sockjs_server)
+        session.register( new XhrPollingReceiver(res) )
+        return true
 
     xhr_streaming: (req, res, _, next_filter) ->
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
