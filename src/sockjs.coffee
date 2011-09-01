@@ -8,6 +8,7 @@ trans_xhr = require('./trans-xhr')
 iframe = require('./iframe')
 trans_eventsource = require('./trans-eventsource')
 trans_htmlfile = require('./trans-htmlfile')
+chunking_test = require('./chunking-test')
 
 
 app =
@@ -23,6 +24,7 @@ app =
 
 $.extend(app, webjs.generic_app)
 $.extend(app, iframe.app)
+$.extend(app, chunking_test.app)
 
 $.extend(app, trans_websocket.app)
 $.extend(app, trans_jsonp.app)
@@ -54,6 +56,8 @@ class Server extends events.EventEmitter
         dispatcher = [
             ['GET', p(''), ['welcome_screen']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
+            ['OPTIONS', p('/chunking_test'), opts_filters],
+            ['POST',    p('/chunking_test'), ['h_sid', 'xhr_cors', 'expect_xhr', 'chunking_test']],
             ['GET',     t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
             ['POST',    t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
             ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
