@@ -2,6 +2,8 @@ url = require('url')
 querystring = require('querystring')
 fs = require('fs')
 
+utils = require('./utils')
+
 $ = require('jquery');
 
 execute_request = (app, funs, req, res, data) ->
@@ -165,11 +167,11 @@ exports.generic_app =
         return content
 
     expect_form: (req, res, _data, next_filter) ->
-        data = []
+        data = new Buffer(0)
         req.on 'data', (d) ->
-            data.push(d.toString('utf8'))
+            data = utils.buffer_concat(data, new Buffer(d, 'binary'))
         req.on 'end', ->
-            data = data.join('')
+            data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
                 when 'application/x-www-form-urlencoded'
                     q = querystring.parse(data)
@@ -183,11 +185,11 @@ exports.generic_app =
         throw {status:0}
 
     expect_xhr: (req, res, _data, next_filter) ->
-        data = []
+        data = new Buffer(0)
         req.on 'data', (d) ->
-            data.push(d.toString('utf8'))
+            data = utils.buffer_concat(data, new Buffer(d, 'binary'))
         req.on 'end', ->
-            data = data.join('')
+            data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
                 when 'text/plain', 'T', 'application/json', 'application/xml', ''
                     q = data
