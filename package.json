@@ -5,9 +5,11 @@
         "repository": {"type": "git",
                        "url": "https://github.com/majek/sockjs-client.git"},
         "dependencies": {
-                "coffee-script": "1.1.1",
                 "jquery": "1.5.1",
                 "node-uuid": "1.2.0"
+        },
+        "devDependencies": {
+                "coffee-script": "1.1.1"
         },
         "main": "index"
 }
