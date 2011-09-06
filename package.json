@@ -5,7 +5,6 @@
         "repository": {"type": "git",
                        "url": "https://github.com/majek/sockjs-client.git"},
         "dependencies": {
-                "jquery": "1.5.1",
                 "node-uuid": "1.2.0"
         },
         "devDependencies": {

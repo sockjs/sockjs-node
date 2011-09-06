@@ -4,7 +4,6 @@ fs = require('fs')
 
 utils = require('./utils')
 
-$ = require('jquery');
 
 execute_request = (app, funs, req, res, data) ->
     try
@@ -28,7 +27,7 @@ class WebJS
 
     handler: (req, res, head) ->
         that = this
-        $.extend(req, url.parse(req.url, true))
+        utils.objectExtend(req, url.parse(req.url, true))
 
         found = false
         allowed_methods = []

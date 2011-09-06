@@ -1,6 +1,6 @@
 events = require('events')
 webjs = require('./webjs')
-$ = require('jquery')
+utils = require('./utils')
 
 trans_websocket = require('./trans-websocket')
 trans_jsonp = require('./trans-jsonp')
@@ -22,15 +22,15 @@ app =
         res.end("Transport disabled.")
         return true
 
-$.extend(app, webjs.generic_app)
-$.extend(app, iframe.app)
-$.extend(app, chunking_test.app)
+utils.objectExtend(app, webjs.generic_app)
+utils.objectExtend(app, iframe.app)
+utils.objectExtend(app, chunking_test.app)
 
-$.extend(app, trans_websocket.app)
-$.extend(app, trans_jsonp.app)
-$.extend(app, trans_xhr.app)
-$.extend(app, trans_eventsource.app)
-$.extend(app, trans_htmlfile.app)
+utils.objectExtend(app, trans_websocket.app)
+utils.objectExtend(app, trans_jsonp.app)
+utils.objectExtend(app, trans_xhr.app)
+utils.objectExtend(app, trans_eventsource.app)
+utils.objectExtend(app, trans_htmlfile.app)
 
 
 class Server extends events.EventEmitter
@@ -42,13 +42,13 @@ class Server extends events.EventEmitter
         if @options.sockjs_url
             throw new Error("options.sockjs_url is required!")
         if user_options
-            $.extend(@options, user_options)
+            utils.objectExtend(@options, user_options)
 
     installHandlers: (http_server, user_options) ->
         options = {}
-        $.extend(options, @options)
+        utils.objectExtend(options, @options)
         if user_options
-            $.extend(options, user_options)
+            utils.objectExtend(options, user_options)
 
         p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']

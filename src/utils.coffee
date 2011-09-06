@@ -70,3 +70,10 @@ exports.timeout_chain = (arr) ->
         user_fun()
         exports.timeout_chain(arr)
     setTimeout(fun, timeout)
+
+
+exports.objectExtend = (dst, src) ->
+    for k of src
+        if src.hasOwnProperty(k)
+            dst[k] = src[k]
+    return dst
