@@ -6,7 +6,7 @@ websocket_hybi10 = require('./trans-websocket-hybi10')
 
 exports.app =
     websocket: (req, connection, head) ->
-        if req.headers.upgrade.toLowerCase() isnt 'websocket'
+        if (req.headers.upgrade || '').toLowerCase() isnt 'websocket'
             throw {
                 status: 406
                 message: "Can upgrade only to websockets."

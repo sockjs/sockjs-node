@@ -1,6 +1,7 @@
 url = require('url')
 querystring = require('querystring')
 fs = require('fs')
+http = require('http')
 
 utils = require('./utils')
 
