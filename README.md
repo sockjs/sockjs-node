@@ -208,9 +208,14 @@ If you want to see samples of running code, take a look at:
 Deployment and load balancing
 -----------------------------
 
+There are two issues that needs to be considered when planning a
+non-trivial SockJS-node deployment: WebSocket-compatible load balancer
+and sticky sessions (aka session affinity).
+
+### WebSocket compatible load balancer
+
 Often WebSockets don't play nicely with proxies and loadbalancers.
-Deploying SockJS server behind nginx or apache could be
-painful.
+Deploying a SockJS server behind Nginx or Apache could be painful.
 
 Fortunetely recent versions of an excellent loadbalancer
 [HAProxy](http://haproxy.1wt.eu/) are able to proxy WebSocket
@@ -223,4 +228,21 @@ The config also shows how to use HAproxy balancing to split traffic
 between multiple Node.js servers. You can also do balancing using dns
 names.
 
+### Sticky sessions
+
+If you plan depling more than one SockJS server, you must make sure
+that all HTTP requests for a single session will hit the same server.
+SockJS has two mechanisms that can be usefull to achieve that:
+
+ * Urls are prefixed with server and session id numbers, like:
+   `/resource/<server_number>/<session_id>/transport`.  This is
+   usefull for load balancers that support prefix-based affinity
+   (HAProxy does).
+ * `JSESSIONID` cookie is being set by SockJS-node. Many load
+   balancers turn on sticky sessions if that cookie is set. This
+   technique is derived from Java applications, where sticky sessions
+   are often neccesary. HAProxy does support this method, as well as
+   some hosting providers, for example CloudFoundry.  In order to
+   enable this method on the client side, please supply a
+   `cookie:true` option to SockJS constructor.
 
