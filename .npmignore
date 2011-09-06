@@ -1,3 +1,4 @@
 .gitignore
 lib/.placeholder
 VERSION-GEN
+src
