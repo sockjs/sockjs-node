@@ -52,9 +52,11 @@ class WebJS
                 res.writeHead = (status, user_headers, content) ->
                     r = []
                     r.push('HTTP/'+req.httpVersion+ ' '+status+' '+http.STATUS_CODES[status])
-                    r = r.concat(user_headers)
-                    r = r.concat(headers)
-                    r.push('')
+                    if user_headers and user_headers.length > 0
+                        r = r.concat(user_headers)
+                    if headers and headers.length > 0
+                        r = r.concat(headers)
+                    r = r.concat(['', ''])
                     if content
                         r.push(content)
                     try
