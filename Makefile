@@ -1,6 +1,7 @@
 .PHONY: all serve clean
 
 all: src/*coffee
+	@coffee -v > /dev/null
 	coffee -o lib/ -c src/*.coffee
 
 serve:
