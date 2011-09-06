@@ -33,7 +33,7 @@ class WebJS
         allowed_methods = []
         for row in @dispatcher
             [method, path, funs] = row
-            if $.type(path) isnt "array"
+            if path.constructor isnt Array
                 path = [path]
             # path[0] must be a regexp
             m = req.pathname.match(path[0])
