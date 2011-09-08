@@ -83,9 +83,20 @@ Where `options` is a hash which can contain:
 
 <dt>disabled_transports (list of strings)</dt>
 <dd>A list of streaming transports that should not be handled by the
-   server. This may be useful, when it's known that the server stands
-   behind a proxy which doesn't like some streaming transports, for
-   example websockets. Valid values are: 'websockets', 'eventsource'.</dd>
+   server. This may be useful when it's known that the server stands
+   behind a load balancer which doesn't like some streaming transports, for
+   example websockets. The only valid transport currently is: 'websocket'.</dd>
+
+<dt>response_limit (integer)</dt>
+<dd>Most streaming transports save responses on the client side and
+   don't free memory used by delivered messages. Such transports need
+   to be garbage-collected once in a while. `response_limit` sets
+   a minimum number of bytes that can be send over a single http streaming
+   request before it will be closed. After that client needs to open
+   new request. Setting this value to one effectively disables
+   streaming and will make streaming transports to behave like polling
+   transports. The default value is 128K.
+</dd>
 </dl>
 
 

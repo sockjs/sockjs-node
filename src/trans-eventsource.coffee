@@ -4,7 +4,6 @@ transport = require('./transport')
 
 class EventSourceReceiver extends transport.ResponseReceiver
     protocol: "eventsource"
-    max_response_size: 128*1024
 
     doSendFrame: (payload) ->
         # Beware of leading whitespace
@@ -21,5 +20,5 @@ exports.app =
         res.write(['', ''].join('\r\n'))
 
         session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
-        session.register( new EventSourceReceiver(res) )
+        session.register( new EventSourceReceiver(res, req.sockjs_server.options) )
         return true

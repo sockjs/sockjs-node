@@ -26,7 +26,6 @@ iframe_template += '\r\n\r\n'
 
 class HtmlFileReceiver extends transport.ResponseReceiver
     protocol: "htmlfile"
-    max_response_size: 128*1024
 
     doSendFrame: (payload) ->
         super( '<script>\np(' + JSON.stringify(payload) + ');\n</script>\r\n' )
@@ -45,5 +44,5 @@ exports.app =
         res.write(iframe_template.replace(/{{ callback }}/g, callback));
 
         session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
-        session.register( new HtmlFileReceiver(res) )
+        session.register( new HtmlFileReceiver(res, req.sockjs_server.options) )
         return true

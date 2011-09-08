@@ -37,6 +37,7 @@ class Server extends events.EventEmitter
     constructor: (user_options) ->
         @options =
             prefix: ''
+            response_limit: 128*1024
             origins: ['*:*']
             disabled_transports: []
         if @options.sockjs_url

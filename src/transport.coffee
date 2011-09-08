@@ -191,12 +191,14 @@ class ConnectionReceiver extends GenericReceiver
 class ResponseReceiver extends GenericReceiver
     max_response_size: undefined
 
-    constructor: (@response) ->
+    constructor: (@response, @options) ->
         @curr_response_size = 0
         try
             @response.connection.setKeepAlive(true, 5000)
         catch x
         super (@response.connection)
+        if @max_response_size is undefined
+            @max_response_size = @options.response_limit
 
     doSendFrame: (payload) ->
         @curr_response_size += payload.length

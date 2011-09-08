@@ -3,7 +3,6 @@ utils = require('./utils')
 
 class XhrStreamingReceiver extends transport.ResponseReceiver
     protocol: "xhr-streaming"
-    max_response_size: 128*1024
 
     doSendFrame: (payload) ->
         return super(payload + '\n')
@@ -59,7 +58,7 @@ exports.app =
 
         session = transport.Session.bySessionIdOrNew(req.session,
                                                      req.sockjs_server)
-        session.register( new XhrPollingReceiver(res) )
+        session.register( new XhrPollingReceiver(res, req.sockjs_server.options) )
         return true
 
     xhr_streaming: (req, res, _, next_filter) ->
@@ -72,5 +71,5 @@ exports.app =
 
         session = transport.Session.bySessionIdOrNew(req.session,
                                                      req.sockjs_server)
-        session.register( new XhrStreamingReceiver(res) )
+        session.register( new XhrStreamingReceiver(res, req.sockjs_server.options) )
         return true
