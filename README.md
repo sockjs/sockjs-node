@@ -1,6 +1,9 @@
 SockJS-node server
 ==================
 
+SockJS-node is a Node.js server side counterpart of
+[SockJS-client browser library](https://github.com/majek/sockjs-client).
+
 To install `sockjs-node` run:
 
     npm install sockjs
@@ -24,6 +27,10 @@ echo.installHandlers(server, {prefix:'[/]echo'});
 server.listen(9999, '0.0.0.0');
 ```
 
+(Take look at
+[examples](https://github.com/majek/sockjs-node/tree/master/examples/echo)
+directory for a complete version.)
+
 Subscribe to
 [SockJS mailing list](http://groups.google.com/group/sockjs) for
 discussions and support.
@@ -37,9 +44,9 @@ some QUnit tests and a few smoke tests that are using SockJS-node. At
 the moment they are deployed in few places:
 
  * http://sockjs.popcnt.org/ (hosted in Europe)
- * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets not working)
- * https://sockjs.cloudfoundry.com/ (CloudFoundry SSL, websockets not working)
- * http://sockjs.herokuapp.com/ (Heroku, websockets not working)
+ * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets disabled, loadbalanced)
+ * https://sockjs.cloudfoundry.com/ (CloudFoundry SSL, websockets disabled, loadbalanced)
+ * http://sockjs.herokuapp.com/ (Heroku, websockets disabled)
 
 
 SockJS-node API
@@ -47,7 +54,7 @@ SockJS-node API
 
 The API is highly influenced by the
 [HTML5 Websockets API](http://dev.w3.org/html5/websockets/). The goal
-is to follow it as closely as possible, but we're not there yet.
+is to follow it as closely as possible.
 
 
 ### Server class
