@@ -220,7 +220,7 @@ If you want to see samples of running code, take a look at:
 
  * [./examples/echo](https://github.com/majek/sockjs-node/tree/master/examples/echo)
    directory, which contains a full example of a echo server.
- * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/sockjs_test_server.js).
+ * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/).
 
 
 Deployment and load balancing
