@@ -1,3 +1,20 @@
+0.0.4
+=====
+
+ * Support for htmlfile transport, used by IE in a deployment
+   dependent on cookies.
+ * Added /chunking_test API, used to detect support for HTTP chunking
+   on client side.
+ * Unified code logic for all the chunking transports - the same code
+   is reused for polling versions.
+ * All the chunking transports are closed by the server after 128K was
+   send, in order to force client to GC and reconnect.
+ * Don't distribute source coffeescript with npm.
+ * Minor fixes in websocket code.
+ * Dropped jQuery dependency.
+ * Unicode encoding could been garbled during XHR upload.
+ * Other minor fixes.
+
 0.0.3
 ======
 

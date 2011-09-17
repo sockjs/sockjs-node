@@ -1,6 +1,9 @@
 SockJS-node server
 ==================
 
+SockJS-node is a Node.js server side counterpart of
+[SockJS-client browser library](https://github.com/majek/sockjs-client).
+
 To install `sockjs-node` run:
 
     npm install sockjs
@@ -24,6 +27,10 @@ echo.installHandlers(server, {prefix:'[/]echo'});
 server.listen(9999, '0.0.0.0');
 ```
 
+(Take look at
+[examples](https://github.com/majek/sockjs-node/tree/master/examples/echo)
+directory for a complete version.)
+
 Subscribe to
 [SockJS mailing list](http://groups.google.com/group/sockjs) for
 discussions and support.
@@ -37,9 +44,9 @@ some QUnit tests and a few smoke tests that are using SockJS-node. At
 the moment they are deployed in few places:
 
  * http://sockjs.popcnt.org/ (hosted in Europe)
- * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets not working)
- * https://sockjs.cloudfoundry.com/ (CloudFoundry SSL, websockets not working)
- * http://sockjs.herokuapp.com/ (Heroku, websockets not working)
+ * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets disabled, loadbalanced)
+ * https://sockjs.cloudfoundry.com/ (CloudFoundry SSL, websockets disabled, loadbalanced)
+ * http://sockjs.herokuapp.com/ (Heroku, websockets disabled)
 
 
 SockJS-node API
@@ -47,7 +54,7 @@ SockJS-node API
 
 The API is highly influenced by the
 [HTML5 Websockets API](http://dev.w3.org/html5/websockets/). The goal
-is to follow it as closely as possible, but we're not there yet.
+is to follow it as closely as possible.
 
 
 ### Server class
@@ -83,9 +90,20 @@ Where `options` is a hash which can contain:
 
 <dt>disabled_transports (list of strings)</dt>
 <dd>A list of streaming transports that should not be handled by the
-   server. This may be useful, when it's known that the server stands
-   behind a proxy which doesn't like some streaming transports, for
-   example websockets. Valid values are: 'websockets', 'eventsource'.</dd>
+   server. This may be useful when it's known that the server stands
+   behind a load balancer which doesn't like some streaming transports, for
+   example websockets. The only valid transport currently is: 'websocket'.</dd>
+
+<dt>response_limit (integer)</dt>
+<dd>Most streaming transports save responses on the client side and
+   don't free memory used by delivered messages. Such transports need
+   to be garbage-collected once in a while. `response_limit` sets
+   a minimum number of bytes that can be send over a single http streaming
+   request before it will be closed. After that client needs to open
+   new request. Setting this value to one effectively disables
+   streaming and will make streaming transports to behave like polling
+   transports. The default value is 128K.
+</dd>
 </dl>
 
 
@@ -202,7 +220,7 @@ If you want to see samples of running code, take a look at:
 
  * [./examples/echo](https://github.com/majek/sockjs-node/tree/master/examples/echo)
    directory, which contains a full example of a echo server.
- * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/sockjs_test_server.js).
+ * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/).
 
 
 Deployment and load balancing
