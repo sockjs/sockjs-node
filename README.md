@@ -32,7 +32,7 @@ server.listen(9999, '0.0.0.0');
 directory for a complete version.)
 
 Subscribe to
-[SockJS mailing list](http://groups.google.com/group/sockjs) for
+[SockJS mailing list](https://groups.google.com/forum/#!forum/sockjs) for
 discussions and support.
 
 
