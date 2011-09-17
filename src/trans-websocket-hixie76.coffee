@@ -37,7 +37,7 @@ class WebHandshakeHixie76
         prefix = if @sec then 'Sec-' else ''
         blob = [
             'HTTP/1.1 101 WebSocket Protocol Handshake',
-            'Upgrade: websocket',
+            'Upgrade: WebSocket',
             'Connection: Upgrade',
             prefix + 'WebSocket-Origin: ' + origin,
             prefix + 'WebSocket-Location: ' + location,
