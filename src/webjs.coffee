@@ -92,7 +92,7 @@ exports.generic_app =
 
     handle_405:(req, res, methods) ->
         res.writeHead(405, {'Allow': methods.join(', ')})
-        res.end("405 - Method Not Alloweds")
+        res.end()
         return true
 
     handle_error: (req, res, x) ->
