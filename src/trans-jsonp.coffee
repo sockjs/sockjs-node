@@ -26,7 +26,7 @@ exports.app =
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
-        session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
+        session = transport.Session.bySessionIdOrNew(req.session, req)
         session.register( new JsonpReceiver(res, req.sockjs_server.options, callback) )
         return true
 

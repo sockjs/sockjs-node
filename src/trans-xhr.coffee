@@ -57,7 +57,7 @@ exports.app =
         res.writeHead(200)
 
         session = transport.Session.bySessionIdOrNew(req.session,
-                                                     req.sockjs_server)
+                                                     req)
         session.register( new XhrPollingReceiver(res, req.sockjs_server.options) )
         return true
 
@@ -70,6 +70,6 @@ exports.app =
         res.write(Array(2048).join('h') + '\n')
 
         session = transport.Session.bySessionIdOrNew(req.session,
-                                                     req.sockjs_server)
+                                                     req)
         session.register( new XhrStreamingReceiver(res, req.sockjs_server.options) )
         return true
