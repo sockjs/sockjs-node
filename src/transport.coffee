@@ -26,10 +26,10 @@ class Session extends events.EventEmitter
             MAP[@session_id] = @
         @timeout_cb = => @didTimeout()
         @to_tref = setTimeout(@timeout_cb, 5000)
-        server = @req.sockjs_server
+        @server = @req.sockjs_server
         @emit_open = =>
             @emit_open = null
-            server.emit('open', @)
+            @server.emit('open', @)
 
     register: (recv) ->
         if @recv
@@ -78,7 +78,7 @@ class Session extends events.EventEmitter
                 if @recv
                     @to_tref = setTimeout(x, keepalive_delay)
                     @recv.doSendFrame("h")
-            # We have a timeout for konqeror - 35 seconds.
+            # We have a timeout for konqueror - 35 seconds.
             @to_tref = setTimeout(x, keepalive_delay)
         return
 
@@ -90,22 +90,27 @@ class Session extends events.EventEmitter
         if @recv
             throw Error('RECV_STILL_THERE')
         @readyState = Transport.CLOSED
-        @emit('close', {status: 1001, reason: "Session timeouted"})
+        @emit('close', {status: 1001, reason: "Session timed out"})
         if @session_id
             delete MAP[@session_id]
             @session_id = null
 
     didMessage: (payload) ->
         if @readyState is Transport.OPEN
-            @emit('message', {data: payload})
+            @emit('message', {type: 'utf8', utf8Data: payload})
         return
 
-    send: (payload) ->
+    sendUTF: (payload) ->
         if @readyState isnt Transport.OPEN
             throw Error('INVALID_STATE_ERR')
         @send_buffer.push( payload )
         if @recv
             @tryFlush()
+
+    sendBinary: (payload) ->
+        if @readyState isnt Transport.OPEN
+            throw Error('INVALID_STATE_ERR')
+        throw Error('INVALID_NOT_YET_IMPLEMENTED')
 
     close: (status=1000, reason="Normal closure") ->
         if @readyState isnt Transport.OPEN
