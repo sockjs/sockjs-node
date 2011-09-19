@@ -36,6 +36,6 @@ exports.app =
             res.statusCode = 304
             return ''
 
-        res.setHeader('Content-Type', 'text/html')
+        res.setHeader('Content-Type', 'text/html; charset=UTF-8')
         res.setHeader('ETag', quoted_md5)
         return content
