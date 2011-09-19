@@ -1,4 +1,5 @@
 events = require('events')
+fs = require('fs')
 webjs = require('./webjs')
 utils = require('./utils')
 
@@ -55,6 +56,10 @@ utils.objectExtend(app, trans_htmlfile.app)
 
 class Server extends events.EventEmitter
     constructor: (user_options) ->
+        if not exports.banner_printed and
+                (not('banner' of user_options) or user_options.banner is True)
+            exports.banner_printed = true
+            print_banner()
         @options =
             prefix: ''
             response_limit: 128*1024
@@ -118,4 +123,17 @@ class Server extends events.EventEmitter
         install_handler(http_server, 'upgrade', handler)
         return true
 
+
+print_banner = ->
+    try
+        package = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
+    catch x
+    if package
+        version = JSON.parse(package).version
+    else
+        version = 'unknown'
+
+    console.log(" _---\\\n\\     \\\n \\     \\         SockJS-node server\n  \\     \\\n   \\    \\        Version " + version + "\n    \\    \\\n    /     |      Node.js server side counterpart of\n   /    -/       SockJS-client browser library\n,-'    /\n\\___--'\n")
+
 exports.Server = Server
+exports.banner_printed = false
