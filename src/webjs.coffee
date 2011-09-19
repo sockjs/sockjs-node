@@ -87,7 +87,7 @@ exports.generic_app =
         if res.finished
             return x
         res.writeHead(404, {})
-        res.end("404 - Not Found")
+        res.end()
         return true
 
     handle_405:(req, res, methods) ->
