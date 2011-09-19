@@ -77,7 +77,7 @@ class Session extends events.EventEmitter
                 if @recv
                     @to_tref = setTimeout(x, keepalive_delay)
                     @recv.doSendFrame("h")
-            # We have a timeout for konqeror - 35 seconds.
+            # We have a timeout for konqueror - 35 seconds.
             @to_tref = setTimeout(x, keepalive_delay)
         return
 
