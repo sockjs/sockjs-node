@@ -23,6 +23,25 @@ app =
         res.end("Transport disabled.")
         return true
 
+    h_sid: (req, res, data) ->
+        if req.sockjs_server.options.jsessionid
+            # Some load balancers do sticky sessions, but only if there is
+            # a JSESSIONID cookie. If this cookie isn't yet set, we shall
+            # set it to a dummy value. It doesn't really matter what, as
+            # session information is usually added by the load balancer.
+            req.cookies = {}
+            if req.headers.cookie
+                for cookie in req.headers.cookie.split(';')
+                    parts = cookie.split('=')
+                    req.cookies[ parts[0].trim() ] = ( parts[1] || '' ).trim()
+            if res.setHeader
+                # We need to set it every time, to give the loadbalancer
+                # opportunity to attach its own cookies.
+                jsid = req.cookies['JSESSIONID'] or 'dummy'
+                res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; path=/')
+        return data
+
+
 utils.objectExtend(app, webjs.generic_app)
 utils.objectExtend(app, iframe.app)
 utils.objectExtend(app, chunking_test.app)
@@ -41,6 +60,7 @@ class Server extends events.EventEmitter
             response_limit: 128*1024
             origins: ['*:*']
             disabled_transports: []
+            jsessionid: true
         if @options.sockjs_url
             throw new Error("options.sockjs_url is required!")
         if user_options
