@@ -17,7 +17,7 @@ keepalive_delay = 25000
 MAP = {}
 
 class Session extends events.EventEmitter
-    constructor: (@session_id, server) ->
+    constructor: (@session_id, @req) ->
         @id  = uuid()
         @send_buffer = []
         @is_closing = false
@@ -26,9 +26,10 @@ class Session extends events.EventEmitter
             MAP[@session_id] = @
         @timeout_cb = => @didTimeout()
         @to_tref = setTimeout(@timeout_cb, 5000)
+        @server = @req.sockjs_server
         @emit_open = =>
             @emit_open = null
-            server.emit('open', @)
+            @server.emit('open', @)
 
     register: (recv) ->
         if @recv
@@ -77,7 +78,7 @@ class Session extends events.EventEmitter
                 if @recv
                     @to_tref = setTimeout(x, keepalive_delay)
                     @recv.doSendFrame("h")
-            # We have a timeout for konqeror - 35 seconds.
+            # We have a timeout for konqueror - 35 seconds.
             @to_tref = setTimeout(x, keepalive_delay)
         return
 
@@ -96,15 +97,20 @@ class Session extends events.EventEmitter
 
     didMessage: (payload) ->
         if @readyState is Transport.OPEN
-            @emit('message', {data: payload})
+            @emit('message', {type: 'utf8', utf8Data: payload})
         return
 
-    send: (payload) ->
+    sendUTF: (payload) ->
         if @readyState isnt Transport.OPEN
             throw Error('INVALID_STATE_ERR')
         @send_buffer.push( payload )
         if @recv
             @tryFlush()
+
+    sendBinary: (payload) ->
+        if @readyState isnt Transport.OPEN
+            throw Error('INVALID_STATE_ERR')
+        throw Error('INVALID_NOT_YET_IMPLEMENTED')
 
     close: (status=1000, reason="Normal closure") ->
         if @readyState isnt Transport.OPEN
@@ -129,10 +135,10 @@ class Session extends events.EventEmitter
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-Session.bySessionIdOrNew = (session_id, server) ->
+Session.bySessionIdOrNew = (session_id, req) ->
     session = Session.bySessionId(session_id)
     if not session
-        session = new Session(session_id, server)
+        session = new Session(session_id, req)
     return session
 
 
