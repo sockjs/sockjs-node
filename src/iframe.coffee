@@ -16,7 +16,7 @@ iframe_template = """
   <h2>Don't panic!</h2>
   <p>This is a SockJS hidden iframe. It's used for cross domain magic.</p>
 </body>
-<html>
+</html>
 """
 
 
