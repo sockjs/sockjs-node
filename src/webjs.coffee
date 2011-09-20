@@ -40,7 +40,7 @@ class WebJS
             m = req.pathname.match(path[0])
             if not m
                 continue
-            if req.method isnt method
+            if not req.method.match(new RegExp(method))
                 allowed_methods.push(method)
                 continue
             for i in [1...path.length]

@@ -105,6 +105,10 @@ class Server extends events.EventEmitter
             dispatcher = dispatcher.concat(urls)
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
+
+        # All other urls are 404.
+        dispatcher = dispatcher.concat([['.*', p('/.*'), ['handle_404']]])
+
         webjs_handler = new webjs.WebJS(app, dispatcher)
 
         install_handler = (ee, event, handler) ->
