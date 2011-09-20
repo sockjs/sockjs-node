@@ -19,10 +19,8 @@ app =
         res.end("Welcome to SockJS!\n")
         return true
 
-    disabled_transport: (req, res) ->
-        res.writeHead(404)
-        res.end("Transport disabled.")
-        return true
+    disabled_transport: (req, res, data) ->
+        return @handle_404(req, res, data)
 
     h_sid: (req, res, data) ->
         if req.sockjs_server.options.jsessionid
