@@ -115,7 +115,7 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
             if payload.length > 2
                 reason = payload.slice(2).toString('utf-8')
             else
-                reason = "Connection cosed by user"
+                reason = "Connection closed by user"
             @didClose(status, reason)
         return
 
