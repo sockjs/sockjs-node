@@ -1,15 +1,15 @@
 SockJS family:
 
-  * [SockJS-client](https://github.com/majek/sockjs-client) JavaScript client library
-  * [SockJS-node](https://github.com/majek/sockjs-node) Node.js server
-  * [SockJS-protocol](https://github.com/majek/sockjs-protocol) protocol documentation
+  * [SockJS-client](https://github.com/sockjs/sockjs-client) JavaScript client library
+  * [SockJS-node](https://github.com/sockjs/sockjs-node) Node.js server
+  * [SockJS-protocol](https://github.com/sockjs/sockjs-protocol) protocol documentation
 
 
 SockJS-node server
 ==================
 
 SockJS-node is a Node.js server side counterpart of
-[SockJS-client browser library](https://github.com/majek/sockjs-client).
+[SockJS-client browser library](https://github.com/sockjs/sockjs-client).
 
 To install `sockjs-node` run:
 
@@ -35,7 +35,7 @@ server.listen(9999, '0.0.0.0');
 ```
 
 (Take look at
-[examples](https://github.com/majek/sockjs-node/tree/master/examples/echo)
+[examples](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
 directory for a complete version.)
 
 Subscribe to
@@ -46,7 +46,7 @@ discussions and support.
 Live QUnit tests and smoke tests
 --------------------------------
 
-[SockJS-client](https://github.com/majek/sockjs-client) comes with
+[SockJS-client](https://github.com/sockjs/sockjs-client) comes with
 some QUnit tests and a few smoke tests that are using SockJS-node. At
 the moment they are deployed in few places:
 
@@ -87,7 +87,7 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option specifies
    its url (if you're unsure, point it to
-   <a href="http://majek.github.com/sockjs-client/sockjs-latest.min.js">
+   <a href="http://sockjs.github.com/sockjs-client/sockjs-latest.min.js">
    the latest minified SockJS client release</a>).</dd>
 
 <dt>prefix (string)</dt>
@@ -205,7 +205,7 @@ var http = require('http');
 var sockjs = require('sockjs');
 
 var sockjs_opts = {sockjs_url:
-    "http://majek.github.com/sockjs-client/sockjs-latest.min.js"};
+    "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
 
 var sjs = new sockjs.Server(sockjs_opts);
 sjs.on('open', function(conn) {
@@ -232,9 +232,9 @@ server.listen(9999, '0.0.0.0');
 
 If you want to see samples of running code, take a look at:
 
- * [./examples/echo](https://github.com/majek/sockjs-node/tree/master/examples/echo)
+ * [./examples/echo](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
    directory, which contains a full example of a echo server.
- * [SockJS-client tests](https://github.com/majek/sockjs-client/blob/master/tests/).
+ * [SockJS-client tests](https://github.com/sockjs/sockjs-client/blob/master/tests/).
 
 
 Deployment and load balancing
@@ -254,7 +254,7 @@ Fortunetely recent versions of an excellent loadbalancer
 connections. We propose to put HAProxy as a front line load balancer
 and use it to split SockJS traffic from normal HTTP data. Take a look
 at the sample
-[SockJS HAProxy configuration](https://github.com/majek/sockjs-node/blob/master/examples/haproxy.cfg).
+[SockJS HAProxy configuration](https://github.com/sockjs/sockjs-node/blob/master/examples/haproxy.cfg).
 
 The config also shows how to use HAproxy balancing to split traffic
 between multiple Node.js servers. You can also do balancing using dns
