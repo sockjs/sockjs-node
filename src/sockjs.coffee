@@ -104,9 +104,6 @@ class Server extends events.EventEmitter
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
 
-        # All other urls are 404.
-        dispatcher = dispatcher.concat([['.*', p('/.*'), ['handle_404']]])
-
         webjs_handler = new webjs.WebJS(app, dispatcher)
 
         install_handler = (ee, event, handler) ->
@@ -118,9 +115,14 @@ class Server extends events.EventEmitter
                         listener.call(this, a, b, c)
                 return false
             ee.addListener(event, new_handler)
-        handler = (req,res,extra) =>
+
+        path_regexp = new RegExp('^' + options.prefix  + '([/].+|[/]?)$')
+        handler = (req, res, extra) =>
+            if not req.url.match(path_regexp)
+                return false
             req.sockjs_server = @
-            return webjs_handler.handler(req, res, extra)
+            webjs_handler.handler(req, res, extra)
+            return true
         install_handler(http_server, 'request', handler)
         install_handler(http_server, 'upgrade', handler)
         return true

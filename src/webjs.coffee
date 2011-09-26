@@ -26,7 +26,31 @@ execute_request = (app, funs, req, res, data) ->
 class WebJS
     constructor: (@app, @dispatcher) ->
 
+    fake_response: (req, res) ->
+        # TODO: this is quite obviously wrong.
+        headers = []
+        res.writeHead = (status, user_headers, content) ->
+            r = []
+            r.push('HTTP/' + req.httpVersion + ' ' + status +
+                   ' ' + http.STATUS_CODES[status])
+            if user_headers and user_headers.length > 0
+                r = r.concat(user_headers)
+            if headers and headers.length > 0
+                r = r.concat(headers)
+            r = r.concat(['', ''])
+            if content
+                r.push(content)
+            try
+                res.write(r.join('\r\n'))
+            catch e
+                null
+        res.setHeader = (k, v) -> headers.push(k+': '+v)
+
+
     handler: (req, res, head) ->
+        if typeof res.writeHead is "undefined"
+            @fake_response(req, res)
+
         that = this
         utils.objectExtend(req, url.parse(req.url, true))
 
@@ -45,26 +69,6 @@ class WebJS
                 continue
             for i in [1...path.length]
                 req[path[i]] = m[i]
-
-            if typeof res.writeHead is "undefined"
-                # TODO: this is quite obviously wrong.
-                headers = []
-                res.writeHead = (status, user_headers, content) ->
-                    r = []
-                    r.push('HTTP/'+req.httpVersion+ ' '+status+' '+http.STATUS_CODES[status])
-                    if user_headers and user_headers.length > 0
-                        r = r.concat(user_headers)
-                    if headers and headers.length > 0
-                        r = r.concat(headers)
-                    r = r.concat(['', ''])
-                    if content
-                        r.push(content)
-                    try
-                        res.write(r.join('\r\n'))
-                    catch e
-                        null
-
-                res.setHeader = (k, v) -> headers.push(k+': '+v)
             req.start_date = new Date()
             funs = funs[0..]
             funs.push('log')
@@ -78,8 +82,8 @@ class WebJS
             if allowed_methods.length isnt 0
                 that.app.handle_405(req, res, allowed_methods)
             else
-                return false
-        return true
+                that.app.handle_404(req, res)
+        return
 
 exports.WebJS = WebJS
 exports.generic_app =
