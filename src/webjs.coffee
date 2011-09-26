@@ -105,7 +105,7 @@ exports.generic_app =
             return x
         if typeof x is 'object' and 'status' of x
             res.writeHead(x.status, {})
-            res.end("" + x.status + " " + x.message)
+            res.end((x.message or ""))
         else
             try
                 res.writeHead(500, {})
