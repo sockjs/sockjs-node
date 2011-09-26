@@ -11,7 +11,7 @@ class WebHandshake8
         key_accept = computeAcceptKey(@req.headers['sec-websocket-key'])
         blob = [
             'HTTP/1.1 101 Switching Protocols',
-            'Upgrade: websocket',
+            'Upgrade: WebSocket',
             'Connection: Upgrade',
             'Sec-WebSocket-Accept: ' + key_accept,
         ]
