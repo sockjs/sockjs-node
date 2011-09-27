@@ -133,7 +133,7 @@ class WebSocketReceiver extends transport.ConnectionReceiver
                 if buf[i] is 0xff
                     payload = buf.slice(1, i).toString('utf8')
                     @recv_buffer = buf.slice(i+1)
-                    if @session
+                    if @session and payload.length > 0
                         @session.didMessage(JSON.parse(payload))
                     return @didMessage()
             # wait for more data

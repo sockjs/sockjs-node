@@ -104,7 +104,8 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
         #console.log('ok', masking, length)
         if opcode is 1
             payload_str = payload.toString('utf-8')
-            @session.didMessage(JSON.parse(payload_str))
+            if @session and payload_str.length > 0
+                @session.didMessage(JSON.parse(payload_str))
             if @recv_buffer
                 return @didMessage()
         else if opcode is 8
