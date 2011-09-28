@@ -278,3 +278,21 @@ SockJS has two mechanisms that can be usefull to achieve that:
    enable this method on the client side, please supply a
    `cookie:true` option to SockJS constructor.
 
+
+Development
+-----------
+
+If you want to update SockJS-node source code, clone git repo and
+follow this steps. First you need to install dependencies:
+
+    cd sockjs-node
+    npm install
+
+You're ready to compile CoffeeScript to js:
+
+    make
+
+If you want to automatically recompile when the source files are
+modified, take a look at `make serve`. Make sure your changes to
+SockJS-node don't break test code in SockJS-client and don't break the
+SockJS-protocol test suite.
