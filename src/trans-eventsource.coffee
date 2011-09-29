@@ -14,10 +14,10 @@ class EventSourceReceiver extends transport.ResponseReceiver
 
 exports.app =
     eventsource: (req, res) ->
-        res.setHeader('Content-type', 'text/event-stream; charset=UTF-8')
+        res.setHeader('Content-Type', 'text/event-stream; charset=UTF-8')
         res.writeHead(200)
-        # opera needs to hear two more initial new lines.
-        res.write(['', ''].join('\r\n'))
+        # Opera needs one more new line at the start.
+        res.write('\r\n')
 
         session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
         session.register( new EventSourceReceiver(res, req.sockjs_server.options) )
