@@ -156,10 +156,7 @@ class GenericReceiver
             @session.unregister(status, reason)
 
     doSendBulk: (messages) ->
-        if messages.length is 1
-            @doSendFrame('m' + JSON.stringify(messages[0]))
-        else
-            @doSendFrame('a' + JSON.stringify(messages))
+        @doSendFrame('a' + JSON.stringify(messages))
 
 
 # Write stuff directly to connection.
