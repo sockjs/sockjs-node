@@ -20,7 +20,7 @@ iframe_template = """
 """
 # Safari needs at least 1024 bytes to parse the website. Relevant:
 #   http://code.google.com/p/browsersec/wiki/Part2#Survey_of_content_sniffing_behaviors
-iframe_template +=  Array(1024 - iframe_template.length).join(' ')
+iframe_template +=  Array(1024 - iframe_template.length + 14).join(' ')
 iframe_template += '\r\n\r\n'
 
 
