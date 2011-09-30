@@ -23,13 +23,20 @@ exports.app =
         if not data
             throw {
                 status: 500
-                message: 'payload expected'
+                message: 'Payload expected.'
             }
-        d = JSON.parse(data)
+        try
+            d = JSON.parse(data)
+        catch e
+            throw {
+                status: 500
+                message: 'Broken JSON encoding.'
+            }
+
         if not d or d.__proto__.constructor isnt Array
             throw {
                 status: 500
-                message: 'payload expected'
+                message: 'Payload expected.'
             }
         jsonp = transport.Session.bySessionId(req.session)
         if not jsonp

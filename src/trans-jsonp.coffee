@@ -34,18 +34,31 @@ exports.app =
         if not query
             throw {
                 status: 500
-                message: 'payload expected'
+                message: 'Payload expected.'
             }
         if typeof query is 'string'
-            d = JSON.parse(query)
+            try
+                d = JSON.parse(query)
+            catch e
+                throw {
+                    status: 500
+                    message: 'Broken JSON encoding.'
+                }
         else
             d = query.d
-        if typeof d is 'string'
-            d = JSON.parse(d)
+        if typeof d is 'string' and d
+            try
+                d = JSON.parse(d)
+            catch e
+                throw {
+                    status: 500
+                    message: 'Broken JSON encoding.'
+                }
+
         if not d or d.__proto__.constructor isnt Array
             throw {
                 status: 500
-                message: 'payload expected'
+                message: 'Payload expected.'
             }
         jsonp = transport.Session.bySessionId(req.session)
         if jsonp is null

@@ -105,7 +105,11 @@ class WebSocket8Receiver extends transport.ConnectionReceiver
         if opcode is 1
             payload_str = payload.toString('utf-8')
             if @session and payload_str.length > 0
-                @session.didMessage(JSON.parse(payload_str))
+                try
+                    message = JSON.parse(payload_str)
+                catch e
+                    return @didClose(1002, 'Broken framing.')
+                @session.didMessage(message)
             if @recv_buffer
                 return @didMessage()
         else if opcode is 8

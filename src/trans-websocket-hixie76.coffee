@@ -134,7 +134,11 @@ class WebSocketReceiver extends transport.ConnectionReceiver
                     payload = buf.slice(1, i).toString('utf8')
                     @recv_buffer = buf.slice(i+1)
                     if @session and payload.length > 0
-                        @session.didMessage(JSON.parse(payload))
+                        try
+                            message = JSON.parse(payload)
+                        catch x
+                            return @didClose(1002, 'Broken framing.')
+                        @session.didMessage(message)
                     return @didMessage()
             # wait for more data
             return
