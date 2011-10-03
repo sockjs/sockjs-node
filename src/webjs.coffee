@@ -86,7 +86,7 @@ class WebJS
         return
 
 exports.WebJS = WebJS
-exports.generic_app =
+exports.GenericApp = class GenericApp
     handle_404: (req, res, x) ->
         if res.finished
             return x

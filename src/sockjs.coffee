@@ -12,7 +12,7 @@ trans_htmlfile = require('./trans-htmlfile')
 chunking_test = require('./chunking-test')
 
 
-app =
+class App extends webjs.GenericApp
     welcome_screen: (req, res) ->
         res.setHeader('content-type', 'text/plain; charset=UTF-8')
         res.writeHead(200)
@@ -41,15 +41,14 @@ app =
         return data
 
 
-utils.objectExtend(app, webjs.generic_app)
-utils.objectExtend(app, iframe.app)
-utils.objectExtend(app, chunking_test.app)
+utils.objectExtend(App.prototype, iframe.app)
+utils.objectExtend(App.prototype, chunking_test.app)
 
-utils.objectExtend(app, trans_websocket.app)
-utils.objectExtend(app, trans_jsonp.app)
-utils.objectExtend(app, trans_xhr.app)
-utils.objectExtend(app, trans_eventsource.app)
-utils.objectExtend(app, trans_htmlfile.app)
+utils.objectExtend(App.prototype, trans_websocket.app)
+utils.objectExtend(App.prototype, trans_jsonp.app)
+utils.objectExtend(App.prototype, trans_xhr.app)
+utils.objectExtend(App.prototype, trans_eventsource.app)
+utils.objectExtend(App.prototype, trans_htmlfile.app)
 
 
 class Server extends events.EventEmitter
@@ -102,7 +101,7 @@ class Server extends events.EventEmitter
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
 
-        webjs_handler = new webjs.WebJS(app, dispatcher)
+        webjs_handler = new webjs.WebJS(new App(), dispatcher)
 
         install_handler = (ee, event, handler) ->
             old_listeners = ee.listeners(event)
