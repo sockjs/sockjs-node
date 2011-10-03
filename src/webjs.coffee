@@ -71,7 +71,7 @@ class WebJS
                 req[path[i]] = m[i]
             req.start_date = new Date()
             funs = funs[0..]
-            funs.push('log')
+            funs.push('log_request')
             req.next_filter = (data) ->
                 execute_request(that.app, funs, req, res, data)
             req.next_filter(head)
@@ -115,7 +115,7 @@ exports.generic_app =
                         '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
         return true
 
-    log: (req, res, data) ->
+    log_request: (req, res, data) ->
         td = (new Date()) - req.start_date
         console.log(req.method, req.url, td, 'ms',
             if res.finished then res._header.split('\r')[0] else '(unfinished)')
