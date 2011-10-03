@@ -54,10 +54,6 @@ utils.objectExtend(app, trans_htmlfile.app)
 
 class Server extends events.EventEmitter
     constructor: (user_options) ->
-        if not exports.banner_printed and
-                (not('banner' of user_options) or user_options.banner is True)
-            exports.banner_printed = true
-            print_banner()
         @options =
             prefix: ''
             response_limit: 128*1024
@@ -74,6 +70,8 @@ class Server extends events.EventEmitter
         utils.objectExtend(options, @options)
         if user_options
             utils.objectExtend(options, user_options)
+        console.log('SockJS v' + sockjs_version() + ' ' +
+                    'started on ' + JSON.stringify(options.prefix))
 
         p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
@@ -128,16 +126,10 @@ class Server extends events.EventEmitter
         return true
 
 
-print_banner = ->
+sockjs_version = ->
     try
         package = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
     catch x
-    if package
-        version = JSON.parse(package).version
-    else
-        version = 'unknown'
-
-    console.log(" _---\\\n\\     \\\n \\     \\         SockJS-node server\n  \\     \\\n   \\    \\        Version " + version + "\n    \\    \\\n    /     |      Node.js server side counterpart of\n   /    -/       SockJS-client browser library\n,-'    /\n\\___--'\n")
+    return if package then JSON.parse(package).version else null
 
 exports.Server = Server
-exports.banner_printed = false
