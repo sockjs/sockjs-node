@@ -51,7 +51,7 @@ utils.objectExtend(App.prototype, trans_eventsource.app)
 utils.objectExtend(App.prototype, trans_htmlfile.app)
 
 
-class Server extends events.EventEmitter
+class ServerInstance extends events.EventEmitter
     constructor: (user_options) ->
         @options =
             prefix: ''
@@ -59,20 +59,16 @@ class Server extends events.EventEmitter
             origins: ['*:*']
             disabled_transports: []
             jsessionid: true
-        if @options.sockjs_url
-            throw new Error("options.sockjs_url is required!")
         if user_options
             utils.objectExtend(@options, user_options)
 
-    installHandlers: (http_server, user_options) ->
-        options = {}
-        utils.objectExtend(options, @options)
-        if user_options
-            utils.objectExtend(options, user_options)
+    installHandlers: (http_server) ->
+        if not @options.sockjs_url
+            throw new Error('Option "sockjs_url" is required!')
         console.log('SockJS v' + sockjs_version() + ' ' +
-                    'started on ' + JSON.stringify(options.prefix))
+                    'bound to ' + JSON.stringify(@options.prefix))
 
-        p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
+        p = (s) => new RegExp('^' + @options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
         opts_filters = ['h_sid', 'xhr_cors', 'cache_for', 'xhr_options', 'expose']
         dispatcher = [
@@ -91,8 +87,8 @@ class Server extends events.EventEmitter
             ['GET',     t('/eventsource'), ['h_sid', 'h_no_cache', 'eventsource']],
             ['GET',     t('/htmlfile'),    ['h_sid', 'h_no_cache', 'htmlfile']],
         ]
-        maybe_add_transport = (name, urls) ->
-            if options.disabled_transports.indexOf(name) isnt -1
+        maybe_add_transport = (name, urls) =>
+            if @options.disabled_transports.indexOf(name) isnt -1
                 # modify urls to return 404
                 urls = for url in urls
                     [method, url, filters] = url
@@ -113,7 +109,7 @@ class Server extends events.EventEmitter
                 return false
             ee.addListener(event, new_handler)
 
-        path_regexp = new RegExp('^' + options.prefix  + '([/].+|[/]?)$')
+        path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
         handler = (req, res, extra) =>
             if not req.url.match(path_regexp)
                 return false
@@ -125,10 +121,42 @@ class Server extends events.EventEmitter
         return true
 
 
+class ServerDeprecatedWrapper
+    constructor: (server_options) ->
+        @listeners = {}
+        @options = {}
+        if server_options
+            utils.objectExtend(@options, server_options)
+
+    addListener: (event, listener) ->
+        if @installed
+            throw Error('Don\'t add listeners after "installHandler" was run.')
+        if not (event of @listeners)
+            @listeners[event] = []
+        @listeners[event].push(listener)
+
+    installHandlers: (http_server, user_options) ->
+        @installed = true
+        options = {}
+        utils.objectExtend(options, @options)
+        if user_options
+            utils.objectExtend(options, user_options)
+        srv = new ServerInstance(options)
+        for event of @listeners
+            for listener in @listeners[event]
+                srv.addListener(event, listener)
+        srv.installHandlers(http_server)
+        return srv
+
+ServerDeprecatedWrapper.prototype.on = \
+    ServerDeprecatedWrapper.prototype.addListener
+
+
 sockjs_version = ->
     try
         package = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
     catch x
     return if package then JSON.parse(package).version else null
 
-exports.Server = Server
+exports.Server = ServerDeprecatedWrapper
+exports.ServerInstance = ServerInstance
