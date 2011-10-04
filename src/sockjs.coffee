@@ -94,33 +94,23 @@ class ServerInstance extends events.EventEmitter
             utils.objectExtend(@options, user_options)
         if not @options.sockjs_url
             throw new Error('Option "sockjs_url" is required!')
+        dispatcher = generate_dispatcher(@options)
+        @webjs_handler = webjs.generateHandler(new App(), dispatcher)
 
     installHandlers: (http_server) ->
         console.log('SockJS v' + sockjs_version() + ' ' +
                     'bound to ' + JSON.stringify(@options.prefix))
-        dispatcher = generate_dispatcher(@options)
-
-        webjs_handler = new webjs.WebJS(new App(), dispatcher)
-
-        install_handler = (ee, event, handler) ->
-            old_listeners = ee.listeners(event)
-            ee.removeAllListeners(event)
-            new_handler = (a,b,c) ->
-                if handler(a,b,c) isnt true
-                    for listener in old_listeners
-                        listener.call(this, a, b, c)
-                return false
-            ee.addListener(event, new_handler)
 
         path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
         handler = (req, res, extra) =>
+            # All urls that match the prefix must be handled by us.
             if not req.url.match(path_regexp)
                 return false
             req.sockjs_server = @
-            webjs_handler.handler(req, res, extra)
+            @webjs_handler(req, res, extra)
             return true
-        install_handler(http_server, 'request', handler)
-        install_handler(http_server, 'upgrade', handler)
+        utils.overshadowListeners(http_server, 'request', handler)
+        utils.overshadowListeners(http_server, 'upgrade', handler)
         return true
 
 

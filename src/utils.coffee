@@ -77,3 +77,14 @@ exports.objectExtend = (dst, src) ->
         if src.hasOwnProperty(k)
             dst[k] = src[k]
     return dst
+
+exports.overshadowListeners = (ee, event, handler) ->
+    old_listeners = ee.listeners(event)
+    ee.removeAllListeners(event)
+    new_handler = () ->
+        if handler.apply(this, arguments) isnt true
+            for listener in old_listeners
+                listener.apply(this, arguments)
+            return false
+        return true
+    ee.addListener(event, new_handler)

@@ -23,10 +23,8 @@ execute_request = (app, funs, req, res, data) ->
         else
            app.handle_error(req, res, x)
 
-class WebJS
-    constructor: (@app, @dispatcher) ->
 
-    fake_response: (req, res) ->
+fake_response = (req, res) ->
         # TODO: this is quite obviously wrong.
         headers = []
         res.writeHead = (status, user_headers, content) ->
@@ -47,16 +45,16 @@ class WebJS
         res.setHeader = (k, v) -> headers.push(k+': '+v)
 
 
-    handler: (req, res, head) ->
+exports.generateHandler = (app, dispatcher) ->
+    return (req, res, head) ->
         if typeof res.writeHead is "undefined"
-            @fake_response(req, res)
+            fake_response(req, res)
 
-        that = this
         utils.objectExtend(req, url.parse(req.url, true))
 
         found = false
         allowed_methods = []
-        for row in @dispatcher
+        for row in dispatcher
             [method, path, funs] = row
             if path.constructor isnt Array
                 path = [path]
@@ -73,19 +71,18 @@ class WebJS
             funs = funs[0..]
             funs.push('log_request')
             req.next_filter = (data) ->
-                execute_request(that.app, funs, req, res, data)
+                execute_request(app, funs, req, res, data)
             req.next_filter(head)
             found = true
             break
 
         if not found
             if allowed_methods.length isnt 0
-                that.app.handle_405(req, res, allowed_methods)
+                app['handle_405'](req, res, allowed_methods)
             else
-                that.app.handle_404(req, res)
+                app['handle_404'](req, res)
         return
 
-exports.WebJS = WebJS
 exports.GenericApp = class GenericApp
     handle_404: (req, res, x) ->
         if res.finished
