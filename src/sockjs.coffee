@@ -23,7 +23,7 @@ class App extends webjs.GenericApp
         return @handle_404(req, res, data)
 
     h_sid: (req, res, data) ->
-        if req.sockjs_server.options.jsessionid
+        if @options.jsessionid
             # Some load balancers do sticky sessions, but only if there is
             # a JSESSIONID cookie. If this cookie isn't yet set, we shall
             # set it to a dummy value. It doesn't really matter what, as
@@ -95,7 +95,10 @@ class ServerInstance extends events.EventEmitter
         if not @options.sockjs_url
             throw new Error('Option "sockjs_url" is required!')
         dispatcher = generate_dispatcher(@options)
-        @webjs_handler = webjs.generateHandler(new App(), dispatcher)
+        @app = new App()
+        @app.options = @options
+        @app.emit = => console.log('x'); @emit.apply(@, arguments)
+        @webjs_handler = webjs.generateHandler(@app, dispatcher)
 
     installHandlers: (http_server) ->
         console.log('SockJS v' + sockjs_version() + ' ' +
@@ -106,7 +109,6 @@ class ServerInstance extends events.EventEmitter
             # All urls that match the prefix must be handled by us.
             if not req.url.match(path_regexp)
                 return false
-            req.sockjs_server = @
             @webjs_handler(req, res, extra)
             return true
         utils.overshadowListeners(http_server, 'request', handler)

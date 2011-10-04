@@ -7,7 +7,7 @@ computeAcceptKey = (key) ->
     return utils.sha1_base64(data)
 
 class WebHandshake8
-    constructor: (@req, @connection, head, origin, location) ->
+    constructor: (@emit, @req, @connection, head, origin, location) ->
         key_accept = computeAcceptKey(@req.headers['sec-websocket-key'])
         blob = [
             'HTTP/1.1 101 Switching Protocols',
@@ -30,7 +30,7 @@ class WebHandshake8
             return
 
         # websockets possess no session_id
-        session = transport.Session.bySessionIdOrNew(undefined, @req.sockjs_server)
+        session = transport.Session.bySessionIdOrNew(undefined, @emit)
         session.register( new WebSocket8Receiver(@connection) )
 
 

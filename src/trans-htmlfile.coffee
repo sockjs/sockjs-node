@@ -43,6 +43,6 @@ exports.app =
         res.writeHead(200)
         res.write(iframe_template.replace(/{{ callback }}/g, callback));
 
-        session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
-        session.register( new HtmlFileReceiver(res, req.sockjs_server.options) )
+        session = transport.Session.bySessionIdOrNew(req.session, @emit)
+        session.register( new HtmlFileReceiver(res, @options) )
         return true

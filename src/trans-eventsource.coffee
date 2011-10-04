@@ -19,6 +19,6 @@ exports.app =
         # Opera needs one more new line at the start.
         res.write('\r\n')
 
-        session = transport.Session.bySessionIdOrNew(req.session, req.sockjs_server)
-        session.register( new EventSourceReceiver(res, req.sockjs_server.options) )
+        session = transport.Session.bySessionIdOrNew(req.session, @emit)
+        session.register( new EventSourceReceiver(res, @options) )
         return true

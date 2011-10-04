@@ -18,7 +18,7 @@ exports.app =
                 message: '"Connection" must be "Upgrade".'
             }
         origin = req.headers.origin
-        if not utils.verify_origin(origin, req.sockjs_server.options.origins)
+        if not utils.verify_origin(origin, @options.origins)
             throw {
                 status: 400
                 message: 'Unverified origin.'
@@ -28,9 +28,9 @@ exports.app =
 
         ver = req.headers['sec-websocket-version']
         if  ver is '8' or ver is '7'
-            new websocket_hybi10.WebHandshake8(req, connection, head or '', origin, location)
+            new websocket_hybi10.WebHandshake8(@emit, req, connection, head or '', origin, location)
         else
-            new websocket_hixie76.WebHandshakeHixie76(req, connection, head or '', origin, location)
+            new websocket_hixie76.WebHandshakeHixie76(@emit, req, connection, head or '', origin, location)
         return true
 
     websocket_get: (req, rep) ->

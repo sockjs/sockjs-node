@@ -23,7 +23,7 @@ iframe_template = """
 exports.app =
     iframe: (req, res) ->
         context =
-            '{{ sockjs_url }}': req.sockjs_server.options.sockjs_url
+            '{{ sockjs_url }}': @options.sockjs_url
 
         content = iframe_template
         for k of context

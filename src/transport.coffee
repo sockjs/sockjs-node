@@ -17,7 +17,7 @@ keepalive_delay = 25000
 MAP = {}
 
 class Session extends events.EventEmitter
-    constructor: (@session_id, server) ->
+    constructor: (@session_id, emit) ->
         @id  = uuid()
         @send_buffer = []
         @is_closing = false
@@ -28,7 +28,7 @@ class Session extends events.EventEmitter
         @to_tref = setTimeout(@timeout_cb, 5000)
         @emit_open = =>
             @emit_open = null
-            server.emit('open', @)
+            emit('open', @)
 
     register: (recv) ->
         if @recv
@@ -129,10 +129,10 @@ class Session extends events.EventEmitter
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-Session.bySessionIdOrNew = (session_id, server) ->
+Session.bySessionIdOrNew = (session_id, emit) ->
     session = Session.bySessionId(session_id)
     if not session
-        session = new Session(session_id, server)
+        session = new Session(session_id, emit)
     return session
 
 
