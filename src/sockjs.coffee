@@ -40,6 +40,9 @@ class App extends webjs.GenericApp
                 res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; path=/')
         return data
 
+    log: (severity, line) ->
+        @options.log(severity, line)
+
 
 utils.objectExtend(App.prototype, iframe.app)
 utils.objectExtend(App.prototype, chunking_test.app)
@@ -90,6 +93,7 @@ class ServerInstance extends events.EventEmitter
             origins: ['*:*']
             disabled_transports: []
             jsessionid: true
+            log: (severity, line) -> console.log(line)
         if user_options
             utils.objectExtend(@options, user_options)
         if not @options.sockjs_url

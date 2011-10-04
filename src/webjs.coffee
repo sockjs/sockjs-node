@@ -15,13 +15,14 @@ execute_request = (app, funs, req, res, data) ->
     catch x
         if typeof x is 'object' and 'status' of x
             if x.status is 0
-                true
+                return
             else if 'handle_' + x.status of app
                 app['handle_' + x.status](req, res, x)
             else
-                app.handle_error(req, res, x)
+                app['handle_error'](req, res, x)
         else
-           app.handle_error(req, res, x)
+           app['handle_error'](req, res, x)
+        app['log_request'](req, res, true)
 
 
 fake_response = (req, res) ->
@@ -49,8 +50,8 @@ exports.generateHandler = (app, dispatcher) ->
     return (req, res, head) ->
         if typeof res.writeHead is "undefined"
             fake_response(req, res)
-
         utils.objectExtend(req, url.parse(req.url, true))
+        req.start_date = new Date()
 
         found = false
         allowed_methods = []
@@ -67,7 +68,6 @@ exports.generateHandler = (app, dispatcher) ->
                 continue
             for i in [1...path.length]
                 req[path[i]] = m[i]
-            req.start_date = new Date()
             funs = funs[0..]
             funs.push('log_request')
             req.next_filter = (data) ->
@@ -81,6 +81,7 @@ exports.generateHandler = (app, dispatcher) ->
                 app['handle_405'](req, res, allowed_methods)
             else
                 app['handle_404'](req, res)
+            app['log_request'](req, res, true)
         return
 
 exports.GenericApp = class GenericApp
@@ -114,9 +115,13 @@ exports.GenericApp = class GenericApp
 
     log_request: (req, res, data) ->
         td = (new Date()) - req.start_date
-        console.log(req.method, req.url, td, 'ms',
-            if res.finished then res._header.split('\r')[0] else '(unfinished)')
+        @log('info', req.method + ' ' + req.url + ' ' + td + 'ms ' +
+                (if res.finished then res._header.split('\r')[0].split(' ')[1] \
+                                  else '(unfinished)'))
         return data
+
+    log: (severity, line) ->
+        console.log(line)
 
     expose_html: (req, res, content) ->
         if res.finished
