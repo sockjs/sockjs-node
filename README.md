@@ -118,6 +118,13 @@ Where `options` is a hash which can contain:
   set this cookie to a dummy value. By default setting JSESSIONID cookie
   is enabled.
 </dd>
+
+<dt>log (function(severity, message))</dt>
+<dd>It's quite useful, especially for debugging, to see some messages
+printed by a SockJS-node library. This is done using this `log`
+function, which is by default set to `console.log`. If this behaviour
+annoys you for some reason, override `log` setting with a custom handler.
+</dd>
 </dl>
 
 
