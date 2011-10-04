@@ -51,24 +51,8 @@ utils.objectExtend(App.prototype, trans_eventsource.app)
 utils.objectExtend(App.prototype, trans_htmlfile.app)
 
 
-class ServerInstance extends events.EventEmitter
-    constructor: (user_options) ->
-        @options =
-            prefix: ''
-            response_limit: 128*1024
-            origins: ['*:*']
-            disabled_transports: []
-            jsessionid: true
-        if user_options
-            utils.objectExtend(@options, user_options)
-
-    installHandlers: (http_server) ->
-        if not @options.sockjs_url
-            throw new Error('Option "sockjs_url" is required!')
-        console.log('SockJS v' + sockjs_version() + ' ' +
-                    'bound to ' + JSON.stringify(@options.prefix))
-
-        p = (s) => new RegExp('^' + @options.prefix + s + '[/]?$')
+generate_dispatcher = (options) ->
+        p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
         opts_filters = ['h_sid', 'xhr_cors', 'cache_for', 'xhr_options', 'expose']
         dispatcher = [
@@ -88,7 +72,7 @@ class ServerInstance extends events.EventEmitter
             ['GET',     t('/htmlfile'),    ['h_sid', 'h_no_cache', 'htmlfile']],
         ]
         maybe_add_transport = (name, urls) =>
-            if @options.disabled_transports.indexOf(name) isnt -1
+            if options.disabled_transports.indexOf(name) isnt -1
                 # modify urls to return 404
                 urls = for url in urls
                     [method, url, filters] = url
@@ -96,6 +80,25 @@ class ServerInstance extends events.EventEmitter
             dispatcher = dispatcher.concat(urls)
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
+
+
+class ServerInstance extends events.EventEmitter
+    constructor: (user_options) ->
+        @options =
+            prefix: ''
+            response_limit: 128*1024
+            origins: ['*:*']
+            disabled_transports: []
+            jsessionid: true
+        if user_options
+            utils.objectExtend(@options, user_options)
+        if not @options.sockjs_url
+            throw new Error('Option "sockjs_url" is required!')
+
+    installHandlers: (http_server) ->
+        console.log('SockJS v' + sockjs_version() + ' ' +
+                    'bound to ' + JSON.stringify(@options.prefix))
+        dispatcher = generate_dispatcher(@options)
 
         webjs_handler = new webjs.WebJS(new App(), dispatcher)
 
