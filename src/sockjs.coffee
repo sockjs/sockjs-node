@@ -97,7 +97,7 @@ class ServerInstance extends events.EventEmitter
         dispatcher = generate_dispatcher(@options)
         @app = new App()
         @app.options = @options
-        @app.emit = => console.log('x'); @emit.apply(@, arguments)
+        @app.emit = => @emit.apply(@, arguments)
         @webjs_handler = webjs.generateHandler(@app, dispatcher)
 
     installHandlers: (http_server) ->
