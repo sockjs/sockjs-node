@@ -109,8 +109,8 @@ exports.GenericApp = class GenericApp
                 res.writeHead(500, {})
                 res.end("500 - Internal Server Error")
             catch y
-            console.log('Caught error on "'+ req.method + ' ' + req.href + ''
-                        '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
+            @log('Exception on "'+ req.method + ' ' + req.href + ''
+                 '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
         return true
 
     log_request: (req, res, data) ->
@@ -187,7 +187,7 @@ exports.GenericApp = class GenericApp
                 when 'text/plain', ''
                     q = data
                 else
-                    console.log("unsupported content-type", req.headers['content-type'])
+                    @log("Unsupported content-type " + req.headers['content-type'])
                     q = undefined
             next_filter(q)
         throw {status:0}
@@ -202,7 +202,7 @@ exports.GenericApp = class GenericApp
                 when 'text/plain', 'T', 'application/json', 'application/xml', ''
                     q = data
                 else
-                    console.log("unsupported content-type", req.headers['content-type'])
+                    @log("Unsupported content-type " + req.headers['content-type'])
                     q = undefined
             next_filter(q)
         throw {status:0}

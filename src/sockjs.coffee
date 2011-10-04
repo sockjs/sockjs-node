@@ -105,8 +105,8 @@ class ServerInstance extends events.EventEmitter
         @webjs_handler = webjs.generateHandler(@app, dispatcher)
 
     installHandlers: (http_server) ->
-        console.log('SockJS v' + sockjs_version() + ' ' +
-                    'bound to ' + JSON.stringify(@options.prefix))
+        @app.log('debug', 'SockJS v' + sockjs_version() + ' ' +
+                          'bound to ' + JSON.stringify(@options.prefix))
 
         path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
         handler = (req, res, extra) =>
