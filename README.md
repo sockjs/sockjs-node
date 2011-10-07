@@ -125,6 +125,21 @@ printed by a SockJS-node library. This is done using this `log`
 function, which is by default set to `console.log`. If this behaviour
 annoys you for some reason, override `log` setting with a custom handler.
 </dd>
+
+<dt>heartbeat_delay (milliseconds)</dt>
+<dd>In order to keep proxies and load balancers from closing long
+running http requests we need to pretend that the connecion is active
+and send a heartbeat packet once in a while. This setting controlls
+how often this is done. By default a heartbeat packet is sent every 25
+seconds.
+</dd>
+
+<dt>disconnect_delay (milliseconds)</dt>
+<dd>The server sends a `close` event when a client receiving
+connection have not been seen for a while. This delay is configured by
+this setting. By default the `close` event will be emitted when a
+receiving connection wasn't seen for 5 seconds.
+</dd>
 </dl>
 
 

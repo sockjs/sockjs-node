@@ -31,7 +31,7 @@ validateCrypto = (req_headers, nonce) ->
 
 
 class WebHandshakeHixie76
-    constructor: (@emit, @req, @connection, head, origin, location) ->
+    constructor: (@server, @req, @connection, head, origin, location) ->
         @sec = ('sec-websocket-key1' of @req.headers)
         wsp = (@sec and ('sec-websocket-protocol' of @req.headers))
         prefix = if @sec then 'Sec-' else ''
@@ -100,7 +100,7 @@ class WebHandshakeHixie76
                 return false
 
         # websockets possess no session_id
-        session = transport.Session.bySessionIdOrNew(undefined, @emit)
+        session = transport.Session.bySessionIdOrNew(undefined, @server)
         session.register( new WebSocketReceiver(@connection) )
 
 

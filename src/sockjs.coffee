@@ -93,6 +93,8 @@ class ServerInstance extends events.EventEmitter
             origins: ['*:*']
             disabled_transports: []
             jsessionid: true
+            heartbeat_delay: 25000
+            disconnect_delay: 5000
             log: (severity, line) -> console.log(line)
         if user_options
             utils.objectExtend(@options, user_options)

@@ -63,7 +63,7 @@ exports.app =
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
-        session = transport.Session.bySessionIdOrNew(req.session, @emit)
+        session = transport.Session.bySessionIdOrNew(req.session, @)
         session.register( new XhrPollingReceiver(res, @options) )
         return true
 
@@ -75,6 +75,6 @@ exports.app =
         #  http://blogs.msdn.com/b/ieinternals/archive/2010/04/06/comet-streaming-in-internet-explorer-with-xmlhttprequest-and-xdomainrequest.aspx
         res.write(Array(2048).join('h') + '\n')
 
-        session = transport.Session.bySessionIdOrNew(req.session, @emit)
+        session = transport.Session.bySessionIdOrNew(req.session, @)
         session.register( new XhrStreamingReceiver(res, @options) )
         return true

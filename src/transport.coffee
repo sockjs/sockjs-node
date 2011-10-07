@@ -12,12 +12,13 @@ closeFrame = (status, reason) ->
     return 'c' + JSON.stringify([status, reason])
 
 
-keepalive_delay = 25000
 
 MAP = {}
 
 class Session extends events.EventEmitter
-    constructor: (@session_id, emit) ->
+    constructor: (@session_id, server) ->
+        @heartbeat_delay = server.options.heartbeat_delay
+        @disconnect_delay = server.options.disconnect_delay
         @id  = uuid()
         @send_buffer = []
         @is_closing = false
@@ -25,10 +26,10 @@ class Session extends events.EventEmitter
         if @session_id
             MAP[@session_id] = @
         @timeout_cb = => @didTimeout()
-        @to_tref = setTimeout(@timeout_cb, 5000)
+        @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
         @emit_open = =>
             @emit_open = null
-            emit('open', @)
+            server.emit('open', @)
 
     register: (recv) ->
         if @recv
@@ -39,7 +40,7 @@ class Session extends events.EventEmitter
             @to_tref = null
         if @readyState is Transport.CLOSING
             recv.doSendFrame(@close_frame)
-            @to_tref = setTimeout(@timeout_cb, 5000)
+            @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
             return
         # Registering. From now on 'unregister' is responsible for
         # setting the timer.
@@ -64,7 +65,7 @@ class Session extends events.EventEmitter
         @recv = null
         if @to_tref
             clearTimeout(@to_tref)
-        @to_tref = setTimeout(@timeout_cb, 5000)
+        @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
 
     tryFlush: ->
         if @send_buffer.length > 0
@@ -75,10 +76,9 @@ class Session extends events.EventEmitter
                 clearTimeout(@to_tref)
             x = =>
                 if @recv
-                    @to_tref = setTimeout(x, keepalive_delay)
+                    @to_tref = setTimeout(x, @heartbeat_delay)
                     @recv.doSendFrame("h")
-            # We have a timeout for konqueror - 35 seconds.
-            @to_tref = setTimeout(x, keepalive_delay)
+            @to_tref = setTimeout(x, @heartbeat_delay)
         return
 
     didTimeout: ->
@@ -129,10 +129,10 @@ class Session extends events.EventEmitter
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-Session.bySessionIdOrNew = (session_id, emit) ->
+Session.bySessionIdOrNew = (session_id, server) ->
     session = Session.bySessionId(session_id)
     if not session
-        session = new Session(session_id, emit)
+        session = new Session(session_id, server)
     return session
 
 
