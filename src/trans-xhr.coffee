@@ -73,7 +73,7 @@ exports.app =
 
         # IE requires 2KB prefix:
         #  http://blogs.msdn.com/b/ieinternals/archive/2010/04/06/comet-streaming-in-internet-explorer-with-xmlhttprequest-and-xdomainrequest.aspx
-        res.write(Array(2048).join('h') + '\n')
+        res.write(Array(2049).join('h') + '\n')
 
         session = transport.Session.bySessionIdOrNew(req.session, @)
         session.register( new XhrStreamingReceiver(res, @options) )
