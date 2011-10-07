@@ -118,12 +118,7 @@ class Session extends events.EventEmitter
                 @unregister
 
     toString: ->
-        r = ['#'+@id]
-        if @session_id
-            r.push( @session_id )
-        if @recv
-            r.push( @recv.protocol )
-        return r.join('/')
+        return '<Session ' + @id + '>'
 
 
 Session.bySessionId = (session_id) ->
