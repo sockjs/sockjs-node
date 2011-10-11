@@ -85,10 +85,16 @@ Where `options` is a hash which can contain:
    placed in an invisible iframe. Code run from this iframe doesn't
    need to worry about cross-domain issues, as it's being run from
    domain local to the SockJS server. This iframe also does need to
-   load SockJS javascript client library, and this option specifies
+   load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
    <a href="http://sockjs.github.com/sockjs-client/sockjs-latest.min.js">
-   the latest minified SockJS client release</a>).</dd>
+   the latest minified SockJS client release</a>). You must explicitly
+   specify this url on the server side for security reasons - we don't
+   want the possibility of running any foreign javascript within the
+   SockJS domain (aka cross site scripting attack). Also, sockjs javascript
+   library is probably already cached by the browser - it makes sense
+   to reuse the sockjs url you're using in normally.
+   </dd>
 
 <dt>prefix (string)</dt>
 <dd>A url prefix for the server. All http requests which paths begins
