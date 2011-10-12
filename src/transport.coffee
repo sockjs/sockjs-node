@@ -102,7 +102,7 @@ class Session extends events.EventEmitter
     send: (payload) ->
         if @readyState isnt Transport.OPEN
             throw Error('INVALID_STATE_ERR')
-        @send_buffer.push( payload )
+        @send_buffer.push('' + payload)
         if @recv
             @tryFlush()
 
