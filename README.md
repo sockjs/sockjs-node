@@ -23,10 +23,11 @@ var http = require('http');
 var sockjs = require('sockjs');
 
 var echo = new sockjs.Server(sockjs_opts);
-echo.on('open', function(conn) {
-    conn.on('message', function(e) {
-        conn.send(e.data);
+echo.on('connection', function(conn) {
+    conn.on('message', function(message) {
+        conn.send(message);
     });
+    conn.on('close', function() {});
 });
 
 var server = http.createServer();
@@ -168,7 +169,7 @@ constructor.
 and emits following event:
 
 <dl>
-<dt>open(connection)</dt>
+<dt>connection(connection)</dt>
 <dd>A new connection has been successfully opened.</dd>
 </dl>
 
@@ -200,10 +201,10 @@ A `Connection` instance is also an
 and emits following events:
 
 <dl>
-<dt>message(event)</dt>
-<dd>A message arrived on the connection. Data is available at 'event.data'.</dd>
+<dt>message(message)</dt>
+<dd>A message arrived on the connection.</dd>
 
-<dt>close(event)</dt>
+<dt>close()</dt>
 <dd>Connection was closed. This event is triggered exactly once for
    every connection.</dd>
 </dl>
@@ -211,14 +212,14 @@ and emits following events:
 For example:
 
 ```javascript
-sjs.on('open', function(conn) {
-    console.log('open' + conn);
-    conn.on('close', function(e) {
-        console.log('close ' + conn, e);
+sjs.on('connection', function(conn) {
+    console.log('connection' + conn);
+    conn.on('close', function() {
+        console.log('close ' + conn);
     });
-    conn.on('message', function(e) {
+    conn.on('message', function(message) {
         console.log('message ' + conn,
-                    e.data);
+                    message);
     });
 });
 ```
@@ -236,10 +237,11 @@ var sockjs_opts = {sockjs_url:
     "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
 
 var sjs = new sockjs.Server(sockjs_opts);
-sjs.on('open', function(conn) {
-    conn.on('message', function(e) {
-        conn.send(e.data);
+sjs.on('connection', function(conn) {
+    conn.on('message', function(message) {
+        conn.send(message);
     });
+    conn.on('close', function() {});
 });
 
 var server = http.createServer();
