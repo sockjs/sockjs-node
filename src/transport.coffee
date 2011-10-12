@@ -89,7 +89,10 @@ class Session extends events.EventEmitter
         if @recv
             throw Error('RECV_STILL_THERE')
         @readyState = Transport.CLOSED
-        @emit('close', {status: 1001, reason: "Session timed out"})
+        e = {status: 1001
+             reason: "Session timed out"
+             wasClean: false}
+        @emit('close', e)
         if @session_id
             delete MAP[@session_id]
             @session_id = null
