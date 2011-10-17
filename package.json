@@ -1,7 +1,7 @@
 {
         "name": "sockjs",
         "author": "Marek Majkowski",
-        "version": "0.0.4",
+        "version": "0.0.5",
         "repository": {"type": "git",
                        "url": "https://github.com/sockjs/sockjs-node.git"},
         "dependencies": {
