@@ -29,7 +29,7 @@ class Session extends events.EventEmitter
         @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
         @emit_open = =>
             @emit_open = null
-            server.emit('open', @)
+            server.emit('connection', @)
 
     register: (recv) ->
         if @recv
@@ -89,20 +89,20 @@ class Session extends events.EventEmitter
         if @recv
             throw Error('RECV_STILL_THERE')
         @readyState = Transport.CLOSED
-        @emit('close', {status: 1001, reason: "Session timed out"})
+        @emit('close')
         if @session_id
             delete MAP[@session_id]
             @session_id = null
 
     didMessage: (payload) ->
         if @readyState is Transport.OPEN
-            @emit('message', {data: payload})
+            @emit('message', payload)
         return
 
     send: (payload) ->
         if @readyState isnt Transport.OPEN
             throw Error('INVALID_STATE_ERR')
-        @send_buffer.push( payload )
+        @send_buffer.push('' + payload)
         if @recv
             @tryFlush()
 

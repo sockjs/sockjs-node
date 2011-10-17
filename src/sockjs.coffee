@@ -105,20 +105,21 @@ class ServerInstance extends events.EventEmitter
         @app.options = @options
         @app.emit = => @emit.apply(@, arguments)
         @webjs_handler = webjs.generateHandler(@app, dispatcher)
+        @path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
+
+    handler: (req, res, extra) ->
+        # All urls that match the prefix must be handled by us.
+        if not req.url.match(@path_regexp)
+            return false
+        @webjs_handler(req, res, extra)
+        return true
 
     installHandlers: (http_server) ->
         @app.log('debug', 'SockJS v' + sockjs_version() + ' ' +
                           'bound to ' + JSON.stringify(@options.prefix))
 
-        path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
-        handler = (req, res, extra) =>
-            # All urls that match the prefix must be handled by us.
-            if not req.url.match(path_regexp)
-                return false
-            @webjs_handler(req, res, extra)
-            return true
-        utils.overshadowListeners(http_server, 'request', handler)
-        utils.overshadowListeners(http_server, 'upgrade', handler)
+        utils.overshadowListeners(http_server, 'request', (a,b,c) => @handler(a,b,c))
+        utils.overshadowListeners(http_server, 'upgrade', (a,b,c) => @handler(a,b,c))
         return true
 
 

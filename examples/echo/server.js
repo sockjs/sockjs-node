@@ -6,9 +6,9 @@ var node_static = require('node-static');
 var sockjs_opts = {sockjs_url: "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
 
 var sjs_echo = new sockjs.Server(sockjs_opts);
-sjs_echo.on('open', function(conn) {
-                conn.on('message', function(e) {
-                            conn.send(e.data);
+sjs_echo.on('connection', function(conn) {
+                conn.on('message', function(message) {
+                            conn.send(message);
                         });
             });
 

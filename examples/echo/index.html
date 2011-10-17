@@ -39,7 +39,7 @@
       </form>
     <script>
       var log;
-      var sockjs_url = 'http://127.0.0.1:9999/echo';
+      var sockjs_url = '/echo';
       var sockjs = new SockJS(sockjs_url);
       sockjs.onopen = function() {
           log(' [*] Connected (using: '+sockjs.protocol+')');
