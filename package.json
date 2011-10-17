@@ -3,7 +3,7 @@
         "author": "Marek Majkowski",
         "version": "0.0.5",
         "repository": {"type": "git",
-                       "url": "https://github.com/sockjs/sockjs-client.git"},
+                       "url": "https://github.com/sockjs/sockjs-node.git"},
         "dependencies": {
                 "node-uuid": "1.2.0"
         },
