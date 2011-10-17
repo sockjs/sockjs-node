@@ -1,3 +1,10 @@
+0.0.5
+=====
+
+ * #20: `npm submodule sockjs` didn't work due to outdated github
+   path.
+
+        
 0.0.4
 =====
 
@@ -15,10 +22,12 @@
  * Unicode encoding could been garbled during XHR upload.
  * Other minor fixes.
 
+
 0.0.3
 ======
 
  * EventSource transport didn't emit 'close' event.
+
 
 0.0.2
 =====
