@@ -130,7 +130,10 @@ Where `options` is a hash which can contain:
 <dd>It's quite useful, especially for debugging, to see some messages
 printed by a SockJS-node library. This is done using this `log`
 function, which is by default set to `console.log`. If this behaviour
-annoys you for some reason, override `log` setting with a custom handler.
+annoys you for some reason, override `log` setting with a custom
+handler.  The following `severities` are used: `debug` (miscellaneous
+logs), `info` (requests logs), `error` (serious errors, consider
+filing an issue).
 </dd>
 
 <dt>heartbeat_delay (milliseconds)</dt>
