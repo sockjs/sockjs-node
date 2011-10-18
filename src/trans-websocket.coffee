@@ -27,7 +27,7 @@ exports.app =
         location += '://' + req.headers.host + req.url
 
         ver = req.headers['sec-websocket-version']
-        if  ver is '8' or ver is '7'
+        if ver in ['7', '8', '13']
             new websocket_hybi10.WebHandshake8(@, req, connection, head or '', origin, location)
         else
             new websocket_hixie76.WebHandshakeHixie76(@, req, connection, head or '', origin, location)
