@@ -11,6 +11,12 @@ trans_eventsource = require('./trans-eventsource')
 trans_htmlfile = require('./trans-htmlfile')
 chunking_test = require('./chunking-test')
 
+sockjsVersion = ->
+    try
+        package = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
+    catch x
+    return if package then JSON.parse(package).version else null
+
 
 class App extends webjs.GenericApp
     welcome_screen: (req, res) ->
@@ -84,8 +90,29 @@ generate_dispatcher = (options) ->
         maybe_add_transport('websocket',[
                 ['GET', t('/websocket'), ['websocket']]])
 
+class Listener
+    constructor: (@options, emit) ->
+        @app = new App()
+        @app.options = options
+        @app.emit = emit
+        @app.log('debug', 'SockJS v' + sockjsVersion() + ' ' +
+                          'bound to ' + JSON.stringify(options.prefix))
+        @dispatcher = generate_dispatcher(@options)
+        @webjs_handler = webjs.generateHandler(@app, @dispatcher)
+        @path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
 
-class ServerInstance extends events.EventEmitter
+    handler: (req, res, extra) =>
+        # All urls that match the prefix must be handled by us.
+        if not req.url.match(@path_regexp)
+            return false
+        @webjs_handler(req, res, extra)
+        return true
+
+    getHandler: () ->
+        return (a,b,c) => @handler(a,b,c)
+
+
+class Server extends events.EventEmitter
     constructor: (user_options) ->
         @options =
             prefix: ''
@@ -100,65 +127,62 @@ class ServerInstance extends events.EventEmitter
             utils.objectExtend(@options, user_options)
         if not @options.sockjs_url
             throw new Error('Option "sockjs_url" is required!')
-        dispatcher = generate_dispatcher(@options)
-        @app = new App()
-        @app.options = @options
-        @app.emit = => @emit.apply(@, arguments)
-        @webjs_handler = webjs.generateHandler(@app, dispatcher)
-        @path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
 
-    handler: (req, res, extra) ->
-        # All urls that match the prefix must be handled by us.
-        if not req.url.match(@path_regexp)
-            return false
-        @webjs_handler(req, res, extra)
+    installHandlers: (http_server, handler_options) ->
+        options = utils.objectExtend({}, @options)
+        if handler_options
+            utils.objectExtend(options, handler_options)
+        h = new Listener(options, => @emit.apply(@, arguments))
+        handler = h.getHandler()
+        utils.overshadowListeners(http_server, 'request', handler)
+        utils.overshadowListeners(http_server, 'upgrade', handler)
         return true
 
-    installHandlers: (http_server) ->
-        @app.log('debug', 'SockJS v' + sockjs_version() + ' ' +
-                          'bound to ' + JSON.stringify(@options.prefix))
+exports.createServer = (options) ->
+    return new Server(options)
 
-        utils.overshadowListeners(http_server, 'request', (a,b,c) => @handler(a,b,c))
-        utils.overshadowListeners(http_server, 'upgrade', (a,b,c) => @handler(a,b,c))
-        return true
-
-
-class ServerDeprecatedWrapper
-    constructor: (server_options) ->
-        @listeners = {}
-        @options = {}
-        if server_options
-            utils.objectExtend(@options, server_options)
-
-    addListener: (event, listener) ->
-        if @installed
-            throw Error('Don\'t add listeners after "installHandler" was run.')
-        if not (event of @listeners)
-            @listeners[event] = []
-        @listeners[event].push(listener)
-
-    installHandlers: (http_server, user_options) ->
-        @installed = true
-        options = {}
-        utils.objectExtend(options, @options)
-        if user_options
-            utils.objectExtend(options, user_options)
-        srv = new ServerInstance(options)
-        for event of @listeners
-            for listener in @listeners[event]
-                srv.addListener(event, listener)
+exports.listen = (http_server, options) ->
+    srv = createServer(options)
+    if http_server
         srv.installHandlers(http_server)
-        return srv
-
-ServerDeprecatedWrapper.prototype.on = \
-    ServerDeprecatedWrapper.prototype.addListener
+    return srv
 
 
-sockjs_version = ->
-    try
-        package = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
-    catch x
-    return if package then JSON.parse(package).version else null
 
-exports.Server = ServerDeprecatedWrapper
-exports.ServerInstance = ServerInstance
+
+class DeprecatedConnectionWrapper extends events.EventEmitter
+    constructor: (@conn) ->
+        @id = @conn.id
+        @conn.on 'message', (message) =>
+            @emit('message', {data:message})
+        @conn.on 'close', (e) =>
+            e =
+                status: 1001
+                reason: 'Session timed out'
+                wasClean: false
+            @emit('close', e)
+
+    send: (m) ->
+        @conn.send(m)
+
+    close: (a, b) ->
+        @conn.close(a, b)
+
+    toString: () ->
+        @conn.toString()
+
+DeprecatedConnectionWrapper.prototype.__defineGetter__ 'readyState', ->
+    @conn.readyState
+
+
+class DeprecatedServerWrapper extends events.EventEmitter
+    constructor: (options) ->
+        @srv = new Server(options)
+
+    installHandlers: (http_server, handler_options) ->
+        @srv.on 'connection', (conn) =>
+            wrapped_conn = new DeprecatedConnectionWrapper(conn)
+            @emit('open', wrapped_conn)
+        @srv.installHandlers(http_server, handler_options)
+
+exports.Server = DeprecatedServerWrapper

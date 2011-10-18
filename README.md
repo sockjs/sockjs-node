@@ -22,7 +22,7 @@ An simplified echo SockJS server could look more or less like:
 var http = require('http');
 var sockjs = require('sockjs');
 
-var echo = new sockjs.Server(sockjs_opts);
+var echo = sockjs.createServer(sockjs_opts);
 echo.on('connection', function(conn) {
     conn.on('message', function(message) {
         conn.send(message);
@@ -73,7 +73,7 @@ with the common
 module.
 
 ```javascript
-var sjs = new sockjs.Server(options);
+var sjs = sockjs.createServer(options);
 ```
 
 Where `options` is a hash which can contain:
@@ -239,7 +239,7 @@ var sockjs = require('sockjs');
 var sockjs_opts = {sockjs_url:
     "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
 
-var sjs = new sockjs.Server(sockjs_opts);
+var sjs = sockjs.createServer(sockjs_opts);
 sjs.on('connection', function(conn) {
     conn.on('message', function(message) {
         conn.send(message);
