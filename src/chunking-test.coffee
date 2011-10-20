@@ -13,7 +13,8 @@ exports.app =
 
         utils.timeout_chain([
             # IE requires 2KB prelude
-            [0, => write(Array(2049).join(' ') + 'h')],
+            [0, => write('h')],
+            [1, => write(Array(2049).join(' ') + 'h')],
             [5, => write('h')],
             [25, => write('h')],
             [125, => write('h')],
