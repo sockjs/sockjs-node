@@ -180,6 +180,7 @@ class DeprecatedServerWrapper extends events.EventEmitter
         @srv = new Server(options)
 
     installHandlers: (http_server, handler_options) ->
+        @srv.options.log('info', 'You\'re using deprecated API, shame on you.')
         @srv.on 'connection', (conn) =>
             wrapped_conn = new DeprecatedConnectionWrapper(conn)
             @emit('open', wrapped_conn)
