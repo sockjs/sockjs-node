@@ -1,3 +1,16 @@
+Current
+=======
+
+ * The API changed, there is now an idiomatic API, modelled on node.js
+   Stream API. The old API is deprecated and there is a dummy wrapper
+   that emulates it. Please do upgrade to the new idiomatic API.
+ * #22 Initial support for hybi13 (stephank)
+ * New options accepted by the `Server` constructor: `log`,
+   `heartbeat_delay` and `disconnect_delay`.
+ * SockJS is now not able to send rich data structures - all data
+   passed to `write` is converted to a string.
+ * Loads of small changes in order to adhere to protocol spec.
+   
 0.0.5
 =====
 
