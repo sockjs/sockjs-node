@@ -1,4 +1,4 @@
-events = require('events')
+stream = require('stream')
 uuid = require('node-uuid')
 
 class Transport
@@ -12,14 +12,44 @@ closeFrame = (status, reason) ->
     return 'c' + JSON.stringify([status, reason])
 
 
+class SockJSConnection extends stream.Stream
+    constructor: (@_session) ->
+        @id  = uuid()
+
+    toString: ->
+        return '<SockJSConnection ' + @id + '>'
+
+    write: (string) ->
+        return @_session.send('' + string)
+
+    end: (string) ->
+        if string
+            @write(string)
+        @close()
+        return null
+
+    close: (code, reason) ->
+        @_session.close(code, reason)
+
+    destroy: () ->
+        @removeAllListeners()
+        @end()
+
+    destroySoon: () ->
+        @destroy()
+
+SockJSConnection.prototype.__defineGetter__ 'readable', ->
+    @_session.readyState is Transport.OPEN
+SockJSConnection.prototype.__defineGetter__ 'writable', ->
+    @_session.readyState is Transport.OPEN
+
 
 MAP = {}
 
-class Session extends events.EventEmitter
+class Session
     constructor: (@session_id, server) ->
         @heartbeat_delay = server.options.heartbeat_delay
         @disconnect_delay = server.options.disconnect_delay
-        @id  = uuid()
         @send_buffer = []
         @is_closing = false
         @readyState = Transport.CONNECTING
@@ -27,9 +57,10 @@ class Session extends events.EventEmitter
             MAP[@session_id] = @
         @timeout_cb = => @didTimeout()
         @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
+        @connection = new SockJSConnection(@)
         @emit_open = =>
             @emit_open = null
-            server.emit('connection', @)
+            server.emit('connection', @connection)
 
     register: (recv) ->
         if @recv
@@ -89,22 +120,28 @@ class Session extends events.EventEmitter
         if @recv
             throw Error('RECV_STILL_THERE')
         @readyState = Transport.CLOSED
-        @emit('close')
+        # Node streaming API is broken. Reader defines 'close' and 'end'
+        # but Writer defines only 'close'. 'End' isn't optional though.
+        #   http://nodejs.org/docs/v0.5.8/api/streams.html#event_close_
+        @connection.emit('end')
+        @connection.emit('close')
+        @connection = null
         if @session_id
             delete MAP[@session_id]
             @session_id = null
 
     didMessage: (payload) ->
         if @readyState is Transport.OPEN
-            @emit('message', payload)
+            @connection.emit('data', payload)
         return
 
     send: (payload) ->
         if @readyState isnt Transport.OPEN
-            throw Error('INVALID_STATE_ERR')
+            return false
         @send_buffer.push('' + payload)
         if @recv
             @tryFlush()
+        return true
 
     close: (status=1000, reason="Normal closure") ->
         if @readyState isnt Transport.OPEN
@@ -116,9 +153,8 @@ class Session extends events.EventEmitter
             @recv.doSendFrame(@close_frame)
             if @recv
                 @unregister
+        return true
 
-    toString: ->
-        return '<Session ' + @id + '>'
 
 
 Session.bySessionId = (session_id) ->

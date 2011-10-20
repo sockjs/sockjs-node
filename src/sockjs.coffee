@@ -153,9 +153,9 @@ exports.listen = (http_server, options) ->
 class DeprecatedConnectionWrapper extends events.EventEmitter
     constructor: (@conn) ->
         @id = @conn.id
-        @conn.on 'message', (message) =>
+        @conn.on 'data', (message) =>
             @emit('message', {data:message})
-        @conn.on 'close', (e) =>
+        @conn.on 'close', () =>
             e =
                 status: 1001
                 reason: 'Session timed out'
@@ -163,7 +163,7 @@ class DeprecatedConnectionWrapper extends events.EventEmitter
             @emit('close', e)
 
     send: (m) ->
-        @conn.send(m)
+        @conn.write(m)
 
     close: (a, b) ->
         @conn.close(a, b)
@@ -172,7 +172,7 @@ class DeprecatedConnectionWrapper extends events.EventEmitter
         @conn.toString()
 
 DeprecatedConnectionWrapper.prototype.__defineGetter__ 'readyState', ->
-    @conn.readyState
+    if @conn.readable then 1 else 3
 
 
 class DeprecatedServerWrapper extends events.EventEmitter

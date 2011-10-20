@@ -155,7 +155,7 @@ receiving connection wasn't seen for 5 seconds.
 
 ### Server instance
 
-Once you have instantiated `Server` class you can hook it to the
+Once you have create `Server` instance you can hook it to the
 [http server instance](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer).
 
 ```javascript
@@ -172,7 +172,7 @@ constructor.
 and emits following event:
 
 <dl>
-<dt>connection(connection)</dt>
+<dt>Event: connection (connection)</dt>
 <dd>A new connection has been successfully opened.</dd>
 </dl>
 
@@ -182,32 +182,40 @@ handlers.
 
 ### Connection instance
 
-A `Connection` instance has following methods and properties:
+A `Connection` instance supports
+[Node Stream API](http://nodejs.org/docs/v0.5.8/api/streams.html) and
+has following methods and properties:
 
 <dl>
-<dt>readyState</dt>
-<dd>A property describing a state of the connecion.</dd>
+<dt>Property: readable (boolean)</dt>
+<dd>Is the stream readable?</dd>
 
-<dt>send(message)</dt>
+<dt>Property: writable (boolean)</dt>
+<dd>Is the stream writable?</dd>
+
+<dt>write(message)</dt>
 <dd>Sends a message over opened connection. It's illegal to send a
-   message after the connection was closed (either by 'close' method
-   or 'close' event).</dd>
+   message after the connection was closed (either after 'close' or
+   'end' method or 'close' event).</dd>
 
-<dt>close([status], [reason])</dt>
-<dd>Asks the remote client to disconnect. 'status' and 'reason'
+<dt>close([code], [reason])</dt>
+<dd>Asks the remote client to disconnect. 'code' and 'reason'
    parameters are optional and can be used to share the reason of
    disconnection.</dd>
+
+<dt>end()</dt>
+<dd>Asks the remote client to disconnect with default 'code' and
+   'reason' values.</dd>
+
 </dl>
 
-A `Connection` instance is also an
-[EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
-and emits following events:
+A `Connection` instance emits the following events:
 
 <dl>
-<dt>message(message)</dt>
+<dt>Event: data (message)</dt>
 <dd>A message arrived on the connection.</dd>
 
-<dt>close()</dt>
+<dt>Event: close ()</dt>
 <dd>Connection was closed. This event is triggered exactly once for
    every connection.</dd>
 </dl>
@@ -220,7 +228,7 @@ sjs.on('connection', function(conn) {
     conn.on('close', function() {
         console.log('close ' + conn);
     });
-    conn.on('message', function(message) {
+    conn.on('data', function(message) {
         console.log('message ' + conn,
                     message);
     });
@@ -230,36 +238,9 @@ sjs.on('connection', function(conn) {
 ### Footnote
 
 A fully working echo server does need a bit more boilerplate (to
-handle unanswered requests), here it is:
-
-```javascript
-var http = require('http');
-var sockjs = require('sockjs');
-
-var sockjs_opts = {sockjs_url:
-    "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
-
-var sjs = sockjs.createServer(sockjs_opts);
-sjs.on('connection', function(conn) {
-    conn.on('message', function(message) {
-        conn.send(message);
-    });
-    conn.on('close', function() {});
-});
-
-var server = http.createServer();
-server.addListener('request', function(req, res) {
-    res.writeHead(404);
-    res.end('404 not found');
-});
-server.addListener('upgrade', function(req, con) {
-    con.end();
-});
-
-sjs.installHandlers(server, {prefix:'[/]echo'});
-
-server.listen(9999, '0.0.0.0');
-```
+handle unanswered requests), see the
+[`echo` example](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
+for a full code.
 
 ### Examples
 
