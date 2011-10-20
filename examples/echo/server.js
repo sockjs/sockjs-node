@@ -5,8 +5,8 @@ var node_static = require('node-static');
 // 1. Echo sockjs server
 var sockjs_opts = {sockjs_url: "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
 
-var sjs_echo = sockjs.createServer(sockjs_opts);
-sjs_echo.on('connection', function(conn) {
+var sockjs_echo = sockjs.createServer(sockjs_opts);
+sockjs_echo.on('connection', function(conn) {
                 conn.on('data', function(message) {
                             conn.write(message);
                         });
@@ -24,7 +24,7 @@ server.addListener('upgrade', function(req,res){
                        res.end();
                    });
 
-sjs_echo.installHandlers(server, {prefix:'[/]echo'});
+sockjs_echo.installHandlers(server, {prefix:'[/]echo'});
 
 console.log(' [*] Listening on 0.0.0.0:9999' );
 server.listen(9999, '0.0.0.0');

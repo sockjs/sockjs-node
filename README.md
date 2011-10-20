@@ -25,7 +25,7 @@ var sockjs = require('sockjs');
 var echo = sockjs.createServer(sockjs_opts);
 echo.on('connection', function(conn) {
     conn.on('message', function(message) {
-        conn.send(message);
+        conn.write(message);
     });
     conn.on('close', function() {});
 });
@@ -60,20 +60,18 @@ the moment they are deployed in few places:
 SockJS-node API
 ---------------
 
-The API is highly influenced by the
-[HTML5 Websockets API](http://dev.w3.org/html5/websockets/). The goal
-is to follow it as closely as possible.
-
+The API design is based on the common Node API's like
+[Streams API](http://nodejs.org/docs/v0.5.8/api/streams.html) or
+[Http.Server API](http://nodejs.org/docs/v0.5.8/api/http.html#http.Server).
 
 ### Server class
 
-Server class on one side is generating an http handler, compatible
-with the common
-[Node.js http](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer)
+SockJS module is generating a `Server` class, similar to
+[Node.js http.createServer](http://nodejs.org/docs/v0.5.8/api/http.html#http.createServer)
 module.
 
 ```javascript
-var sjs = sockjs.createServer(options);
+var sockjs_server = sockjs.createServer(options);
 ```
 
 Where `options` is a hash which can contain:
@@ -94,8 +92,7 @@ Where `options` is a hash which can contain:
    want the possibility of running any foreign javascript within the
    SockJS domain (aka cross site scripting attack). Also, sockjs javascript
    library is probably already cached by the browser - it makes sense
-   to reuse the sockjs url you're using in normally.
-   </dd>
+   to reuse the sockjs url you're using in normally.</dd>
 
 <dt>prefix (string)</dt>
 <dd>A url prefix for the server. All http requests which paths begins
@@ -116,56 +113,51 @@ Where `options` is a hash which can contain:
    request before it will be closed. After that client needs to open
    new request. Setting this value to one effectively disables
    streaming and will make streaming transports to behave like polling
-   transports. The default value is 128K.
-</dd>
+   transports. The default value is 128K.</dd>
 
 <dt>jsessionid (boolean)</dt>
 <dd>Some hosting providers enable sticky sessions only to requests that
   have JSESSIONID cookie set. This setting controls if the server should
   set this cookie to a dummy value. By default setting JSESSIONID cookie
-  is enabled.
-</dd>
+  is enabled.</dd>
 
 <dt>log (function(severity, message))</dt>
 <dd>It's quite useful, especially for debugging, to see some messages
-printed by a SockJS-node library. This is done using this `log`
-function, which is by default set to `console.log`. If this behaviour
-annoys you for some reason, override `log` setting with a custom
-handler.  The following `severities` are used: `debug` (miscellaneous
-logs), `info` (requests logs), `error` (serious errors, consider
-filing an issue).
-</dd>
+  printed by a SockJS-node library. This is done using this `log`
+  function, which is by default set to `console.log`. If this
+  behaviour annoys you for some reason, override `log` setting with a
+  custom handler.  The following `severities` are used: `debug`
+  (miscellaneous logs), `info` (requests logs), `error` (serious
+  errors, consider filing an issue).</dd>
 
 <dt>heartbeat_delay (milliseconds)</dt>
 <dd>In order to keep proxies and load balancers from closing long
-running http requests we need to pretend that the connecion is active
-and send a heartbeat packet once in a while. This setting controlls
-how often this is done. By default a heartbeat packet is sent every 25
-seconds.
-</dd>
+  running http requests we need to pretend that the connecion is
+  active and send a heartbeat packet once in a while. This setting
+  controlls how often this is done. By default a heartbeat packet is
+  sent every 25 seconds.  </dd>
 
 <dt>disconnect_delay (milliseconds)</dt>
 <dd>The server sends a `close` event when a client receiving
-connection have not been seen for a while. This delay is configured by
-this setting. By default the `close` event will be emitted when a
-receiving connection wasn't seen for 5 seconds.
-</dd>
+  connection have not been seen for a while. This delay is configured
+  by this setting. By default the `close` event will be emitted when a
+  receiving connection wasn't seen for 5 seconds.  </dd>
 </dl>
 
 
 ### Server instance
 
 Once you have create `Server` instance you can hook it to the
-[http server instance](http://nodejs.org/docs/v0.4.10/api/http.html#http.createServer).
+[http.Server instance](http://nodejs.org/docs/v0.5.8/api/http.html#http.createServer).
 
 ```javascript
 var http_server = http.createServer();
-sjs.installHandlers(http_server, options);
+sockjs_server.installHandlers(http_server, options);
 http_server.listen(...);
 ```
 
-Where `options` can overwrite options set by `Server` class
-constructor.
+Where `options` can overshadow options given when creating `Server`
+instance.
 
 `Server` instance is an
 [EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
@@ -178,7 +170,8 @@ and emits following event:
 
 All http requests that don't go under the path selected by `prefix`
 will remain unanswered and will be passed to previously registered
-handlers.
+handlers. You must install your custom http handlers before calling
+`installHandlers`.
 
 ### Connection instance
 
@@ -194,9 +187,11 @@ has following methods and properties:
 <dd>Is the stream writable?</dd>
 
 <dt>write(message)</dt>
-<dd>Sends a message over opened connection. It's illegal to send a
-   message after the connection was closed (either after 'close' or
-   'end' method or 'close' event).</dd>
+
+<dd>Sends a message over opened connection. A message must be a
+  non-empty string that can be encoded using UTF-8. It's illegal to
+  send a message after the connection was closed (either after 'close'
+  or 'end' method or 'close' event).</dd>
 
 <dt>close([code], [reason])</dt>
 <dd>Asks the remote client to disconnect. 'code' and 'reason'
@@ -213,7 +208,8 @@ A `Connection` instance emits the following events:
 
 <dl>
 <dt>Event: data (message)</dt>
-<dd>A message arrived on the connection.</dd>
+<dd>A message arrived on the connection. Message is a unicode
+  string.</dd>
 
 <dt>Event: close ()</dt>
 <dd>Connection was closed. This event is triggered exactly once for
@@ -223,7 +219,7 @@ A `Connection` instance emits the following events:
 For example:
 
 ```javascript
-sjs.on('connection', function(conn) {
+sockjs_server.on('connection', function(conn) {
     console.log('connection' + conn);
     conn.on('close', function() {
         console.log('close ' + conn);
@@ -238,9 +234,9 @@ sjs.on('connection', function(conn) {
 ### Footnote
 
 A fully working echo server does need a bit more boilerplate (to
-handle unanswered requests), see the
+handle requests unanswered by SockJS), see the
 [`echo` example](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
-for a full code.
+for a complete code.
 
 ### Examples
 
