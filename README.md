@@ -186,6 +186,9 @@ has following methods and properties:
 <dt>Property: writable (boolean)</dt>
 <dd>Is the stream writable?</dd>
 
+<dt>Property: remoteAddress (string)</dt>
+<dd>Last known IP address of the client.</dd>
+
 <dt>write(message)</dt>
 
 <dd>Sends a message over opened connection. A message must be a
