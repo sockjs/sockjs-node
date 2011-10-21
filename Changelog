@@ -9,15 +9,17 @@ Current
    `heartbeat_delay` and `disconnect_delay`.
  * SockJS is now not able to send rich data structures - all data
    passed to `write` is converted to a string.
+ * #23 `Connection.remoteAddress` property introduced (Stéphan Kochen)
  * Loads of small changes in order to adhere to protocol spec.
-   
+
+
 0.0.5
 =====
 
  * #20: `npm submodule sockjs` didn't work due to outdated github
    path.
 
-        
+
 0.0.4
 =====
 
