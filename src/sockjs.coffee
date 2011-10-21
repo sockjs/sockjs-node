@@ -142,7 +142,7 @@ exports.createServer = (options) ->
     return new Server(options)
 
 exports.listen = (http_server, options) ->
-    srv = createServer(options)
+    srv = exports.createServer(options)
     if http_server
         srv.installHandlers(http_server)
     return srv
