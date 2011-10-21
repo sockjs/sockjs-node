@@ -12,7 +12,9 @@ exports.app =
                 status: 400
                 message: 'Can "Upgrade" only to "WebSocket".'
             }
-        if (req.headers.connection || '').toLowerCase() isnt 'upgrade'
+        conn = (req.headers.connection || '').toLowerCase()
+
+        if (conn.split(/, */)).indexOf('upgrade') is -1
             throw {
                 status: 400
                 message: '"Connection" must be "Upgrade".'
