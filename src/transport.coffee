@@ -78,6 +78,11 @@ class Session
         @recv = recv
         @recv.session = @
 
+        # Store the last known address.
+        unless socket = @recv.connection
+            socket = @recv.response.connection
+        @connection.remoteAddress = socket.remoteAddress
+
         # first, send the open frame
         if @readyState is Transport.CONNECTING
             @recv.doSendFrame('o')
