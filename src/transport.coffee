@@ -157,7 +157,7 @@ class Session
             # Go away.
             @recv.doSendFrame(@close_frame)
             if @recv
-                @unregister
+                @unregister()
         return true
 
 
