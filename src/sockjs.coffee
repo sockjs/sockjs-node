@@ -25,6 +25,12 @@ class App extends webjs.GenericApp
         res.end("Welcome to SockJS!\n")
         return true
 
+    handle_404: (req, res) ->
+        res.setHeader('content-type', 'text/plain; charset=UTF-8')
+        res.writeHead(404)
+        res.end('404 Error: Page not found\n')
+        return true
+
     disabled_transport: (req, res, data) ->
         return @handle_404(req, res, data)
 
