@@ -109,8 +109,7 @@ exports.GenericApp = class GenericApp
                 res.writeHead(500, {})
                 res.end("500 - Internal Server Error")
             catch y
-            @log('error', 'Exception on "'+ req.method + ' ' + req.href + ''
-                 '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
+            @log('error', 'Exception on "'+ req.method + ' ' + req.href + '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
         return true
 
     log_request: (req, res, data) ->
