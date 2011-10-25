@@ -190,11 +190,13 @@ has following methods and properties:
 <dd>Last known IP address of the client.</dd>
 
 <dt>write(message)</dt>
-
 <dd>Sends a message over opened connection. A message must be a
-  non-empty string that can be encoded using UTF-8. It's illegal to
-  send a message after the connection was closed (either after 'close'
-  or 'end' method or 'close' event).</dd>
+  non-empty string that can be encoded using UTF-8. The message must
+  be composed of valid unicode characters. Beware of
+  [unicode surrogates](http://en.wikipedia.org/wiki/Mapping_of_Unicode_characters#Surrogates)
+  as they are known to break some transports (including
+  websockets). It's illegal to send a message after the connection was
+  closed (either after 'close' or 'end' method or 'close' event).</dd>
 
 <dt>close([code], [reason])</dt>
 <dd>Asks the remote client to disconnect. 'code' and 'reason'
