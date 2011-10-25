@@ -86,7 +86,7 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
-   <a href="http://sockjs.github.com/sockjs-client/sockjs-latest.min.js">
+   <a href="http://cdn.sockjs.org/sockjs-0.0.min.js">
    the latest minified SockJS client release</a>). You must explicitly
    specify this url on the server side for security reasons - we don't
    want the possibility of running any foreign javascript within the
