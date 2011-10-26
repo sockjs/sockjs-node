@@ -3,7 +3,7 @@ var sockjs = require('sockjs');
 var node_static = require('node-static');
 
 // 1. Echo sockjs server
-var sockjs_opts = {sockjs_url: "http://sockjs.github.com/sockjs-client/sockjs-latest.min.js"};
+var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.1.min.js"};
 
 var sockjs_echo = sockjs.createServer(sockjs_opts);
 sockjs_echo.on('connection', function(conn) {
