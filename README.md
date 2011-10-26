@@ -189,6 +189,12 @@ has following methods and properties:
 <dt>Property: remoteAddress (string)</dt>
 <dd>Last known IP address of the client.</dd>
 
+<dt>Property: remotePort (number)</dt>
+<dd>Last known port number of the client.</dd>
+
+<dt>Property: address (object)</dt>
+<dd>Hash with 'address' and 'port' fields.</dd>
+
 <dt>write(message)</dt>
 <dd>Sends a message over opened connection. A message must be a
   non-empty string that can be encoded using UTF-8. The message must

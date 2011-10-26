@@ -82,6 +82,11 @@ class Session
         unless socket = @recv.connection
             socket = @recv.response.connection
         @connection.remoteAddress = socket.remoteAddress
+        @connection.remotePort = socket.remotePort
+        try
+            @connection.address = socket.address()
+        catch e
+            @connection.address = {}
 
         # first, send the open frame
         if @readyState is Transport.CONNECTING
