@@ -9,7 +9,8 @@ SockJS-node server
 ==================
 
 SockJS-node is a Node.js server side counterpart of
-[SockJS-client browser library](https://github.com/sockjs/sockjs-client).
+[SockJS-client browser library](https://github.com/sockjs/sockjs-client)
+written in CoffeeScript.
 
 To install `sockjs-node` run:
 
