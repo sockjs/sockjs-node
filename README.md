@@ -24,7 +24,7 @@ var sockjs = require('sockjs');
 
 var echo = sockjs.createServer(sockjs_opts);
 echo.on('connection', function(conn) {
-    conn.on('message', function(message) {
+    conn.on('data', function(message) {
         conn.write(message);
     });
     conn.on('close', function() {});
