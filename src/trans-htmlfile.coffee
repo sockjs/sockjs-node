@@ -44,5 +44,6 @@ exports.app =
         res.write(iframe_template.replace(/{{ callback }}/g, callback));
 
         session = transport.Session.bySessionIdOrNew(req.session, @)
+        session.cookies = req.headers['cookie']
         session.register( new HtmlFileReceiver(res, @options) )
         return true

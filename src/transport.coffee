@@ -52,6 +52,7 @@ class Session
         @disconnect_delay = server.options.disconnect_delay
         @send_buffer = []
         @is_closing = false
+        @cookies = null
         @readyState = Transport.CONNECTING
         if @session_id
             MAP[@session_id] = @
