@@ -64,6 +64,7 @@ exports.app =
         res.writeHead(200)
 
         session = transport.Session.bySessionIdOrNew(req.session, @)
+        session.cookies = req.headers['cookie']
         session.register( new XhrPollingReceiver(res, @options) )
         return true
 
@@ -76,5 +77,6 @@ exports.app =
         res.write(Array(2049).join('h') + '\n')
 
         session = transport.Session.bySessionIdOrNew(req.session, @)
+        session.cookies = req.headers['cookie']
         session.register( new XhrStreamingReceiver(res, @options) )
         return true

@@ -52,6 +52,7 @@ class Session
         @disconnect_delay = server.options.disconnect_delay
         @send_buffer = []
         @is_closing = false
+        @cookies = null
         @readyState = Transport.CONNECTING
         if @session_id
             MAP[@session_id] = @
@@ -87,7 +88,7 @@ class Session
             @connection.address = socket.address()
         catch e
             @connection.address = {}
-
+        @connection.cookies = @cookies
         # first, send the open frame
         if @readyState is Transport.CONNECTING
             @recv.doSendFrame('o')

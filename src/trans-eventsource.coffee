@@ -20,5 +20,6 @@ exports.app =
         res.write('\r\n')
 
         session = transport.Session.bySessionIdOrNew(req.session, @)
+        session.cookies = req.headers['cookie']
         session.register( new EventSourceReceiver(res, @options) )
         return true

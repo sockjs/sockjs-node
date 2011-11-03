@@ -31,6 +31,7 @@ class WebHandshake8
 
         # websockets possess no session_id
         session = transport.Session.bySessionIdOrNew(undefined, @server)
+        session.cookies = @req.headers['cookie']
         session.register( new WebSocket8Receiver(@connection) )
 
 

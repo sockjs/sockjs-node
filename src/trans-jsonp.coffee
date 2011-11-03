@@ -27,6 +27,7 @@ exports.app =
         res.writeHead(200)
 
         session = transport.Session.bySessionIdOrNew(req.session, @)
+        session.cookies = req.headers['cookie']
         session.register( new JsonpReceiver(res, @options, callback) )
         return true
 

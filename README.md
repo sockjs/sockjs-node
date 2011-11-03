@@ -196,6 +196,10 @@ has following methods and properties:
 <dt>Property: address (object)</dt>
 <dd>Hash with 'address' and 'port' fields.</dd>
 
+<dt>Property: cookies (string)</dt>
+<dd>Last cookies sent by the client. The SockJS server URL must have
+  the same (sub)domain as the remote client sharing the cookies.</dd>
+
 <dt>write(message)</dt>
 <dd>Sends a message over opened connection. A message must be a
   non-empty string that can be encoded using UTF-8. The message must
