@@ -19,6 +19,9 @@ class SockJSConnection extends stream.Stream
     toString: ->
         return '<SockJSConnection ' + @id + '>'
 
+    cookies: ->
+        return @_session.cookies
+
     write: (string) ->
         return @_session.send('' + string)
 
@@ -88,7 +91,6 @@ class Session
             @connection.address = socket.address()
         catch e
             @connection.address = {}
-
         # first, send the open frame
         if @readyState is Transport.CONNECTING
             @recv.doSendFrame('o')
