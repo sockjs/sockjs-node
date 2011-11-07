@@ -26,7 +26,7 @@ exports.app =
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
-        session = transport.Session.bySessionIdOrNew(req.session, @)
+        session = transport.Session.bySessionIdOrNew(req.session, @, req)
         session.register( new JsonpReceiver(res, @options, callback) )
         return true
 
