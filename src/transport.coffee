@@ -47,7 +47,7 @@ SockJSConnection.prototype.__defineGetter__ 'writable', ->
 MAP = {}
 
 class Session
-    constructor: (@session_id, server) ->
+    constructor: (@session_id, server, request) ->
         @heartbeat_delay = server.options.heartbeat_delay
         @disconnect_delay = server.options.disconnect_delay
         @send_buffer = []
@@ -58,6 +58,7 @@ class Session
         @timeout_cb = => @didTimeout()
         @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
         @connection = new SockJSConnection(@)
+        @connection.request = request
         @emit_open = =>
             @emit_open = null
             server.emit('connection', @connection)
@@ -170,10 +171,10 @@ class Session
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-Session.bySessionIdOrNew = (session_id, server) ->
+Session.bySessionIdOrNew = (session_id, server, request) ->
     session = Session.bySessionId(session_id)
     if not session
-        session = new Session(session_id, server)
+        session = new Session(session_id, server, request)
     return session
 
 
