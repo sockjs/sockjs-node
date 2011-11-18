@@ -100,8 +100,8 @@ class WebHandshakeHixie76
                 return false
 
         # websockets possess no session_id
-        session = transport.Session.bySessionIdOrNew(undefined, @server)
-        session.register( new WebSocketReceiver(@connection) )
+        transport.registerNoSession(@req, @server,
+                                    new WebSocketReceiver(@connection))
 
 
 class WebSocketReceiver extends transport.ConnectionReceiver

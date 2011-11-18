@@ -62,7 +62,7 @@ class Session
             @emit_open = null
             server.emit('connection', @connection)
 
-    register: (recv) ->
+    register: (req, recv) ->
         if @recv
             recv.doSendFrame(closeFrame(2010, "Another connection still open"))
             return
@@ -78,15 +78,8 @@ class Session
         @recv = recv
         @recv.session = @
 
-        # Store the last known address.
-        unless socket = @recv.connection
-            socket = @recv.response.connection
-        @connection.remoteAddress = socket.remoteAddress
-        @connection.remotePort = socket.remotePort
-        try
-            @connection.address = socket.address()
-        catch e
-            @connection.address = {}
+        # Save parameters from request
+        @decorateConnection(req)
 
         # first, send the open frame
         if @readyState is Transport.CONNECTING
@@ -100,6 +93,21 @@ class Session
             return
         @tryFlush()
         return
+
+    decorateConnection: (req) ->
+        # Store the last known address.
+        unless socket = @recv.connection
+            socket = @recv.response.connection
+        @connection.remoteAddress = socket.remoteAddress
+        @connection.remotePort = socket.remotePort
+        try
+            @connection.address = socket.address()
+        catch e
+            @connection.address = {}
+
+        @connection.url = req.url
+        @connection.pathname = req.pathname
+
 
     unregister: ->
         @recv.session = null
@@ -170,11 +178,18 @@ class Session
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-Session.bySessionIdOrNew = (session_id, server) ->
+register = (req, server, session_id, receiver) ->
     session = Session.bySessionId(session_id)
     if not session
         session = new Session(session_id, server)
+    session.register(req, receiver)
     return session
+
+exports.register = (req, server, receiver) ->
+    register(req, server, req.session, receiver)
+exports.registerNoSession = (req, server, receiver) ->
+    register(req, server, undefined, receiver)
+
 
 
 class GenericReceiver

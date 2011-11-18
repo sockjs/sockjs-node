@@ -29,9 +29,8 @@ class WebHandshake8
             catch x
             return
 
-        # websockets possess no session_id
-        session = transport.Session.bySessionIdOrNew(undefined, @server)
-        session.register( new WebSocket8Receiver(@connection) )
+        transport.registerNoSession(@req, @server,
+                                    new WebSocket8Receiver(@connection))
 
 
 class WebSocket8Receiver extends transport.ConnectionReceiver
