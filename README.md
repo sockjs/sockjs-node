@@ -196,6 +196,16 @@ has following methods and properties:
 <dt>Property: address (object)</dt>
 <dd>Hash with 'address' and 'port' fields.</dd>
 
+<dt>Property: url (string)</dt>
+<dd><a href="http://nodejs.org/docs/v0.4.10/api/http.html#request.url">Url</a>
+    property copied from last request.</dd>
+
+<dt>Property: pathname (string)</dt>
+<dd>`pathname` from parsed url, for convenience.</dd>
+
+<dt>Property: prefix (string)</dt>
+<dd>Prefix of the url on which the request was handled.</dd>
+
 <dt>write(message)</dt>
 <dd>Sends a message over opened connection. A message must be a
   non-empty string that can be encoded using UTF-8. The message must

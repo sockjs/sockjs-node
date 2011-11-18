@@ -1,5 +1,11 @@
+0.1.x - current
+===============
+
+ * #30 Expose request path on connection.
+
+	
 0.1.0
-=======
+=====
 
  * The API changed, there is now an idiomatic API, modelled on node.js
    Stream API. The old API is deprecated and there is a dummy wrapper

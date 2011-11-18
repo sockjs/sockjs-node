@@ -15,6 +15,7 @@ closeFrame = (status, reason) ->
 class SockJSConnection extends stream.Stream
     constructor: (@_session) ->
         @id  = uuid()
+        @prefix = @_session.prefix
 
     toString: ->
         return '<SockJSConnection ' + @id + '>'
@@ -50,6 +51,7 @@ class Session
     constructor: (@session_id, server) ->
         @heartbeat_delay = server.options.heartbeat_delay
         @disconnect_delay = server.options.disconnect_delay
+        @prefix = server.options.prefix
         @send_buffer = []
         @is_closing = false
         @readyState = Transport.CONNECTING
