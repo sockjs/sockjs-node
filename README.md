@@ -196,6 +196,13 @@ has following methods and properties:
 <dt>Property: address (object)</dt>
 <dd>Hash with 'address' and 'port' fields.</dd>
 
+<dt>Property: headers (object)</dt>
+<dd>Hash containing various headers copied from last receiving request
+    on that connection. Exposed headers include: `origin`, `referer`
+    and `x-forwarded-for` (and friends). We expliclty do not grant
+    access to `cookie` header, as using it may easily lead to security
+    issues.</dd>
+
 <dt>Property: url (string)</dt>
 <dd><a href="http://nodejs.org/docs/v0.4.10/api/http.html#request.url">Url</a>
     property copied from last request.</dd>

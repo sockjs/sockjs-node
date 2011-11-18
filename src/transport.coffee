@@ -15,6 +15,7 @@ closeFrame = (status, reason) ->
 class SockJSConnection extends stream.Stream
     constructor: (@_session) ->
         @id  = uuid()
+        @headers = {}
         @prefix = @_session.prefix
 
     toString: ->
@@ -110,6 +111,12 @@ class Session
         @connection.url = req.url
         @connection.pathname = req.pathname
 
+        headers = {}
+        for key in ['origin', 'referer', 'x-client-ip', 'x-forwarded-for', \
+                    'x-cluster-client-ip']
+            headers[key] = req.headers[key] if req.headers[key]
+        if headers
+            @connection.headers = headers
 
     unregister: ->
         @recv.session = null

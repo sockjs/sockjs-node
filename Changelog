@@ -1,6 +1,7 @@
 0.1.x - current
 ===============
 
+ * #32 Expose various request headers on connection.
  * #30 Expose request path on connection.
 
 	
