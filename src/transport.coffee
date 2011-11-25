@@ -1,5 +1,6 @@
 stream = require('stream')
 uuid = require('node-uuid')
+utils = require('./utils')
 
 class Transport
 
@@ -221,7 +222,9 @@ class GenericReceiver
             @session.unregister(status, reason)
 
     doSendBulk: (messages) ->
-        @doSendFrame('a' + JSON.stringify(messages))
+        q_msgs = for m in messages
+                utils.quote(m)
+        @doSendFrame('a' + '[' + q_msgs.join(', ') + ']')
 
 
 # Write stuff directly to connection.

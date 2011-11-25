@@ -88,3 +88,28 @@ exports.overshadowListeners = (ee, event, handler) ->
             return false
         return true
     ee.addListener(event, new_handler)
+
+
+escapable = /[\x00-\x1f\ud800-\udfff\ufffe\uffff\u2000-\u20ff]/g
+
+unroll_lookup = (escapable) ->
+    unrolled = {}
+    c = for i in [0...65536]
+            String.fromCharCode(i)
+    escapable.lastIndex = 0
+    c.join('').replace escapable, (a) ->
+        unrolled[ a ] = '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4)
+    return unrolled
+
+lookup = unroll_lookup(escapable)
+
+exports.quote = (string) ->
+    quoted = JSON.stringify(string)
+
+    # In most cases normal json encoding fast and enough
+    escapable.lastIndex = 0
+    if not escapable.test(quoted)
+        return quoted
+
+    return quoted.replace escapable, (a) ->
+                return lookup[a]
