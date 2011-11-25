@@ -90,7 +90,7 @@ exports.overshadowListeners = (ee, event, handler) ->
     ee.addListener(event, new_handler)
 
 
-escapable = /[\x00-\x1f\ud800-\udfff\ufffe\uffff\u2000-\u20ff]/g
+escapable = /[\x00-\x1f\ud800-\udfff\u2000-\u20ff\ufff0-\uffff]/g
 
 unroll_lookup = (escapable) ->
     unrolled = {}
