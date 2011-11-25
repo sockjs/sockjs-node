@@ -215,11 +215,7 @@ has following methods and properties:
 
 <dt>write(message)</dt>
 <dd>Sends a message over opened connection. A message must be a
-  non-empty string that can be encoded using UTF-8. The message must
-  be composed of valid unicode characters. Beware of
-  [unicode surrogates](http://en.wikipedia.org/wiki/Mapping_of_Unicode_characters#Surrogates)
-  as they are known to break some transports (including
-  websockets). It's illegal to send a message after the connection was
+  non-empty string. It's illegal to send a message after the connection was
   closed (either after 'close' or 'end' method or 'close' event).</dd>
 
 <dt>close([code], [reason])</dt>
