@@ -224,7 +224,7 @@ class GenericReceiver
     doSendBulk: (messages) ->
         q_msgs = for m in messages
                 utils.quote(m)
-        @doSendFrame('a' + '[' + q_msgs.join(', ') + ']')
+        @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
 
 
 # Write stuff directly to connection.
