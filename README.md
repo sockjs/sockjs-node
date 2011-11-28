@@ -116,11 +116,12 @@ Where `options` is a hash which can contain:
    streaming and will make streaming transports to behave like polling
    transports. The default value is 128K.</dd>
 
-<dt>jsessionid (boolean)</dt>
+<dt>jsessionid (boolean or function)</dt>
 <dd>Some hosting providers enable sticky sessions only to requests that
   have JSESSIONID cookie set. This setting controls if the server should
   set this cookie to a dummy value. By default setting JSESSIONID cookie
-  is enabled.</dd>
+  is enabled. More sophisticated beaviour can be achieved by supplying
+  a function.</dd>
 
 <dt>log (function(severity, message))</dt>
 <dd>It's quite useful, especially for debugging, to see some messages

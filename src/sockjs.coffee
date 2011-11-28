@@ -35,21 +35,19 @@ class App extends webjs.GenericApp
         return @handle_404(req, res, data)
 
     h_sid: (req, res, data) ->
-        if @options.jsessionid
-            # Some load balancers do sticky sessions, but only if there is
-            # a JSESSIONID cookie. If this cookie isn't yet set, we shall
-            # set it to a dummy value. It doesn't really matter what, as
-            # session information is usually added by the load balancer.
-            req.cookies = {}
-            if req.headers.cookie
-                for cookie in req.headers.cookie.split(';')
-                    parts = cookie.split('=')
-                    req.cookies[ parts[0].trim() ] = ( parts[1] || '' ).trim()
-            if res.setHeader
-                # We need to set it every time, to give the loadbalancer
-                # opportunity to attach its own cookies.
-                jsid = req.cookies['JSESSIONID'] or 'dummy'
-                res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; path=/')
+        # Some load balancers do sticky sessions, but only if there is
+        # a JSESSIONID cookie. If this cookie isn't yet set, we shall
+        # set it to a dummy value. It doesn't really matter what, as
+        # session information is usually added by the load balancer.
+        req.cookies = utils.parseCookie(req.headers.cookie)
+        if typeof @options.jsessionid is 'function'
+            # Users can supply a function
+            @options.jsessionid(req, res)
+        else if (@options.jsessionid and res.setHeader)
+            # We need to set it every time, to give the loadbalancer
+            # opportunity to attach its own cookies.
+            jsid = req.cookies['JSESSIONID'] or 'dummy'
+            res.setHeader('Set-Cookie', 'JSESSIONID=' + jsid + '; path=/')
         return data
 
     log: (severity, line) ->

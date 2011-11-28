@@ -113,3 +113,11 @@ exports.quote = (string) ->
 
     return quoted.replace escapable, (a) ->
                 return lookup[a]
+
+exports.parseCookie = (cookie_header) ->
+    cookies = {}
+    if cookie_header
+        for cookie in cookie_header.split(';')
+            parts = cookie.split('=')
+            cookies[ parts[0].trim() ] = ( parts[1] || '' ).trim()
+    return cookies
