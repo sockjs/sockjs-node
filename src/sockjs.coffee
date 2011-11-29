@@ -127,10 +127,9 @@ class Server extends events.EventEmitter
             heartbeat_delay: 25000
             disconnect_delay: 5000
             log: (severity, line) -> console.log(line)
+            sockjs_url: 'http://cdn.sockjs.org/sockjs-0.1.min.js'
         if user_options
             utils.objectExtend(@options, user_options)
-        if not @options.sockjs_url
-            throw new Error('Option "sockjs_url" is required!')
 
     installHandlers: (http_server, handler_options) ->
         options = utils.objectExtend({}, @options)

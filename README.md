@@ -88,12 +88,13 @@ Where `options` is a hash which can contain:
    load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
    <a href="http://cdn.sockjs.org/sockjs-0.1.min.js">
-   the latest minified SockJS client release</a>). You must explicitly
-   specify this url on the server side for security reasons - we don't
-   want the possibility of running any foreign javascript within the
-   SockJS domain (aka cross site scripting attack). Also, sockjs javascript
-   library is probably already cached by the browser - it makes sense
-   to reuse the sockjs url you're using in normally.</dd>
+   the latest minified SockJS client release</a>, this is the default).
+   You must explicitly specify this url on the server side for security
+   reasons - we don't want the possibility of running any foreign
+   javascript within the SockJS domain (aka cross site scripting attack).
+   Also, sockjs javascript library is probably already cached by the
+   browser - it makes sense to reuse the sockjs url you're using in
+   normally.</dd>
 
 <dt>prefix (string)</dt>
 <dd>A url prefix for the server. All http requests which paths begins
