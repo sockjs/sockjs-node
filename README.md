@@ -323,7 +323,7 @@ If you want to update SockJS-node source code, clone git repo and
 follow this steps. First you need to install dependencies:
 
     cd sockjs-node
-    npm install
+    npm install --dev
 
 You're ready to compile CoffeeScript to js:
 
