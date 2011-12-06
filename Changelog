@@ -1,5 +1,5 @@
-current
-=======
+0.1.2
+=====
 
  * #27 - Allow all unicode characters to be send over SockJS.
  * #14 - Make it possible to customize JSESSIONID cookie logic.
