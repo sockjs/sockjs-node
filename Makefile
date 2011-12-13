@@ -1,21 +1,42 @@
 .PHONY: all serve clean
 
-all: src/*coffee
+#### General
+
+all: build
+
+build: src/*coffee
 	@coffee -v > /dev/null
 	coffee -o lib/ -c src/*.coffee
-
-serve:
-	@while [ 1 ]; do					\
-		make all;					\
-	    sleep 0.1;						\
-	    inotifywait -r -q -e modify .;			\
-	done
 
 clean:
 	rm -f lib/*.js
 
 
-# Release process:
+#### Testing
+
+test_server:
+	node examples/test_server/server.js
+
+serve:
+	@if [ -e .pidfile.pid ]; then		\
+		kill `cat .pidfile.pid`;	\
+		rm .pidfile.pid;		\
+	fi
+
+	@while [ 1 ]; do				\
+		make build;				\
+		echo " [*] Running http server";	\
+		make test_server &			\
+		SRVPID=$$!;				\
+		echo $$SRVPID > .pidfile.pid;		\
+		echo " [*] Server pid: $$SRVPID";	\
+		inotifywait -r -q -e modify .;		\
+		kill `cat .pidfile.pid`;		\
+		rm -f .pidfile.pid;			\
+		sleep 0.1;				\
+	done
+
+#### Release process
 #   1) commit everything
 #   2) amend version in package.json
 #   3) run 'make tag' and run suggested 'git push' variants
