@@ -50,7 +50,8 @@ Live QUnit tests and smoke tests
 
 [SockJS-client](https://github.com/sockjs/sockjs-client) comes with
 some QUnit tests and a few smoke tests that are using SockJS-node. At
-the moment they are deployed in few places:
+the moment they are deployed in few places, just click to see if
+SockJS is working in your browser:
 
  * http://sockjs.popcnt.org/ (hosted in Europe)
  * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets disabled, loadbalanced)
@@ -271,7 +272,7 @@ If you want to see samples of running code, take a look at:
 
  * [./examples/echo](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
    directory, which contains a full example of a echo server.
- * [SockJS-client tests](https://github.com/sockjs/sockjs-client/blob/master/tests/).
+ * [./examples/test_server](https://github.com/sockjs/sockjs-node/tree/master/examples/test_server) a standard SockJS test server.
 
 
 Deployment and load balancing
@@ -316,20 +317,53 @@ SockJS has two mechanisms that can be usefull to achieve that:
    `cookie:true` option to SockJS constructor.
 
 
-Development
------------
+Development and testing
+-----------------------
 
-If you want to update SockJS-node source code, clone git repo and
-follow this steps. First you need to install dependencies:
+If you want to work on SockJS-node source code, you need to clone the
+git repo and follow this steps. First you need to install
+dependencies:
 
     cd sockjs-node
     npm install --dev
 
-You're ready to compile CoffeeScript to js:
+You're ready to compile CoffeeScript:
 
     make
 
-If you want to automatically recompile when the source files are
-modified, take a look at `make serve`. Make sure your changes to
-SockJS-node don't break test code in SockJS-client and don't break the
-SockJS-protocol test suite.
+If compilation succeeds you may want to test if your changes pass all
+the tests. Currently, there are two separate test suits. For both of
+them you need to start a SockJS-node test server (by default listening
+on port 8081):
+
+    make test_server
+
+### SockJS-protocol Python tests
+
+To run it run something like:
+
+    cd sockjs-protocol
+    ./venv/bin/python sockjs-protocol-0.1.py
+
+For details see
+[SockJS-protocol README](https://github.com/sockjs/sockjs-protocol#readme).
+
+### SockJS-client QUnit tests
+
+You need to start a second web server (by default listening on 8080)
+that is serving various static html and javascript files:
+
+    cd sockjs-client
+    make test
+
+At that point you should have two web servers running: sockjs-node on
+8081 and sockjs-client on 8080. When you open the browser on
+[http://localhost:8080/](http://localhost:8080/) you should be able
+run the QUnit tests against your sockjs-node server.
+
+For details see
+[SockJS-client README](https://github.com/sockjs/sockjs-client#readme).
+
+Additionally, if you're doing more serious development consider using
+`make serve`, which will automatically reload sockjs-node test server
+when you modify the source code.
