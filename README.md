@@ -336,6 +336,7 @@ the tests. Currently, there are two separate test suits. For both of
 them you need to start a SockJS-node test server (by default listening
 on port 8081):
 
+    make build
     make test_server
 
 ### SockJS-protocol Python tests
@@ -365,5 +366,5 @@ For details see
 [SockJS-client README](https://github.com/sockjs/sockjs-client#readme).
 
 Additionally, if you're doing more serious development consider using
-`make serve`, which will automatically reload sockjs-node test server
-when you modify the source code.
+`make serve`, which will automatically the server when you modify the
+source code.
