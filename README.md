@@ -326,17 +326,17 @@ dependencies:
 
     cd sockjs-node
     npm install --dev
+    ln -s .. node_modules/sockjs
 
 You're ready to compile CoffeeScript:
 
-    make
+    make build
 
 If compilation succeeds you may want to test if your changes pass all
 the tests. Currently, there are two separate test suits. For both of
 them you need to start a SockJS-node test server (by default listening
 on port 8081):
 
-    make build
     make test_server
 
 ### SockJS-protocol Python tests
@@ -344,6 +344,7 @@ on port 8081):
 To run it run something like:
 
     cd sockjs-protocol
+    make
     ./venv/bin/python sockjs-protocol-0.1.py
 
 For details see
