@@ -1,7 +1,8 @@
 var sockjs = require('sockjs');
 
-exports.install = function(config, server) {
-    var sjs_echo = sockjs.createServer(config.opts);
+exports.install = function(opts, server) {
+    var sjs_echo = sockjs.createServer(opts);
+
     sjs_echo.on('connection', function(conn) {
                     console.log('    [+] echo open    ' + conn);
                     conn.on('close', function() {
@@ -16,7 +17,7 @@ exports.install = function(config, server) {
                             });
                 });
 
-    var sjs_close = sockjs.createServer(config.opts);
+    var sjs_close = sockjs.createServer(opts);
     sjs_close.on('connection', function(conn) {
                      console.log('    [+] clos open    ' + conn);
                      conn.close(3000, "Go away!");
@@ -25,7 +26,7 @@ exports.install = function(config, server) {
                              });
                  });
 
-    var sjs_ticker = sockjs.createServer(config.opts);
+    var sjs_ticker = sockjs.createServer(opts);
     sjs_ticker.on('connection', function(conn) {
                       console.log('    [+] ticker open   ' + conn);
                       var tref;
@@ -41,7 +42,7 @@ exports.install = function(config, server) {
                   });
 
     var broadcast = {};
-    var sjs_broadcast = sockjs.createServer(config.opts);
+    var sjs_broadcast = sockjs.createServer(opts);
     sjs_broadcast.on('connection', function(conn) {
                          console.log('    [+] broadcast open ' + conn);
                          broadcast[conn.id] = conn;
@@ -57,7 +58,7 @@ exports.install = function(config, server) {
                                  });
                      });
 
-    var sjs_amplify = sockjs.createServer(config.opts);
+    var sjs_amplify = sockjs.createServer(opts);
     sjs_amplify.on('connection', function(conn) {
                     console.log('    [+] amp open    ' + conn);
                     conn.on('close', function() {
