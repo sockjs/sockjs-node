@@ -1,6 +1,8 @@
 dev
 ===
 
+ * #36, #3 - Replace a custom WebSocket server implementation
+   with faye-websocket-node.
  * The test server got moved from SockJS-client to SockJS-node.
  
  
