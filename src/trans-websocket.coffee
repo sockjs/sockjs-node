@@ -1,3 +1,5 @@
+FayeWebsocket = require('faye-websocket')
+
 utils = require('./utils')
 
 websocket_hixie76 = require('./trans-websocket-hixie76')
@@ -25,14 +27,12 @@ exports.app =
                 status: 400
                 message: 'Unverified origin.'
             }
-        location = (if origin and origin[0...5] is 'https' then 'wss' else 'ws')
-        location += '://' + req.headers.host + req.url
 
-        ver = req.headers['sec-websocket-version']
-        if ver in ['7', '8', '13']
-            new websocket_hybi10.WebHandshake8(@, req, connection, head or '', origin, location)
-        else
-            new websocket_hixie76.WebHandshakeHixie76(@, req, connection, head or '', origin, location)
+        ws = new FayeWebsocket(req, connection, head)
+
+            # websockets possess no session_id
+        transport.registerNoSession(req, @,
+                                    new WebSocketReceiver(ws, connection))
         return true
 
     websocket_get: (req, rep) ->
@@ -41,3 +41,40 @@ exports.app =
             status: 400
             message: 'Can "Upgrade" only to "WebSocket".'
         }
+
+class WebSocketReceiver extends transport.ConnectionReceiver
+    protocol: "websocket"
+
+    constructor: (@ws, connection) ->
+        try
+            connection.setKeepAlive(true, 5000)
+            connection.setNoDelay(true)
+        catch x
+        super @ws
+
+    setUp: ->
+        @ws.addListener('close', @thingy_end_cb)
+        super
+
+    tearDown: ->
+        @ws.removeListener('close', @thingy_end_cb)
+        super
+
+    didMessage: (message) ->
+        if @session and message.length > 0
+            @session.didMessage(message)
+
+    doSendFrame: (payload) ->
+        if @ws
+            try
+                @ws.send(payload)
+                return true
+            catch e
+        return false
+
+    didClose: ->
+        super
+        try
+            @ws.close()
+        catch x
+        @ws = null

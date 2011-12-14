@@ -227,31 +227,6 @@ class GenericReceiver
         @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
 
 
-# Write stuff directly to connection.
-class ConnectionReceiver extends GenericReceiver
-    constructor: (@connection) ->
-        try
-            @connection.setKeepAlive(true, 5000)
-        catch x
-        super @connection
-
-    doSendFrame: (payload, encoding='utf-8') ->
-        if not @connection
-            return false
-        try
-            @connection.write(payload, encoding)
-            return true
-        catch e
-        return false
-
-    didClose: ->
-        super
-        try
-            @connection.end()
-        catch x
-        @connection = null
-
-
 # Write stuff to response, using chunked encoding if possible.
 class ResponseReceiver extends GenericReceiver
     max_response_size: undefined
@@ -286,5 +261,4 @@ class ResponseReceiver extends GenericReceiver
 
 exports.Transport = Transport
 exports.Session = Session
-exports.ConnectionReceiver = ConnectionReceiver
 exports.ResponseReceiver = ResponseReceiver
