@@ -29,7 +29,9 @@ exports.app =
 
             # websockets possess no session_id
         transport.registerNoSession(req, @,
-                                    new WebSocketReceiver(ws, connection))
+                                    new WebSocketReceiver(ws, connection), {
+                                        disconnect_delay: 15
+                                    })
         return true
 
     websocket_get: (req, rep) ->
@@ -48,14 +50,6 @@ class WebSocketReceiver extends transport.ConnectionReceiver
             connection.setNoDelay(true)
         catch x
         super @ws
-
-    setUp: ->
-        @ws.addEventListener('close', @thingy_end_cb)
-        super
-
-    tearDown: ->
-        @ws.removeEventListener('close', @thingy_end_cb)
-        super
 
     didMessage: (message) ->
         if @session and message.length > 0

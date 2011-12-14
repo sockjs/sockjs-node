@@ -50,9 +50,10 @@ SockJSConnection.prototype.__defineGetter__ 'writable', ->
 MAP = {}
 
 class Session
-    constructor: (@session_id, server) ->
+    constructor: (@session_id, server, opt) ->
+        opt = opt || {}
         @heartbeat_delay = server.options.heartbeat_delay
-        @disconnect_delay = server.options.disconnect_delay
+        @disconnect_delay = opt.disconnect_delay || server.options.disconnect_delay
         @prefix = server.options.prefix
         @send_buffer = []
         @is_closing = false
@@ -188,17 +189,17 @@ class Session
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-register = (req, server, session_id, receiver) ->
+register = (req, server, session_id, receiver, opt) ->
     session = Session.bySessionId(session_id)
     if not session
-        session = new Session(session_id, server)
+        session = new Session(session_id, server, opt)
     session.register(req, receiver)
     return session
 
 exports.register = (req, server, receiver) ->
     register(req, server, req.session, receiver)
-exports.registerNoSession = (req, server, receiver) ->
-    register(req, server, undefined, receiver)
+exports.registerNoSession = (req, server, receiver, opt) ->
+    register(req, server, undefined, receiver, opt)
 
 
 
@@ -209,13 +210,13 @@ class GenericReceiver
     setUp: ->
         @thingy_end_cb = () => @didClose(1006, "Connection closed")
         if typeof @thingy.addEventListener is 'function'
-            @thingy.addEventListener('end', @thingy_end_cb)
+            @thingy.addEventListener('close', @thingy_end_cb)
         else
             @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
         if typeof @thingy.removeEventListener is 'function'
-            @thingy.removeEventListener('end', @thingy_end_cb)
+            @thingy.removeEventListener('close', @thingy_end_cb)
         else
             @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
