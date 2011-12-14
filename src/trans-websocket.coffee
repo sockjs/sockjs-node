@@ -1,10 +1,7 @@
 FayeWebsocket = require('faye-websocket')
 
 utils = require('./utils')
-
-websocket_hixie76 = require('./trans-websocket-hixie76')
-websocket_hybi10 = require('./trans-websocket-hybi10')
-
+transport = require('./transport')
 
 exports.app =
     websocket: (req, connection, head) ->
@@ -32,7 +29,9 @@ exports.app =
 
             # websockets possess no session_id
         transport.registerNoSession(req, @,
-                                    new WebSocketReceiver(ws, connection))
+                                    new WebSocketReceiver(ws, connection), {
+                                        disconnect_delay: 15
+                                    })
         return true
 
     websocket_get: (req, rep) ->
@@ -51,14 +50,6 @@ class WebSocketReceiver extends transport.ConnectionReceiver
             connection.setNoDelay(true)
         catch x
         super @ws
-
-    setUp: ->
-        @ws.addListener('close', @thingy_end_cb)
-        super
-
-    tearDown: ->
-        @ws.removeListener('close', @thingy_end_cb)
-        super
 
     didMessage: (message) ->
         if @session and message.length > 0

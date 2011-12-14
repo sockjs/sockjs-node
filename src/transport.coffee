@@ -50,9 +50,10 @@ SockJSConnection.prototype.__defineGetter__ 'writable', ->
 MAP = {}
 
 class Session
-    constructor: (@session_id, server) ->
+    constructor: (@session_id, server, opt) ->
+        opt = opt || {}
         @heartbeat_delay = server.options.heartbeat_delay
-        @disconnect_delay = server.options.disconnect_delay
+        @disconnect_delay = opt.disconnect_delay || server.options.disconnect_delay
         @prefix = server.options.prefix
         @send_buffer = []
         @is_closing = false
@@ -188,17 +189,17 @@ class Session
 Session.bySessionId = (session_id) ->
     return MAP[session_id] or null
 
-register = (req, server, session_id, receiver) ->
+register = (req, server, session_id, receiver, opt) ->
     session = Session.bySessionId(session_id)
     if not session
-        session = new Session(session_id, server)
+        session = new Session(session_id, server, opt)
     session.register(req, receiver)
     return session
 
 exports.register = (req, server, receiver) ->
     register(req, server, req.session, receiver)
-exports.registerNoSession = (req, server, receiver) ->
-    register(req, server, undefined, receiver)
+exports.registerNoSession = (req, server, receiver, opt) ->
+    register(req, server, undefined, receiver, opt)
 
 
 
@@ -208,10 +209,16 @@ class GenericReceiver
 
     setUp: ->
         @thingy_end_cb = () => @didClose(1006, "Connection closed")
-        @thingy.addListener('end', @thingy_end_cb)
+        if typeof @thingy.addEventListener is 'function'
+            @thingy.addEventListener('close', @thingy_end_cb)
+        else
+            @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
-        @thingy.removeListener('end', @thingy_end_cb)
+        if typeof @thingy.removeEventListener is 'function'
+            @thingy.removeEventListener('close', @thingy_end_cb)
+        else
+            @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
 
     didClose: (status, reason) ->
@@ -225,6 +232,31 @@ class GenericReceiver
         q_msgs = for m in messages
                 utils.quote(m)
         @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
+
+
+# Write stuff directly to connection.
+class ConnectionReceiver extends GenericReceiver
+    constructor: (@connection) ->
+        try
+            @connection.setKeepAlive(true, 5000)
+        catch x
+        super @connection
+
+    doSendFrame: (payload, encoding='utf-8') ->
+        if not @connection
+            return false
+        try
+            @connection.write(payload, encoding)
+            return true
+        catch e
+        return false
+
+    didClose: ->
+        super
+        try
+            @connection.end()
+        catch x
+        @connection = null
 
 
 # Write stuff to response, using chunked encoding if possible.
@@ -261,4 +293,5 @@ class ResponseReceiver extends GenericReceiver
 
 exports.Transport = Transport
 exports.Session = Session
+exports.ConnectionReceiver = ConnectionReceiver
 exports.ResponseReceiver = ResponseReceiver
