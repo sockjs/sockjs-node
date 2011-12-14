@@ -344,7 +344,7 @@ on port 8081):
 To run it run something like:
 
     cd sockjs-protocol
-    make
+    make test_deps
     ./venv/bin/python sockjs-protocol-0.1.py
 
 For details see
