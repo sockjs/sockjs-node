@@ -1,10 +1,7 @@
 FayeWebsocket = require('faye-websocket')
 
 utils = require('./utils')
-
-websocket_hixie76 = require('./trans-websocket-hixie76')
-websocket_hybi10 = require('./trans-websocket-hybi10')
-
+transport = require('./transport')
 
 exports.app =
     websocket: (req, connection, head) ->
@@ -53,11 +50,11 @@ class WebSocketReceiver extends transport.ConnectionReceiver
         super @ws
 
     setUp: ->
-        @ws.addListener('close', @thingy_end_cb)
+        @ws.addEventListener('close', @thingy_end_cb)
         super
 
     tearDown: ->
-        @ws.removeListener('close', @thingy_end_cb)
+        @ws.removeEventListener('close', @thingy_end_cb)
         super
 
     didMessage: (message) ->

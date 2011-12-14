@@ -208,10 +208,16 @@ class GenericReceiver
 
     setUp: ->
         @thingy_end_cb = () => @didClose(1006, "Connection closed")
-        @thingy.addListener('end', @thingy_end_cb)
+        if typeof @thingy.addEventListener is 'function'
+            @thingy.addEventListener('end', @thingy_end_cb)
+        else
+            @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
-        @thingy.removeListener('end', @thingy_end_cb)
+        if typeof @thingy.removeEventListener is 'function'
+            @thingy.removeEventListener('end', @thingy_end_cb)
+        else
+            @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
 
     didClose: (status, reason) ->
@@ -225,6 +231,31 @@ class GenericReceiver
         q_msgs = for m in messages
                 utils.quote(m)
         @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
+
+
+# Write stuff directly to connection.
+class ConnectionReceiver extends GenericReceiver
+    constructor: (@connection) ->
+        try
+            @connection.setKeepAlive(true, 5000)
+        catch x
+        super @connection
+
+    doSendFrame: (payload, encoding='utf-8') ->
+        if not @connection
+            return false
+        try
+            @connection.write(payload, encoding)
+            return true
+        catch e
+        return false
+
+    didClose: ->
+        super
+        try
+            @connection.end()
+        catch x
+        @connection = null
 
 
 # Write stuff to response, using chunked encoding if possible.
@@ -261,4 +292,5 @@ class ResponseReceiver extends GenericReceiver
 
 exports.Transport = Transport
 exports.Session = Session
+exports.ConnectionReceiver = ConnectionReceiver
 exports.ResponseReceiver = ResponseReceiver
