@@ -1,9 +1,7 @@
 FayeWebsocket = require('faye-websocket')
 
 utils = require('./utils')
-
-websocket_hixie76 = require('./trans-websocket-hixie76')
-websocket_hybi10 = require('./trans-websocket-hybi10')
+transport = require('./transport')
 
 
 exports.app =
@@ -30,7 +28,7 @@ exports.app =
 
         ws = new FayeWebsocket(req, connection, head)
 
-            # websockets possess no session_id
+        # websockets possess no session_id
         transport.registerNoSession(req, @,
                                     new WebSocketReceiver(ws, connection))
         return true
@@ -42,26 +40,31 @@ exports.app =
             message: 'Can "Upgrade" only to "WebSocket".'
         }
 
-class WebSocketReceiver extends transport.ConnectionReceiver
+class WebSocketReceiver extends transport.GenericReceiver
     protocol: "websocket"
 
-    constructor: (@ws, connection) ->
+    constructor: (@ws, @connection) ->
         try
-            connection.setKeepAlive(true, 5000)
-            connection.setNoDelay(true)
+            @connection.setKeepAlive(true, 5000)
+            @connection.setNoDelay(true)
         catch x
-        super @ws
+        @ws.addEventListener('message', (m) => @didMessage(m.data))
+        super @connection
 
     setUp: ->
-        @ws.addListener('close', @thingy_end_cb)
         super
+        @ws.addEventListener('close', @thingy_end_cb)
 
     tearDown: ->
-        @ws.removeListener('close', @thingy_end_cb)
+        @ws.removeEventListener('close', @thingy_end_cb)
         super
 
-    didMessage: (message) ->
-        if @session and message.length > 0
+    didMessage: (payload) ->
+        if @ws and @session and payload.length > 0
+            try
+                message = JSON.parse(payload)
+            catch x
+                return @didClose(1002, 'Broken framing.')
             @session.didMessage(message)
 
     doSendFrame: (payload) ->
@@ -78,3 +81,4 @@ class WebSocketReceiver extends transport.ConnectionReceiver
             @ws.close()
         catch x
         @ws = null
+        @connection = null

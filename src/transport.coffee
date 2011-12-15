@@ -259,6 +259,7 @@ class ResponseReceiver extends GenericReceiver
         @response = null
 
 
+exports.GenericReceiver = GenericReceiver
 exports.Transport = Transport
 exports.Session = Session
 exports.ResponseReceiver = ResponseReceiver
