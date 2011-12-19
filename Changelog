@@ -4,8 +4,8 @@ dev
  * #36, #3 - Replace a custom WebSocket server implementation
    with faye-websocket-node.
  * The test server got moved from SockJS-client to SockJS-node.
- 
- 
+
+
 0.1.2
 =====
 
@@ -19,7 +19,7 @@ dev
  * #32 Expose various request headers on connection.
  * #30 Expose request path on connection.
 
-	
+
 0.1.0
 =====
 
@@ -69,7 +69,7 @@ dev
 0.0.2
 =====
 
- * By default set JSESSIONID cookie, useful for load balancing. 
+ * By default set JSESSIONID cookie, useful for load balancing.
 
 
 0.0.1
