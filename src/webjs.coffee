@@ -28,12 +28,13 @@ execute_request = (app, funs, req, res, data) ->
 fake_response = (req, res) ->
         # TODO: this is quite obviously wrong.
         headers = []
-        res.writeHead = (status, user_headers, content) ->
+        res.writeHead = (status, user_headers={}, content) ->
             r = []
             r.push('HTTP/' + req.httpVersion + ' ' + status +
                    ' ' + http.STATUS_CODES[status])
-            if user_headers and user_headers.length > 0
-                r = r.concat(user_headers)
+            if Object.keys(user_headers).length > 0
+                for k of user_headers
+                    r = r.concat(k + ': ' +user_headers[k])
             if headers and headers.length > 0
                 r = r.concat(headers)
             r = r.concat(['', ''])
