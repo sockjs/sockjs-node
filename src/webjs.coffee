@@ -26,17 +26,15 @@ execute_request = (app, funs, req, res, data) ->
 
 
 fake_response = (req, res) ->
-        # TODO: this is quite obviously wrong.
-        headers = []
-        res.writeHead = (status, user_headers={}, content) ->
+        # This is quite simplistic, don't expect much.
+        headers = {}
+        res.writeHead = (status, user_headers = {}, content) ->
             r = []
             r.push('HTTP/' + req.httpVersion + ' ' + status +
                    ' ' + http.STATUS_CODES[status])
-            if Object.keys(user_headers).length > 0
-                for k of user_headers
-                    r = r.concat(k + ': ' +user_headers[k])
-            if headers and headers.length > 0
-                r = r.concat(headers)
+            utils.objectExtend(headers, user_headers)
+            for k of headers
+                r = r.concat(k + ': ' + headers[k])
             r = r.concat(['', ''])
             if content
                 r.push(content)
@@ -44,7 +42,7 @@ fake_response = (req, res) ->
                 res.write(r.join('\r\n'))
             catch e
                 null
-        res.setHeader = (k, v) -> headers.push(k+': '+v)
+        res.setHeader = (k, v) -> headers[k] = v
 
 
 exports.generateHandler = (app, dispatcher) ->
