@@ -45,7 +45,7 @@ exports.app =
             jsonp.didMessage(message)
 
         # FF assumes that the response is XML.
-        res.setHeader('Content-Type', 'text/plain')
+        res.setHeader('Content-Type', 'text/plain; charset=UTF-8')
         res.writeHead(204)
         res.end()
         return true
