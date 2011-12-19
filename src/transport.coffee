@@ -69,12 +69,14 @@ class Session
     register: (req, recv) ->
         if @recv
             recv.doSendFrame(closeFrame(2010, "Another connection still open"))
+            recv.didClose()
             return
         if @to_tref
             clearTimeout(@to_tref)
             @to_tref = null
         if @readyState is Transport.CLOSING
             recv.doSendFrame(@close_frame)
+            recv.didClose()
             @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
             return
         # Registering. From now on 'unregister' is responsible for
@@ -179,6 +181,7 @@ class Session
         if @recv
             # Go away.
             @recv.doSendFrame(@close_frame)
+            @recv.didClose()
             if @recv
                 @unregister()
         return true
