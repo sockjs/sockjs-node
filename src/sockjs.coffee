@@ -73,6 +73,7 @@ generate_dispatcher = (options) ->
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['OPTIONS', p('/chunking_test'), opts_filters],
             ['POST',    p('/chunking_test'), ['xhr_cors', 'expect_xhr', 'chunking_test']],
+            ['GET',     p('/websocket'),   ['raw_websocket']],
             ['GET',     t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
             ['POST',    t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
             ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
@@ -92,7 +93,7 @@ generate_dispatcher = (options) ->
                     [method, url, ['cache_for', 'disabled_transport']]
             dispatcher = dispatcher.concat(urls)
         maybe_add_transport('websocket',[
-                ['GET', t('/websocket'), ['websocket']]])
+                ['GET', t('/websocket'), ['sockjs_websocket']]])
 
 class Listener
     constructor: (@options, emit) ->

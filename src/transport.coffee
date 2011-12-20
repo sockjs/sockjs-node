@@ -266,3 +266,4 @@ exports.GenericReceiver = GenericReceiver
 exports.Transport = Transport
 exports.Session = Session
 exports.ResponseReceiver = ResponseReceiver
+exports.SockJSConnection = SockJSConnection
