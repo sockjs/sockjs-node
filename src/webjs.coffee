@@ -28,16 +28,14 @@ execute_request = (app, funs, req, res, data) ->
 fake_response = (req, res) ->
         # This is quite simplistic, don't expect much.
         headers = {}
-        res.writeHead = (status, user_headers = {}, content) ->
+        res.writeHead = (status, user_headers = {}) ->
             r = []
             r.push('HTTP/' + req.httpVersion + ' ' + status +
                    ' ' + http.STATUS_CODES[status])
             utils.objectExtend(headers, user_headers)
             for k of headers
-                r = r.concat(k + ': ' + headers[k])
+                r.push(k + ': ' + headers[k])
             r = r.concat(['', ''])
-            if content
-                r.push(content)
             try
                 res.write(r.join('\r\n'))
             catch e
