@@ -22,3 +22,12 @@ exports.app =
             [3125, => write('h'); res.end()],
         ])
         return true
+
+    info: (req, res, _) ->
+        info = {
+            websocket: @options.disabled_transports.indexOf('websocket') is -1,
+            origins: @options.origins,
+        }
+        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
+        res.writeHead(200)
+        res.end(JSON.stringify(info))
