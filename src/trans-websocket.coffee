@@ -37,7 +37,7 @@ exports.app =
     raw_websocket: (req, connection, head) ->
         @_websocket_check(req, connection, head)
         ver = req.headers['sec-websocket-version'] or ''
-        if ver isnt '8'
+        if ['8', '13'].indexOf(ver) is -1
             throw {
                 status: 400
                 message: 'Only supported WebSocket protocol is RFC 6455.'
