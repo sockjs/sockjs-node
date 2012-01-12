@@ -28,6 +28,6 @@ exports.app =
             websocket: @options.disabled_transports.indexOf('websocket') is -1,
             origins: @options.origins,
         }
-        res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
+        res.setHeader('Content-Type', 'application/json; charset=UTF-8')
         res.writeHead(200)
         res.end(JSON.stringify(info))
