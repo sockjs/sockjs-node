@@ -1,6 +1,7 @@
 utils = require('./utils')
 
 exports.app =
+    # TODO: remove in next major release
     chunking_test: (req, res, _, next_filter) ->
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
@@ -27,7 +28,14 @@ exports.app =
         info = {
             websocket: @options.disabled_transports.indexOf('websocket') is -1,
             origins: @options.origins,
+            cookie_needed: not not @options.jsessionid,
         }
         res.setHeader('Content-Type', 'application/json; charset=UTF-8')
         res.writeHead(200)
         res.end(JSON.stringify(info))
+
+    info_options: (req, res) ->
+        res.statusCode = 204
+        res.setHeader('Allow-Control-Allow-Methods', 'OPTIONS, GET')
+        res.setHeader('Access-Control-Max-Age', res.cache_for)
+        return ''
