@@ -196,7 +196,7 @@ exports.GenericApp = class GenericApp
         req.on 'end', =>
             data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
-                when 'text/plain', 'T', 'application/json', 'application/xml', ''
+                when 'text/plain', 'T', 'application/json', 'application/xml', '', 'text/xml'
                     q = data
                 else
                     @log('error', 'Unsupported content-type ' +
