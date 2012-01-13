@@ -3,6 +3,7 @@ var sockjs = require('sockjs');
 exports.install = function(opts, server) {
     // Some QUnit tests require `response_limit` of 4096.
     opts.response_limit = 4096;
+    opts.jsessionid = true;
 
     var sjs_echo = sockjs.createServer(opts);
     sjs_echo.on('connection', function(conn) {
