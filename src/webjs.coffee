@@ -172,9 +172,9 @@ exports.GenericApp = class GenericApp
 
     expect_form: (req, res, _data, next_filter) ->
         data = new Buffer(0)
-        req.on 'data', (d) ->
+        req.on 'data', (d) =>
             data = utils.buffer_concat(data, new Buffer(d, 'binary'))
-        req.on 'end', ->
+        req.on 'end', =>
             data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
                 when 'application/x-www-form-urlencoded'
@@ -191,16 +191,16 @@ exports.GenericApp = class GenericApp
 
     expect_xhr: (req, res, _data, next_filter) ->
         data = new Buffer(0)
-        req.on 'data', (d) ->
+        req.on 'data', (d) =>
             data = utils.buffer_concat(data, new Buffer(d, 'binary'))
-        req.on 'end', ->
+        req.on 'end', =>
             data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
                 when 'text/plain', 'T', 'application/json', 'application/xml', ''
                     q = data
                 else
-                    @log(error, "Unsupported content-type " +
-                                req.headers['content-type'])
+                    @log('error', 'Unsupported content-type ' +
+                                  req.headers['content-type'])
                     q = undefined
             next_filter(q)
         throw {status:0}
