@@ -15,7 +15,7 @@ class XhrPollingReceiver extends XhrStreamingReceiver
 exports.app =
     xhr_options: (req, res) ->
         res.statusCode = 204    # No content
-        res.setHeader('Allow', 'OPTIONS, POST')
+        res.setHeader('Allow-Control-Allow-Methods', 'OPTIONS, POST')
         res.setHeader('Access-Control-Max-Age', res.cache_for)
         return ''
 
@@ -45,7 +45,7 @@ exports.app =
             jsonp.didMessage(message)
 
         # FF assumes that the response is XML.
-        res.setHeader('Content-Type', 'text/plain')
+        res.setHeader('Content-Type', 'text/plain; charset=UTF-8')
         res.writeHead(204)
         res.end()
         return true

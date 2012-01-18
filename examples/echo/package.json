@@ -1,6 +1,6 @@
 {
         "name": "sockjs-echo",
-        "version": "0.0.0",
+        "version": "0.0.0-unreleasable",
         "dependencies": {
                 "node-static": "*",
                 "sockjs": "*"

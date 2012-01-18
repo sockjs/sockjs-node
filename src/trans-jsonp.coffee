@@ -66,6 +66,7 @@ exports.app =
             jsonp.didMessage(message)
 
         res.setHeader('Content-Length', '2')
+        res.setHeader('Content-Type', 'text/plain; charset=UTF-8')
         res.writeHead(200)
         res.end('ok')
         return true

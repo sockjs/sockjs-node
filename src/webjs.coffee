@@ -26,24 +26,21 @@ execute_request = (app, funs, req, res, data) ->
 
 
 fake_response = (req, res) ->
-        # TODO: this is quite obviously wrong.
-        headers = []
-        res.writeHead = (status, user_headers, content) ->
+        # This is quite simplistic, don't expect much.
+        headers = {}
+        res.writeHead = (status, user_headers = {}) ->
             r = []
             r.push('HTTP/' + req.httpVersion + ' ' + status +
                    ' ' + http.STATUS_CODES[status])
-            if user_headers and user_headers.length > 0
-                r = r.concat(user_headers)
-            if headers and headers.length > 0
-                r = r.concat(headers)
+            utils.objectExtend(headers, user_headers)
+            for k of headers
+                r.push(k + ': ' + headers[k])
             r = r.concat(['', ''])
-            if content
-                r.push(content)
             try
                 res.write(r.join('\r\n'))
             catch e
                 null
-        res.setHeader = (k, v) -> headers.push(k+': '+v)
+        res.setHeader = (k, v) -> headers[k] = v
 
 
 exports.generateHandler = (app, dispatcher) ->
@@ -175,9 +172,9 @@ exports.GenericApp = class GenericApp
 
     expect_form: (req, res, _data, next_filter) ->
         data = new Buffer(0)
-        req.on 'data', (d) ->
+        req.on 'data', (d) =>
             data = utils.buffer_concat(data, new Buffer(d, 'binary'))
-        req.on 'end', ->
+        req.on 'end', =>
             data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
                 when 'application/x-www-form-urlencoded'
@@ -194,16 +191,16 @@ exports.GenericApp = class GenericApp
 
     expect_xhr: (req, res, _data, next_filter) ->
         data = new Buffer(0)
-        req.on 'data', (d) ->
+        req.on 'data', (d) =>
             data = utils.buffer_concat(data, new Buffer(d, 'binary'))
-        req.on 'end', ->
+        req.on 'end', =>
             data = data.toString('utf-8')
             switch (req.headers['content-type'] or '').split(';')[0]
-                when 'text/plain', 'T', 'application/json', 'application/xml', ''
+                when 'text/plain', 'T', 'application/json', 'application/xml', '', 'text/xml'
                     q = data
                 else
-                    @log(error, "Unsupported content-type " +
-                                req.headers['content-type'])
+                    @log('error', 'Unsupported content-type ' +
+                                  req.headers['content-type'])
                     q = undefined
             next_filter(q)
         throw {status:0}

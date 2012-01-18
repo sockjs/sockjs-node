@@ -5,7 +5,9 @@
         "repository": {"type": "git",
                        "url": "https://github.com/sockjs/sockjs-node.git"},
         "dependencies": {
-                "node-uuid": "1.2.0"
+                "node-uuid": "1.2.0",
+                "faye-websocket": "0.3.x",
+                "rbytes": "0.0.2"
         },
         "devDependencies": {
                 "coffee-script": "1.1.1"

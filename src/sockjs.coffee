@@ -67,32 +67,37 @@ utils.objectExtend(App.prototype, trans_htmlfile.app)
 generate_dispatcher = (options) ->
         p = (s) => new RegExp('^' + options.prefix + s + '[/]?$')
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
-        opts_filters = ['h_sid', 'xhr_cors', 'cache_for', 'xhr_options', 'expose']
+        opts_filters = (options_filter='xhr_options') ->
+            return ['h_sid', 'xhr_cors', 'cache_for', options_filter, 'expose']
         dispatcher = [
             ['GET', p(''), ['welcome_screen']],
             ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
-            ['OPTIONS', p('/chunking_test'), opts_filters],
+            ['OPTIONS', p('/info'), opts_filters('info_options')],
+            ['GET', p('/info'), ['xhr_cors', 'h_no_cache', 'info', 'expose']],
+            ['OPTIONS', p('/chunking_test'), opts_filters()],
             ['POST',    p('/chunking_test'), ['xhr_cors', 'expect_xhr', 'chunking_test']],
+            ['GET',     p('/websocket'),   ['raw_websocket']],
             ['GET',     t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
             ['POST',    t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
             ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
-            ['OPTIONS', t('/xhr'), opts_filters],
+            ['OPTIONS', t('/xhr'), opts_filters()],
             ['POST',    t('/xhr_send'), ['h_sid', 'xhr_cors', 'expect_xhr', 'xhr_send']],
-            ['OPTIONS', t('/xhr_send'), opts_filters],
+            ['OPTIONS', t('/xhr_send'), opts_filters()],
             ['POST',    t('/xhr_streaming'), ['h_sid', 'xhr_cors', 'xhr_streaming']],
-            ['OPTIONS', t('/xhr_streaming'), opts_filters],
+            ['OPTIONS', t('/xhr_streaming'), opts_filters()],
             ['GET',     t('/eventsource'), ['h_sid', 'h_no_cache', 'eventsource']],
             ['GET',     t('/htmlfile'),    ['h_sid', 'h_no_cache', 'htmlfile']],
         ]
-        maybe_add_transport = (name, urls) =>
-            if options.disabled_transports.indexOf(name) isnt -1
-                # modify urls to return 404
-                urls = for url in urls
-                    [method, url, filters] = url
-                    [method, url, ['cache_for', 'disabled_transport']]
-            dispatcher = dispatcher.concat(urls)
-        maybe_add_transport('websocket',[
-                ['GET', t('/websocket'), ['websocket']]])
+
+        # TODO: remove this code on next major release
+        if options.websocket
+            dispatcher.push(
+                ['GET', t('/websocket'), ['sockjs_websocket']])
+        else
+            # modify urls to return 404
+            dispatcher.push(
+                ['GET', t('/websocket'), ['cache_for', 'disabled_transport']])
+        return dispatcher
 
 class Listener
     constructor: (@options, emit) ->
@@ -122,7 +127,7 @@ class Server extends events.EventEmitter
             prefix: ''
             response_limit: 128*1024
             origins: ['*:*']
-            disabled_transports: []
+            websocket: true
             jsessionid: true
             heartbeat_delay: 25000
             disconnect_delay: 5000
@@ -149,44 +154,3 @@ exports.listen = (http_server, options) ->
     if http_server
         srv.installHandlers(http_server)
     return srv
-
-
-
-
-class DeprecatedConnectionWrapper extends events.EventEmitter
-    constructor: (@conn) ->
-        @id = @conn.id
-        @conn.on 'data', (message) =>
-            @emit('message', {data:message})
-        @conn.on 'close', () =>
-            e =
-                status: 1001
-                reason: 'Session timed out'
-                wasClean: false
-            @emit('close', e)
-
-    send: (m) ->
-        @conn.write(m)
-
-    close: (a, b) ->
-        @conn.close(a, b)
-
-    toString: () ->
-        @conn.toString()
-
-DeprecatedConnectionWrapper.prototype.__defineGetter__ 'readyState', ->
-    if @conn.readable then 1 else 3
-
-
-class DeprecatedServerWrapper extends events.EventEmitter
-    constructor: (options) ->
-        @srv = new Server(options)
-
-    installHandlers: (http_server, handler_options) ->
-        @srv.options.log('info', 'You\'re using deprecated API, shame on you.')
-        @srv.on 'connection', (conn) =>
-            wrapped_conn = new DeprecatedConnectionWrapper(conn)
-            @emit('open', wrapped_conn)
-        @srv.installHandlers(http_server, handler_options)
-
-exports.Server = DeprecatedServerWrapper

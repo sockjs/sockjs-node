@@ -69,12 +69,14 @@ class Session
     register: (req, recv) ->
         if @recv
             recv.doSendFrame(closeFrame(2010, "Another connection still open"))
+            recv.didClose()
             return
         if @to_tref
             clearTimeout(@to_tref)
             @to_tref = null
         if @readyState is Transport.CLOSING
             recv.doSendFrame(@close_frame)
+            recv.didClose()
             @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
             return
         # Registering. From now on 'unregister' is responsible for
@@ -141,6 +143,9 @@ class Session
         return
 
     didTimeout: ->
+        if @to_tref
+            clearTimeout(@to_tref)
+            @to_tref = null
         if @readyState isnt Transport.CONNECTING and
            @readyState isnt Transport.OPEN and
            @readyState isnt Transport.CLOSING
@@ -179,6 +184,7 @@ class Session
         if @recv
             # Go away.
             @recv.doSendFrame(@close_frame)
+            @recv.didClose()
             if @recv
                 @unregister()
         return true
@@ -207,12 +213,18 @@ class GenericReceiver
         @setUp(@thingy)
 
     setUp: ->
-        @thingy_end_cb = () => @didClose(1006, "Connection closed")
+        @thingy_end_cb = () => @didAbort(1006, "Connection closed")
         @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
         @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
+
+    didAbort: (status, reason) ->
+        session = @session
+        @didClose(status, reason)
+        if session
+            session.didTimeout()
 
     didClose: (status, reason) ->
         if @thingy
@@ -225,31 +237,6 @@ class GenericReceiver
         q_msgs = for m in messages
                 utils.quote(m)
         @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
-
-
-# Write stuff directly to connection.
-class ConnectionReceiver extends GenericReceiver
-    constructor: (@connection) ->
-        try
-            @connection.setKeepAlive(true, 5000)
-        catch x
-        super @connection
-
-    doSendFrame: (payload, encoding='utf-8') ->
-        if not @connection
-            return false
-        try
-            @connection.write(payload, encoding)
-            return true
-        catch e
-        return false
-
-    didClose: ->
-        super
-        try
-            @connection.end()
-        catch x
-        @connection = null
 
 
 # Write stuff to response, using chunked encoding if possible.
@@ -284,7 +271,8 @@ class ResponseReceiver extends GenericReceiver
         @response = null
 
 
+exports.GenericReceiver = GenericReceiver
 exports.Transport = Transport
 exports.Session = Session
-exports.ConnectionReceiver = ConnectionReceiver
 exports.ResponseReceiver = ResponseReceiver
+exports.SockJSConnection = SockJSConnection
