@@ -102,12 +102,6 @@ Where `options` is a hash which can contain:
    with selected prefix will be handled by SockJS. All other requests
    will be passed through, to previously registered handlers.</dd>
 
-<dt>disabled_transports (list of strings)</dt>
-<dd>A list of streaming transports that should not be handled by the
-   server. This may be useful when it's known that the server stands
-   behind a load balancer which doesn't like some streaming transports, for
-   example websockets. The only valid transport currently is: 'websocket'.</dd>
-
 <dt>response_limit (integer)</dt>
 <dd>Most streaming transports save responses on the client side and
    don't free memory used by delivered messages. Such transports need
@@ -117,6 +111,11 @@ Where `options` is a hash which can contain:
    new request. Setting this value to one effectively disables
    streaming and will make streaming transports to behave like polling
    transports. The default value is 128K.</dd>
+
+<dt>websocket (boolean)</dt>
+<dd>Some load balancers don't support websockets. This option can be used
+   to disable websockets support by the server. By default websockets are
+   enabled.</dd>
 
 <dt>jsessionid (boolean or function)</dt>
 <dd>Some hosting providers enable sticky sessions only to requests that

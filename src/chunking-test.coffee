@@ -26,7 +26,7 @@ exports.app =
 
     info: (req, res, _) ->
         info = {
-            websocket: @options.disabled_transports.indexOf('websocket') is -1,
+            websocket: @options.websocket,
             origins: @options.origins,
             cookie_needed: not not @options.jsessionid,
             entropy: utils.random32(),

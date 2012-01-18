@@ -89,16 +89,15 @@ generate_dispatcher = (options) ->
             ['GET',     t('/htmlfile'),    ['h_sid', 'h_no_cache', 'htmlfile']],
         ]
 
-        # TODO: remove this code in next major release
-        maybe_add_transport = (name, urls) =>
-            if options.disabled_transports.indexOf(name) isnt -1
-                # modify urls to return 404
-                urls = for url in urls
-                    [method, url, filters] = url
-                    [method, url, ['cache_for', 'disabled_transport']]
-            dispatcher = dispatcher.concat(urls)
-        maybe_add_transport('websocket',[
-                ['GET', t('/websocket'), ['sockjs_websocket']]])
+        # TODO: remove this code on next major release
+        if options.websocket
+            dispatcher.push(
+                ['GET', t('/websocket'), ['sockjs_websocket']])
+        else
+            # modify urls to return 404
+            dispatcher.push(
+                ['GET', t('/websocket'), ['cache_for', 'disabled_transport']])
+        return dispatcher
 
 class Listener
     constructor: (@options, emit) ->
@@ -128,7 +127,7 @@ class Server extends events.EventEmitter
             prefix: ''
             response_limit: 128*1024
             origins: ['*:*']
-            disabled_transports: []
+            websocket: true
             jsessionid: true
             heartbeat_delay: 25000
             disconnect_delay: 5000
