@@ -2,7 +2,7 @@
 =====
 
  * #36, #3 - Replace a custom WebSocket server implementation
-   with faye-websocket-node.
+   with  faye-websocket-node.
  * Multiple changes to support SockJS-protocol 0.2.
     * The session is now closed on network errors immediately
       (instead of waiting 5 seconds)
