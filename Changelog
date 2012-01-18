@@ -1,5 +1,5 @@
-dev
-===
+0.2.0
+=====
 
  * #36, #3 - Replace a custom WebSocket server implementation
    with faye-websocket-node.
