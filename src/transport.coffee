@@ -223,7 +223,8 @@ class GenericReceiver
     didAbort: (status, reason) ->
         session = @session
         @didClose(status, reason)
-        session.didTimeout()
+        if session
+            session.didTimeout()
 
     didClose: (status, reason) ->
         if @thingy
