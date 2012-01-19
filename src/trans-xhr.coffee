@@ -15,7 +15,7 @@ class XhrPollingReceiver extends XhrStreamingReceiver
 exports.app =
     xhr_options: (req, res) ->
         res.statusCode = 204    # No content
-        res.setHeader('Allow-Control-Allow-Methods', 'OPTIONS, POST')
+        res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, POST')
         res.setHeader('Access-Control-Max-Age', res.cache_for)
         return ''
 

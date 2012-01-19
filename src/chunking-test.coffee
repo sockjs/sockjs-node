@@ -37,6 +37,6 @@ exports.app =
 
     info_options: (req, res) ->
         res.statusCode = 204
-        res.setHeader('Allow-Control-Allow-Methods', 'OPTIONS, GET')
+        res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET')
         res.setHeader('Access-Control-Max-Age', res.cache_for)
         return ''
