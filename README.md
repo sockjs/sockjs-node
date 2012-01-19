@@ -23,7 +23,7 @@ An simplified echo SockJS server could look more or less like:
 var http = require('http');
 var sockjs = require('sockjs');
 
-var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.1.min.js"};
+var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.2.min.js"};
 
 var echo = sockjs.createServer(sockjs_opts);
 echo.on('connection', function(conn) {
@@ -90,7 +90,7 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
-   <a href="http://cdn.sockjs.org/sockjs-0.1.min.js">
+   <a href="http://cdn.sockjs.org/sockjs-0.2.min.js">
    the latest minified SockJS client release</a>, this is the default).
    You must explicitly specify this url on the server side for security
    reasons - we don't want the possibility of running any foreign
@@ -346,7 +346,7 @@ To run it run something like:
 
     cd sockjs-protocol
     make test_deps
-    ./venv/bin/python sockjs-protocol-0.1.py
+    ./venv/bin/python sockjs-protocol-0.2.py
 
 For details see
 [SockJS-protocol README](https://github.com/sockjs/sockjs-protocol#readme).
