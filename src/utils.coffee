@@ -1,5 +1,10 @@
 crypto = require('crypto')
 
+try
+    rbytes = require('rbytes')
+catch x
+    null
+
 exports.array_intersection = array_intersection = (arr_a, arr_b) ->
     r = []
     for a in arr_a
@@ -121,3 +126,14 @@ exports.parseCookie = (cookie_header) ->
             parts = cookie.split('=')
             cookies[ parts[0].trim() ] = ( parts[1] || '' ).trim()
     return cookies
+
+exports.random32 = () ->
+    if rbytes
+        x = rbytes.randomBytes(4)
+        v = [x[0], x[1], x[2], x[3]]
+    else
+        foo = -> Math.floor(Math.random()*256)
+        v = [foo(), foo(), foo(), foo()]
+
+    x =  v[0] + (v[1]*256 ) + (v[2]*256*256) + (v[3]*256*256*256)
+    return x

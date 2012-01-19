@@ -1,9 +1,6 @@
 var sockjs = require('sockjs');
 
 exports.install = function(opts, server) {
-    // Some QUnit tests require `response_limit` of 4096.
-    opts.response_limit = 4096;
-
     var sjs_echo = sockjs.createServer(opts);
     sjs_echo.on('connection', function(conn) {
                     console.log('    [+] echo open    ' + conn);
@@ -75,9 +72,11 @@ exports.install = function(opts, server) {
                 });
 
 
-    sjs_echo.installHandlers(server, {prefix:'[/]echo'});
+    sjs_echo.installHandlers(server, {prefix:'[/]echo',
+                                      response_limit: 4096,
+                                      jsessionid: true});
     sjs_echo.installHandlers(server, {prefix:'[/]disabled_websocket_echo',
-                                      disabled_transports: ['websocket']});
+                                      websocket: false});
     sjs_close.installHandlers(server, {prefix:'[/]close'});
     sjs_ticker.installHandlers(server, {prefix:'[/]ticker'});
     sjs_amplify.installHandlers(server, {prefix:'[/]amplify'});

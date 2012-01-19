@@ -13,7 +13,7 @@ server.addListener('upgrade', function(req, res){
     res.end();
 });
 
-sockjs_app.install(config.sockjs_opts, server);
+sockjs_app.install(config.server_opts, server);
 
 console.log(" [*] Listening on", config.host + ':' + config.port);
 server.listen(config.port, config.host);

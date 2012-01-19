@@ -143,6 +143,9 @@ class Session
         return
 
     didTimeout: ->
+        if @to_tref
+            clearTimeout(@to_tref)
+            @to_tref = null
         if @readyState isnt Transport.CONNECTING and
            @readyState isnt Transport.OPEN and
            @readyState isnt Transport.CLOSING
@@ -210,12 +213,18 @@ class GenericReceiver
         @setUp(@thingy)
 
     setUp: ->
-        @thingy_end_cb = () => @didClose(1006, "Connection closed")
+        @thingy_end_cb = () => @didAbort(1006, "Connection closed")
         @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
         @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
+
+    didAbort: (status, reason) ->
+        session = @session
+        @didClose(status, reason)
+        if session
+            session.didTimeout()
 
     didClose: (status, reason) ->
         if @thingy

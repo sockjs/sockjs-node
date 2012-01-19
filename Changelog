@@ -3,8 +3,15 @@ dev
 
  * #36, #3 - Replace a custom WebSocket server implementation
    with faye-websocket-node.
+ * Multiple changes to support SockJS-protocol 0.2.
+    * The session is now closed on network errors immediately
+      (instead of waiting 5 seconds)
+    * Raw websocket interface available - to make it easier
+      to write command line SockJS clients.
+    * Support '/info' url.
  * The test server got moved from SockJS-client to SockJS-node.
-
+ * Dropped deprecated Server API (use createServer method instead).
+ * Option `websocket` is now used instead of `disabled_transports`.
 
 0.1.2
 =====
