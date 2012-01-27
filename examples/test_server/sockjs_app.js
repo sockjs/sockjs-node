@@ -72,13 +72,13 @@ exports.install = function(opts, server) {
                 });
 
 
-    sjs_echo.installHandlers(server, {prefix:'[/]echo',
+    sjs_echo.installHandlers(server, {prefix:'/echo',
                                       response_limit: 4096,
                                       jsessionid: true});
-    sjs_echo.installHandlers(server, {prefix:'[/]disabled_websocket_echo',
+    sjs_echo.installHandlers(server, {prefix:'/disabled_websocket_echo',
                                       websocket: false});
-    sjs_close.installHandlers(server, {prefix:'[/]close'});
-    sjs_ticker.installHandlers(server, {prefix:'[/]ticker'});
-    sjs_amplify.installHandlers(server, {prefix:'[/]amplify'});
-    sjs_broadcast.installHandlers(server, {prefix:'[/]broadcast'});
+    sjs_close.installHandlers(server, {prefix:'/close'});
+    sjs_ticker.installHandlers(server, {prefix:'/ticker'});
+    sjs_amplify.installHandlers(server, {prefix:'/amplify'});
+    sjs_broadcast.installHandlers(server, {prefix:'/broadcast'});
 };
