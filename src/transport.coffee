@@ -115,13 +115,9 @@ class Session
         @connection.pathname = req.pathname
 
         headers = {}
-        parseUrl = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?$/
-        if req.headers.host && req.headers.origin && req.headers.host.replace(parseUrl, '$3') is req.headers.origin.replace(parseUrl, '$3')
-            headers = req.headers
-        else
-            for key in ['origin', 'referer', 'x-client-ip', 'x-forwarded-for', \
-                        'x-cluster-client-ip']
-                headers[key] = req.headers[key] if req.headers[key]
+        for key in ['origin', 'referer', 'x-client-ip', 'x-forwarded-for', \
+                    'x-cluster-client-ip']
+            headers[key] = req.headers[key] if req.headers[key]
         if headers
             @connection.headers = headers
 
