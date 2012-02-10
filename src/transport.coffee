@@ -115,7 +115,7 @@ class Session
         @connection.pathname = req.pathname
 
         headers = {}
-        for key in ['origin', 'referer', 'x-client-ip', 'x-forwarded-for', \
+        for key in ['referer', 'x-client-ip', 'x-forwarded-for', \
                     'x-cluster-client-ip']
             headers[key] = req.headers[key] if req.headers[key]
         if headers
