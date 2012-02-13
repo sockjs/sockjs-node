@@ -49,8 +49,7 @@ VER:=$(shell ./VERSION-GEN)
 
 .PHONY: tag
 tag: all
-	-git tag -d v$(RVER)
 	git commit $(TAG_OPTS) package.json Changelog -m "Release $(RVER)"
-	git tag -a v$(RVER) -m "Release $(RVER)"
+	git tag -s v$(RVER) -m "Release $(RVER)"
 	@echo ' [*] Now run'
 	@echo 'git push; git push --tag'
