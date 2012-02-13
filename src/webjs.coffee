@@ -179,7 +179,6 @@ exports.GenericApp = class GenericApp
             switch (req.headers['content-type'] or '').split(';')[0]
                 when 'application/x-www-form-urlencoded'
                     q = querystring.parse(data)
-                    break
                 when 'text/plain', ''
                     q = data
                 else
