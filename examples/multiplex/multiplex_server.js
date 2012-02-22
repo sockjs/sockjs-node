@@ -4,77 +4,71 @@ var stream = require('stream');
 
 exports.MultiplexServer = MultiplexServer = function(service) {
     var that = this;
-    this.namespaces = {};
+    this.registered_channels = {};
     this.service = service;
     this.service.on('connection', function(conn) {
-        var subscriptions = {};
+        var channels = {};
 
         conn.on('data', function(message) {
             var t = message.split(',', 3);
             var type = t[0], topic = t[1],  payload = t[2];
-            if (!(topic in that.namespaces)) {
+            if (!(topic in that.registered_channels)) {
                 return;
             }
             switch(type) {
             case 'sub':
-                var sub = subscriptions[topic] = new Subscription(conn, topic,
-                                                                  subscriptions);
-                that.namespaces[topic].emit('connection', sub)
+                var sub = channels[topic] = new Channel(conn, topic,
+                                                                  channels);
+                that.registered_channels[topic].emit('connection', sub)
                 break;
             case 'uns':
-                if (topic in subscriptions) {
-                    delete subscriptions[topic];
-                    subscriptions[topic].emit('close');
+                if (topic in channels) {
+                    delete channels[topic];
+                    channels[topic].emit('close');
                 }
                 break;
             case 'msg':
-                if (topic in subscriptions) {
-                    subscriptions[topic].emit('data', payload);
+                if (topic in channels) {
+                    channels[topic].emit('data', payload);
                 }
                 break;
             }
         });
         conn.on('close', function() {
-            for (topic in subscriptions) {
-                subscriptions[topic].emit('close');
+            for (topic in channels) {
+                channels[topic].emit('close');
             }
-            subscriptions = {};
+            channels = {};
         });
     });
 };
 
-MultiplexServer.prototype.createNamespace = function(name) {
-    return this.namespaces[escape(name)] = new Namespace();
+MultiplexServer.prototype.registerChannel = function(name) {
+    return this.registered_channels[escape(name)] = new events.EventEmitter();
 };
 
 
-var Namespace = function() {
-    events.EventEmitter.call(this);
-};
-Namespace.prototype = new events.EventEmitter();
-
-
-var Subscription = function(conn, topic, subscriptions) {
+var Channel = function(conn, topic, channels) {
     this.conn = conn;
     this.topic = topic;
-    this.subscriptions = subscriptions;
+    this.channels = channels;
     stream.Stream.call(this);
 };
-Subscription.prototype = new stream.Stream();
+Channel.prototype = new stream.Stream();
 
-Subscription.prototype.write = function(data) {
+Channel.prototype.write = function(data) {
     this.conn.write('msg,' + this.topic + ',' + data);
 };
-Subscription.prototype.end = function(data) {
+Channel.prototype.end = function(data) {
     var that = this;
     if (data) this.write(data);
-    if (this.topic in this.subscriptions) {
+    if (this.topic in this.channels) {
         this.conn.write('uns,' + this.topic);
-        delete this.subscriptions[this.topic];
+        delete this.channels[this.topic];
         process.nextTick(function(){that.emit('close');});
     }
 };
-Subscription.prototype.destroy = Subscription.prototype.destroySoon =
+Channel.prototype.destroy = Channel.prototype.destroySoon =
     function() {
         this.removeAllListeners();
         this.end();

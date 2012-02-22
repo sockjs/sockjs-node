@@ -12,7 +12,7 @@ var service = sockjs.createServer(sockjs_opts);
 // 2. Setup multiplexing
 var multiplexer = new multiplex_server.MultiplexServer(service);
 
-var ann = multiplexer.createNamespace('ann');
+var ann = multiplexer.registerChannel('ann');
 ann.on('connection', function(conn) {
     conn.write('Ann says hi!');
     conn.on('data', function(data) {
@@ -20,7 +20,7 @@ ann.on('connection', function(conn) {
     });
 });
 
-var bob = multiplexer.createNamespace('bob');
+var bob = multiplexer.registerChannel('bob');
 bob.on('connection', function(conn) {
     conn.write('Bob doesn\'t agree.');
     conn.on('data', function(data) {
@@ -28,7 +28,7 @@ bob.on('connection', function(conn) {
     });
 });
 
-var carl = multiplexer.createNamespace('carl');
+var carl = multiplexer.registerChannel('carl');
 carl.on('connection', function(conn) {
     conn.write('Carl says goodbye!');
     // Explicitly cancel connection

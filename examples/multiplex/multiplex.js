@@ -25,18 +25,18 @@ DumbEventTarget.prototype.emit = function(type) {
 var MultiplexedWebSocket = function(ws) {
     var that = this;
     this.ws = ws;
-    this.subscriptions = {};
+    this.channels = {};
     this.ws.addEventListener('message', function(e) {
         var t = e.data.split(',', 3);
-        var type = t[0], topic = t[1],  payload = t[2];
-        if(!(topic in that.subscriptions)) {
+        var type = t[0], name = t[1],  payload = t[2];
+        if(!(name in that.channels)) {
             return;
         }
-        var sub = that.subscriptions[topic];
+        var sub = that.channels[name];
 
         switch(type) {
         case 'uns':
-            delete that.subscriptions[topic];
+            delete that.channels[name];
             sub.emit('close', {});
             break;
         case 'msg':
@@ -45,20 +45,20 @@ var MultiplexedWebSocket = function(ws) {
         }
     });
 };
-MultiplexedWebSocket.prototype.subscribe = function(name) {
-    return this.subscriptions[escape(name)] =
-        new Subscription(this.ws, escape(name), this.subscriptions);
+MultiplexedWebSocket.prototype.channel = function(raw_name) {
+    return this.channels[escape(raw_name)] =
+        new Channel(this.ws, escape(raw_name), this.channels);
 };
 
 
-var Subscription = function(ws, topic, subscriptions) {
+var Channel = function(ws, name, channels) {
     DumbEventTarget.call(this);
     var that = this;
     this.ws = ws;
-    this.topic = topic;
-    this.subscriptions = subscriptions;
+    this.name = name;
+    this.channels = channels;
     var onopen = function() {
-        that.ws.send('sub,' + that.topic);
+        that.ws.send('sub,' + that.name);
         that.emit('open');
     };
     if(ws.readyState > 0) {
@@ -67,14 +67,14 @@ var Subscription = function(ws, topic, subscriptions) {
         this.ws.addEventListener('open', onopen);
     }
 };
-Subscription.prototype = new DumbEventTarget()
+Channel.prototype = new DumbEventTarget()
 
-Subscription.prototype.send = function(data) {
-    this.ws.send('msg,' + this.topic + ',' + data);
+Channel.prototype.send = function(data) {
+    this.ws.send('msg,' + this.name + ',' + data);
 };
-Subscription.prototype.close = function() {
+Channel.prototype.close = function() {
     var that = this;
-    this.ws.send('uns,' + this.topic);
-    delete this.subscriptions[this.topic];
+    this.ws.send('uns,' + this.name);
+    delete this.channels[this.name];
     setTimeout(function(){that.emit('close', {})},0);
 };

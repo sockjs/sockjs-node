@@ -82,10 +82,10 @@
         var sockjs_url = '/echo';
         var sockjs = new SockJS(sockjs_url);
 
-         var ann  = multiplexer.subscribe('ann');
-         var bob  = multiplexer.subscribe('bob');
-         var carl = multiplexer.subscribe('carl');
         var multiplexer = new MultiplexedWebSocket(sockjs);
+        var ann  = multiplexer.channel('ann');
+        var bob  = multiplexer.channel('bob');
+        var carl = multiplexer.channel('carl');
 
         pipe(ann,  '#first');
         pipe(bob,  '#second');
