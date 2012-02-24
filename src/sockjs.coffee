@@ -70,10 +70,10 @@ generate_dispatcher = (options) ->
         opts_filters = (options_filter='xhr_options') ->
             return ['h_sid', 'xhr_cors', 'cache_for', options_filter, 'expose']
         dispatcher = [
-            ['GET', p(''), ['welcome_screen']],
-            ['GET', p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
+            ['GET',     p(''), ['welcome_screen']],
+            ['GET',     p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['OPTIONS', p('/info'), opts_filters('info_options')],
-            ['GET', p('/info'), ['xhr_cors', 'h_no_cache', 'info', 'expose']],
+            ['GET',     p('/info'), ['xhr_cors', 'h_no_cache', 'info', 'expose']],
             ['OPTIONS', p('/chunking_test'), opts_filters()],
             ['POST',    p('/chunking_test'), ['xhr_cors', 'expect_xhr', 'chunking_test']],
             ['GET',     p('/websocket'),   ['raw_websocket']],
