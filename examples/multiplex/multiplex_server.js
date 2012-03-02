@@ -11,27 +11,28 @@ exports.MultiplexServer = MultiplexServer = function(service) {
 
         conn.on('data', function(message) {
             var t = message.split(',', 3);
-            var type = t[0], topic = t[1],  payload = t[2];
+            var type = t[0], topic = t[1], payload = t[2];
             if (!(topic in that.registered_channels)) {
                 return;
             }
-            switch(type) {
-            case 'sub':
-                var sub = channels[topic] = new Channel(conn, topic,
-                                                                  channels);
-                that.registered_channels[topic].emit('connection', sub)
-                break;
-            case 'uns':
-                if (topic in channels) {
+            if (topic in channels) {
+                switch(type) {
+                case 'uns':
                     delete channels[topic];
                     channels[topic].emit('close');
-                }
-                break;
-            case 'msg':
-                if (topic in channels) {
+                    break;
+                case 'msg':
                     channels[topic].emit('data', payload);
+                    break;
                 }
-                break;
+            } else {
+                switch(type) {
+                case 'sub':
+                    var sub = channels[topic] = new Channel(conn, topic,
+                                                            channels);
+                    that.registered_channels[topic].emit('connection', sub)
+                    break;
+                }
             }
         });
         conn.on('close', function() {
