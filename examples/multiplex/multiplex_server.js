@@ -16,13 +16,15 @@ exports.MultiplexServer = MultiplexServer = function(service) {
                 return;
             }
             if (topic in channels) {
+                var sub = that.channels[topic];
+
                 switch(type) {
                 case 'uns':
                     delete channels[topic];
-                    channels[topic].emit('close');
+                    sub.emit('close');
                     break;
                 case 'msg':
-                    channels[topic].emit('data', payload);
+                    sub.emit('data', payload);
                     break;
                 }
             } else {
