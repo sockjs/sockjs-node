@@ -51,7 +51,10 @@ exports.app =
         return true
 
     xhr_cors: (req, res, content) ->
-        origin = req.headers['origin'] or '*'
+        if !req.headers['origin'] or req.headers['origin'] is 'null'
+            origin = '*'
+        else
+            origin = req.headers['origin']
         res.setHeader('Access-Control-Allow-Origin', origin)
         headers = req.headers['access-control-request-headers']
         if headers
