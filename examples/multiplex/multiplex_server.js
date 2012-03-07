@@ -10,13 +10,13 @@ exports.MultiplexServer = MultiplexServer = function(service) {
         var channels = {};
 
         conn.on('data', function(message) {
-            var t = message.split(',', 3);
-            var type = t[0], topic = t[1], payload = t[2];
+            var t = message.split(',');
+            var type = t.shift(), topic = t.shift(),  payload = t.join();
             if (!(topic in that.registered_channels)) {
                 return;
             }
             if (topic in channels) {
-                var sub = that.channels[topic];
+                var sub = channels[topic];
 
                 switch(type) {
                 case 'uns':
