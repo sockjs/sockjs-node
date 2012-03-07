@@ -27,8 +27,8 @@ var MultiplexedWebSocket = function(ws) {
     this.ws = ws;
     this.channels = {};
     this.ws.addEventListener('message', function(e) {
-        var t = e.data.split(',', 3);
-        var type = t[0], name = t[1],  payload = t[2];
+        var t = e.data.split(',');
+        var type = t.shift(), name = t.shift(),  payload = t.join();
         if(!(name in that.channels)) {
             return;
         }
