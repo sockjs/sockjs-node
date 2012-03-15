@@ -136,15 +136,22 @@ class Server extends events.EventEmitter
         if user_options
             utils.objectExtend(@options, user_options)
 
-    installHandlers: (http_server, handler_options) ->
+    listener: (handler_options) ->
         options = utils.objectExtend({}, @options)
         if handler_options
             utils.objectExtend(options, handler_options)
-        h = new Listener(options, => @emit.apply(@, arguments))
-        handler = h.getHandler()
+        return new Listener(options, => @emit.apply(@, arguments))
+
+    installHandlers: (http_server, handler_options) ->
+        handler = @listener(handler_options).getHandler()
         utils.overshadowListeners(http_server, 'request', handler)
         utils.overshadowListeners(http_server, 'upgrade', handler)
         return true
+
+    middleware: (handler_options) ->
+        handler = @listener(handler_options).getHandler()
+        handler.upgrade = handler
+        return handler
 
 exports.createServer = (options) ->
     return new Server(options)
