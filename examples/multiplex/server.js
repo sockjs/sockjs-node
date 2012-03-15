@@ -38,7 +38,7 @@ carl.on('connection', function(conn) {
 
 // 3. Express server
 var app = express.createServer();
-service.installHandlers(app, {prefix:'/echo'});
+service.installHandlers(app, {prefix:'/multiplex'});
 
 console.log(' [*] Listening on 0.0.0.0:9999' );
 app.listen(9999, '0.0.0.0');
