@@ -214,9 +214,11 @@ class GenericReceiver
 
     setUp: ->
         @thingy_end_cb = () => @didAbort(1006, "Connection closed")
+        @thingy.addListener('close', @thingy_end_cb)
         @thingy.addListener('end', @thingy_end_cb)
 
     tearDown: ->
+        @thingy.removeListener('close', @thingy_end_cb)
         @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
 
