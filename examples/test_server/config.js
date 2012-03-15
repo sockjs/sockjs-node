@@ -1,6 +1,6 @@
 exports.config = {
     server_opts: {
-        sockjs_url: 'http://10.20.219.170:8080/lib/sockjs.js',
+        sockjs_url: 'http://localhost:8080/lib/sockjs.js',
         websocket: true
     },
 
