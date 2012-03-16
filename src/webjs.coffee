@@ -27,7 +27,7 @@ execute_request = (app, funs, req, res, data) ->
 
 fake_response = (req, res) ->
         # This is quite simplistic, don't expect much.
-        headers = {}
+        headers = {'Connection': 'close'}
         res.writeHead = (status, user_headers = {}) ->
             r = []
             r.push('HTTP/' + req.httpVersion + ' ' + status +
@@ -38,6 +38,10 @@ fake_response = (req, res) ->
             r = r.concat(['', ''])
             try
                 res.write(r.join('\r\n'))
+            catch e
+                null
+            try
+                res.end()
             catch e
                 null
         res.setHeader = (k, v) -> headers[k] = v
