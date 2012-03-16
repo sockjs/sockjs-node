@@ -1,7 +1,7 @@
-var express          = require('express');
-var multiplex_server = require('./multiplex_server.js');
+var express             = require('express');
+var sockjs              = require('sockjs');
 
-var sockjs = require('sockjs');
+var websocket_multiplex = require('websocket-multiplex');
 
 
 // 1. Setup SockJS server
@@ -10,7 +10,7 @@ var service = sockjs.createServer(sockjs_opts);
 
 
 // 2. Setup multiplexing
-var multiplexer = new multiplex_server.MultiplexServer(service);
+var multiplexer = new websocket_multiplex.MultiplexServer(service);
 
 var ann = multiplexer.registerChannel('ann');
 ann.on('connection', function(conn) {
