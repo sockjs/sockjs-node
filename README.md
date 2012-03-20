@@ -203,7 +203,7 @@ has following methods and properties:
     on that connection. Exposed headers include: `origin`, `referer`
     and `x-forwarded-for` (and friends). We expliclty do not grant
     access to `cookie` header, as using it may easily lead to security
-    issues.</dd>
+    issues (for details read the section "Authorization").</dd>
 
 <dt>Property: url (string)</dt>
 <dd><a href="http://nodejs.org/docs/v0.4.10/api/http.html#request.url">Url</a>
@@ -393,3 +393,26 @@ For details see
 Additionally, if you're doing more serious development consider using
 `make serve`, which will automatically the server when you modify the
 source code.
+
+
+Various issues and design considerations
+----------------------------------------
+
+### Authorization
+
+SockJS-node does not expose cookies to the application. This is done
+deliberatly as using cookie-based authorization with SockJS simply
+doesn't make sense and will lead to security issues.
+
+Cookies are a contract between a browser and a http server, and are
+identified by a domain name. If a browser has a cookie set for
+particular domain, it will pass it as a part of all http requests to
+the host. But to get various transports working, SockJS uses a middleman
+- an iframe hosted from target SockJS domain. That means the server
+will receive requests from the iframe, and not from the real
+domain. The domain of an iframe is the same as the SockJS domain. The
+problem is that any website can embedd the iframe and communicate with
+it - and request establishing SockJS connection. Using cookies for
+authorization in this scenario will result in granting full access to
+SockJS communication with your website from any website. This is a
+classic CSRF attack.
