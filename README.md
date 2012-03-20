@@ -219,6 +219,10 @@ has following methods and properties:
 <dd>Protocol used by the connection. Keep in mind that some protocols
    are indistinguishable - for example "xhr-polling" and "xdr-polling".</dd>
 
+<dt>Property: readyState (integer)</dt>
+<dd>Current state of the connection:
+   0-connecting, 1-open, 2-closing, 3-closed.</dd>
+
 <dt>write(message)</dt>
 <dd>Sends a message over opened connection. A message must be a
   non-empty string. It's illegal to send a message after the connection was

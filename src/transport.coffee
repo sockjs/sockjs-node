@@ -45,6 +45,8 @@ SockJSConnection.prototype.__defineGetter__ 'readable', ->
     @_session.readyState is Transport.OPEN
 SockJSConnection.prototype.__defineGetter__ 'writable', ->
     @_session.readyState is Transport.OPEN
+SockJSConnection.prototype.__defineGetter__ 'readyState', ->
+    @_session.readyState
 
 
 MAP = {}
