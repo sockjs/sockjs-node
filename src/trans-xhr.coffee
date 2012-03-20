@@ -8,7 +8,7 @@ class XhrStreamingReceiver extends transport.ResponseReceiver
         return super(payload + '\n')
 
 class XhrPollingReceiver extends XhrStreamingReceiver
-    protocol: "xhr"
+    protocol: "xhr-polling"
     max_response_size: 1
 
 

@@ -113,6 +113,7 @@ class Session
 
         @connection.url = req.url
         @connection.pathname = req.pathname
+        @connection.protocol = @recv.protocol
 
         headers = {}
         for key in ['referer', 'x-client-ip', 'x-forwarded-for', \

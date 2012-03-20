@@ -215,6 +215,10 @@ has following methods and properties:
 <dt>Property: prefix (string)</dt>
 <dd>Prefix of the url on which the request was handled.</dd>
 
+<dt>Property: protocol (string)</dt>
+<dd>Protocol used by the connection. Keep in mind that some protocols
+   are indistinguishable - for example "xhr-polling" and "xdr-polling".</dd>
+
 <dt>write(message)</dt>
 <dd>Sends a message over opened connection. A message must be a
   non-empty string. It's illegal to send a message after the connection was

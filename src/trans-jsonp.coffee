@@ -1,7 +1,7 @@
 transport = require('./transport')
 
 class JsonpReceiver extends transport.ResponseReceiver
-    protocol: "jsonp"
+    protocol: "jsonp-polling"
     max_response_size: 1
 
     constructor: (res, options, @callback) ->
