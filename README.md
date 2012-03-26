@@ -416,3 +416,8 @@ it - and request establishing SockJS connection. Using cookies for
 authorization in this scenario will result in granting full access to
 SockJS communication with your website from any website. This is a
 classic CSRF attack.
+
+Basically - cookies are not suited for SockJS model. If you want to
+authorize a session - provide a unique token on a page, send it as a
+first thing over SockJS connection and validate it on the server
+side. In essence, this is how cookies work.
