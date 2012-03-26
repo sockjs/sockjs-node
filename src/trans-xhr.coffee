@@ -66,6 +66,9 @@ exports.app =
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
+        req.origin = if @isTrustedOrigin(req.headers.origin) then \
+                       req.headers['x-sockjs-origin']
+
         transport.register(req, @, new XhrPollingReceiver(res, @options))
         return true
 
@@ -76,6 +79,9 @@ exports.app =
         # IE requires 2KB prefix:
         #  http://blogs.msdn.com/b/ieinternals/archive/2010/04/06/comet-streaming-in-internet-explorer-with-xmlhttprequest-and-xdomainrequest.aspx
         res.write(Array(2049).join('h') + '\n')
+
+        req.origin = if @isTrustedOrigin(req.headers.origin) then \
+                       req.headers['x-sockjs-origin']
 
         transport.register(req, @, new XhrStreamingReceiver(res, @options) )
         return true

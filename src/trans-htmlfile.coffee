@@ -43,5 +43,9 @@ exports.app =
         res.writeHead(200)
         res.write(iframe_template.replace(/{{ callback }}/g, callback));
 
+        req.origin = if @isTrustedOrigin(req.headers.origin or \
+                                         'any://' + req.headers.host) then \
+                         req.query.origin
+
         transport.register(req, @, new HtmlFileReceiver(res, @options))
         return true

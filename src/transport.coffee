@@ -121,6 +121,9 @@ class Session
         for key in ['referer', 'x-client-ip', 'x-forwarded-for', \
                     'x-cluster-client-ip', 'via', 'x-real-ip']
             headers[key] = req.headers[key] if req.headers[key]
+        # Origin is much more complex and computed upfront:
+        headers['x-origin'] = req.origin or req.headers.origin or 'null'
+
         if headers
             @connection.headers = headers
 

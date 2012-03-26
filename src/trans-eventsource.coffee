@@ -19,5 +19,9 @@ exports.app =
         # Opera needs one more new line at the start.
         res.write('\r\n')
 
+        req.origin = if @isTrustedOrigin(req.headers.origin or \
+                                         'any://' + req.headers.host) then \
+                         req.query.origin
+
         transport.register(req, @, new EventSourceReceiver(res, @options))
         return true

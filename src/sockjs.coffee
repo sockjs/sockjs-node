@@ -53,6 +53,11 @@ class App extends webjs.GenericApp
     log: (severity, line) ->
         @options.log(severity, line)
 
+    isTrustedOrigin: (url) ->
+        host = url.split('/')[2]
+        r = @options.public_urls.indexOf(host) isnt -1
+        console.log('isTrusted', host, r)
+        return r
 
 utils.objectExtend(App.prototype, iframe.app)
 utils.objectExtend(App.prototype, chunking_test.app)
@@ -127,6 +132,7 @@ class Server extends events.EventEmitter
             prefix: ''
             response_limit: 128*1024
             origins: ['*:*']
+            public_urls: []
             websocket: true
             jsessionid: true
             heartbeat_delay: 25000
