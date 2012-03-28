@@ -73,10 +73,11 @@ exports.install = function(opts, server) {
 
 
     sjs_echo.installHandlers(server, {prefix:'/echo',
-                                      response_limit: 4096,
-                                      jsessionid: true});
+                                      response_limit: 4096}),
     sjs_echo.installHandlers(server, {prefix:'/disabled_websocket_echo',
                                       websocket: false});
+    sjs_echo.installHandlers(server, {prefix:'/cookie_needed_echo',
+                                      jsessionid: true});
     sjs_close.installHandlers(server, {prefix:'/close'});
     sjs_ticker.installHandlers(server, {prefix:'/ticker'});
     sjs_amplify.installHandlers(server, {prefix:'/amplify'});
