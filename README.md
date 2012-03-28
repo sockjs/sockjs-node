@@ -121,7 +121,7 @@ Where `options` is a hash which can contain:
 <dd>Some hosting providers enable sticky sessions only to requests that
   have JSESSIONID cookie set. This setting controls if the server should
   set this cookie to a dummy value. By default setting JSESSIONID cookie
-  is enabled. More sophisticated beaviour can be achieved by supplying
+  is disabled. More sophisticated beaviour can be achieved by supplying
   a function.</dd>
 
 <dt>log (function(severity, message))</dt>

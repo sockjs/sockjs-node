@@ -128,7 +128,7 @@ class Server extends events.EventEmitter
             response_limit: 128*1024
             origins: ['*:*']
             websocket: true
-            jsessionid: true
+            jsessionid: false
             heartbeat_delay: 25000
             disconnect_delay: 5000
             log: (severity, line) -> console.log(line)
