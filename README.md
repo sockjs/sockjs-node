@@ -53,10 +53,9 @@ some QUnit tests and a few smoke tests that are using SockJS-node. At
 the moment they are deployed in few places, just click to see if
 SockJS is working in your browser:
 
- * http://sockjs.popcnt.org/ (hosted in Europe)
+ * http://sockjs.popcnt.org/ and https://sockjs.popcnt.org/ (hosted in Europe)
  * http://sockjs.cloudfoundry.com/ (CloudFoundry, websockets disabled, loadbalanced)
  * https://sockjs.cloudfoundry.com/ (CloudFoundry SSL, websockets disabled, loadbalanced)
- * http://sockjs.herokuapp.com/ (Heroku, websockets disabled)
 
 
 SockJS-node API
