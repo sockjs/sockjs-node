@@ -87,7 +87,7 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
-   <a href="http://cdn.sockjs.org/sockjs-0.2.min.js">
+   <a href="http://cdn.sockjs.org/sockjs-0.3.min.js">
    the latest minified SockJS client release</a>, this is the default).
    You must explicitly specify this url on the server side for security
    reasons - we don't want the possibility of running any foreign
@@ -286,7 +286,7 @@ Connecting to SockJS-node without the client
 
 Although the main point of SockJS it to enable browser-to-server
 connectivity, it is possible to connect to SockJS from an external
-application. Any SockJS server complying with 0.2 protocol does
+application. Any SockJS server complying with 0.3 protocol does
 support a raw WebSocket url. The raw WebSocket url for the test server
 looks like:
 
@@ -368,7 +368,7 @@ To run it run something like:
 
     cd sockjs-protocol
     make test_deps
-    ./venv/bin/python sockjs-protocol-0.2.py
+    ./venv/bin/python sockjs-protocol-0.3.py
 
 For details see
 [SockJS-protocol README](https://github.com/sockjs/sockjs-protocol#readme).
