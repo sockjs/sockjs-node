@@ -1,3 +1,20 @@
+0.3.0
+=====
+
+ * Sending JSESSIONID cookie is now *disabled* by default.
+ * sockjs/sockjs-protocol#46 - introduce new service
+   required for protocol tests "/cookie_needed_echo"
+ * Initial work towards better integration with
+   "connect" (Stephan Kochen). See discusion:
+       https://github.com/senchalabs/connect/pull/506
+ * More documentation about the Cookie and Origin headers.
+ * #51 - expose "readyState" on connection instance
+ * #53 - expose "protocol" on connection instance
+ * #52 - Some protocols may not emit 'close' event with IE.
+ * sockjs/sockjs-client#49 - Support 'null' origin - aka: allow SockJS
+   client to be served from file:// paths.
+
+
 0.2.1
 =====
 
