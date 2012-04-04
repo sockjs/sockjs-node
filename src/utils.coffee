@@ -84,7 +84,10 @@ exports.objectExtend = (dst, src) ->
     return dst
 
 exports.overshadowListeners = (ee, event, handler) ->
-    old_listeners = ee.listeners(event)
+    # listeners() returns a reference to the internal array of EventEmitter.
+    # Make a copy, because we're about the replace the actual listeners.
+    old_listeners = ee.listeners(event).slice(0)
+
     ee.removeAllListeners(event)
     new_handler = () ->
         if handler.apply(this, arguments) isnt true
