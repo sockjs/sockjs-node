@@ -16,6 +16,7 @@ To install `sockjs-node` run:
 
     npm install sockjs
 
+(If you see `rbytes` dependecy failing, don't worry, it's optional, SockJS-node will work fine without it.)
 
 An simplified echo SockJS server could look more or less like:
 
