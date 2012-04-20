@@ -421,3 +421,9 @@ Basically - cookies are not suited for SockJS model. If you want to
 authorize a session - provide a unique token on a page, send it as a
 first thing over SockJS connection and validate it on the server
 side. In essence, this is how cookies work.
+
+
+### Deploying SockJS on Heroku
+
+Long polling is known to cause problems on Heroku, but
+[workaround for SockJS is available](https://github.com/sockjs/sockjs-node/issues/57#issuecomment-5242187).
