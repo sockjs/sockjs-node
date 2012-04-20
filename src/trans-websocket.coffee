@@ -80,7 +80,11 @@ class WebSocketReceiver extends transport.GenericReceiver
                 message = JSON.parse(payload)
             catch x
                 return @didClose(1002, 'Broken framing.')
-            @session.didMessage(message)
+            if payload[0] is '['
+                for msg in message
+                    @session.didMessage(msg)
+            else
+                @session.didMessage(message)
 
     doSendFrame: (payload) ->
         if @ws
