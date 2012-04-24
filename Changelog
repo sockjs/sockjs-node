@@ -1,3 +1,15 @@
+0.3.1
+=====
+
+ * #58 - websocket transport emitted an array instead of a string
+   during onmessage event.
+ * Running under node.js 0.7 caused infinite recursion (Stephan Kochen)
+ * #59 - restrict characters allowed in callback parameter
+ * Updated readme - rbytes package is optional
+ * Updated readme WRT deployments on heroku
+ * Add minimalistic license block to every source file.
+
+
 0.3.0
 =====
 
