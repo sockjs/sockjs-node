@@ -29,6 +29,12 @@ exports.app =
             }
 
         callback = if 'c' of req.query then req.query['c'] else req.query['callback']
+        if /[^a-zA-Z0-9-_.]/.test(callback)
+            throw {
+                status: 500
+                message: 'invalid "callback" parameter'
+            }
+
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 

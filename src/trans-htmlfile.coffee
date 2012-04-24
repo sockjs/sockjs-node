@@ -45,6 +45,13 @@ exports.app =
                 message: '"callback" parameter required'
             }
         callback = if 'c' of req.query then req.query['c'] else req.query['callback']
+        if /[^a-zA-Z0-9-_.]/.test(callback)
+            throw {
+                status: 500
+                message: 'invalid "callback" parameter'
+            }
+
+
         res.setHeader('Content-Type', 'text/html; charset=UTF-8')
         res.writeHead(200)
         res.write(iframe_template.replace(/{{ callback }}/g, callback));
