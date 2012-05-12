@@ -79,7 +79,7 @@ var sockjs_server = sockjs.createServer(options);
 Where `options` is a hash which can contain:
 
 <dl>
-<dt>sockjs_url (string, required)</dt>
+<dt>sockjs_url (string)</dt>
 <dd>Transports which don't support cross-domain communication natively
    ('eventsource' to name one) use an iframe trick. A simple page is
    served from the SockJS server (using its foreign domain) and is
