@@ -24,7 +24,7 @@ An simplified echo SockJS server could look more or less like:
 var http = require('http');
 var sockjs = require('sockjs');
 
-var echo = sockjs.createServer();
+var echo = sockjs.createServer({prefix:'/echo'});
 echo.on('connection', function(conn) {
     conn.on('data', function(message) {
         conn.write(message);
@@ -33,7 +33,7 @@ echo.on('connection', function(conn) {
 });
 
 var server = http.createServer();
-echo.installHandlers(server, {prefix:'/echo'});
+echo.installHandlers(server);
 server.listen(9999, '0.0.0.0');
 ```
 
