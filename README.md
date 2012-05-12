@@ -24,7 +24,7 @@ An simplified echo SockJS server could look more or less like:
 var http = require('http');
 var sockjs = require('sockjs');
 
-var echo = sockjs.createServer();
+var echo = sockjs.createServer({prefix:'/echo'});
 echo.on('connection', function(conn) {
     conn.on('data', function(message) {
         conn.write(message);
@@ -33,7 +33,7 @@ echo.on('connection', function(conn) {
 });
 
 var server = http.createServer();
-echo.installHandlers(server, {prefix:'/echo'});
+echo.installHandlers(server);
 server.listen(9999, '0.0.0.0');
 ```
 
@@ -79,7 +79,7 @@ var sockjs_server = sockjs.createServer(options);
 Where `options` is a hash which can contain:
 
 <dl>
-<dt>sockjs_url (string, required)</dt>
+<dt>sockjs_url (string)</dt>
 <dd>Transports which don't support cross-domain communication natively
    ('eventsource' to name one) use an iframe trick. A simple page is
    served from the SockJS server (using its foreign domain) and is
