@@ -142,6 +142,9 @@ class Server extends events.EventEmitter
         if user_options
             utils.objectExtend(@options, user_options)
 
+        if @options.http_server
+            @installHandlers(@options.http_server)
+
     listener: (handler_options) ->
         options = utils.objectExtend({}, @options)
         if handler_options
@@ -161,9 +164,3 @@ class Server extends events.EventEmitter
 
 exports.createServer = (options) ->
     return new Server(options)
-
-exports.listen = (http_server, options) ->
-    srv = exports.createServer(options)
-    if http_server
-        srv.installHandlers(http_server)
-    return srv
