@@ -145,6 +145,10 @@ Where `options` is a hash which can contain:
   connection have not been seen for a while. This delay is configured
   by this setting. By default the `close` event will be emitted when a
   receiving connection wasn't seen for 5 seconds.  </dd>
+
+<dt>http_server (http.Server)</dt>
+<dd>The sockjs server will attach itself to this http.Server instance,
+so you no longer need to call `installHandlers` yourself.</dd>
 </dl>
 
 
