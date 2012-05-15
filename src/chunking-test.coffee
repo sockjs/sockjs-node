@@ -32,10 +32,10 @@ exports.app =
 
     info: (req, res, _) ->
         info = {
-            websocket: @options.websocket,
-            origins: @options.origins,
-            cookie_needed: not not @options.jsessionid,
-            entropy: utils.random32(),
+            websocket     : @options.websocket,
+            origins       : @options.origins,
+            cookie_needed : not not @options.jsessionid,
+            entropy       : utils.random32(),
         }
         res.setHeader('Content-Type', 'application/json; charset=UTF-8')
         res.writeHead(200)
