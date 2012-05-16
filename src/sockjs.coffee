@@ -112,6 +112,12 @@ class Listener
         @app.emit = emit
         @app.log('debug', 'SockJS v' + sockjsVersion() + ' ' +
                           'bound to ' + JSON.stringify(options.prefix))
+
+        if @options.heartbeat_delay
+            @app.log('warn', 'Option "heartbeat_delay" got renamed to '+
+                             '"server_heartbeat_interval". Update your code.')
+            @options.server_heartbeat_interval = @options.heartbeat_delay
+
         @dispatcher = generate_dispatcher(@options)
         @webjs_handler = webjs.generateHandler(@app, @dispatcher)
         @path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
