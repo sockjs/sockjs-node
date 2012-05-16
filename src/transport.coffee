@@ -59,7 +59,7 @@ MAP = {}
 
 class Session
     constructor: (@session_id, server) ->
-        @heartbeat_delay = server.options.heartbeat_delay
+        @server_heartbeat_interval = server.options.heartbeat_delay
         @disconnect_delay = server.options.disconnect_delay
         @prefix = server.options.prefix
         @send_buffer = []
@@ -67,7 +67,10 @@ class Session
         @readyState = Transport.CONNECTING
         if @session_id
             MAP[@session_id] = @
-        @timeout_cb = => @didTimeout()
+        @timeout_cb = =>
+            @didTimeout()
+        @heartbeat_cb = =>
+            @doHeartbeat()
         @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
         @connection = new SockJSConnection(@)
         @emit_open = =>
@@ -141,15 +144,17 @@ class Session
         if @send_buffer.length > 0
             [sb, @send_buffer] = [@send_buffer, []]
             @recv.doSendBulk(sb)
-        else
-            if @to_tref
-                clearTimeout(@to_tref)
-            x = =>
-                if @recv
-                    @to_tref = setTimeout(x, @heartbeat_delay)
-                    @recv.doSendFrame("h")
-            @to_tref = setTimeout(x, @heartbeat_delay)
+
+        if @to_tref
+            clearTimeout(@to_tref)
+        @to_tref = setTimeout(@heartbeat_cb, @server_heartbeat_interval)
         return
+
+    doHeartbeat: ->
+        if @recv
+            @to_tref = setTimeout(@heartbeat_cb, @server_heartbeat_interval)
+            @recv.doSendFrame("h")
+
 
     didTimeout: ->
         if @to_tref
