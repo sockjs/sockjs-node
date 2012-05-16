@@ -308,10 +308,10 @@ and sticky sessions (aka session affinity).
 
 ### WebSocket compatible load balancer
 
-Often WebSockets don't play nicely with proxies and loadbalancers.
+Often WebSockets don't play nicely with proxies and load balancers.
 Deploying a SockJS server behind Nginx or Apache could be painful.
 
-Fortunetely recent versions of an excellent loadbalancer
+Fortunetely recent versions of an excellent load balancer
 [HAProxy](http://haproxy.1wt.eu/) are able to proxy WebSocket
 connections. We propose to put HAProxy as a front line load balancer
 and use it to split SockJS traffic from normal HTTP data. Take a look
@@ -345,7 +345,7 @@ Development and testing
 -----------------------
 
 If you want to work on SockJS-node source code, you need to clone the
-git repo and follow this steps. First you need to install
+git repo and follow these steps. First you need to install
 dependencies:
 
     cd sockjs-node
@@ -357,7 +357,7 @@ You're ready to compile CoffeeScript:
     make build
 
 If compilation succeeds you may want to test if your changes pass all
-the tests. Currently, there are two separate test suits. For both of
+the tests. Currently, there are two separate test suites. For both of
 them you need to start a SockJS-node test server (by default listening
 on port 8081):
 
@@ -401,10 +401,10 @@ Various issues and design considerations
 ### Authorization
 
 SockJS-node does not expose cookies to the application. This is done
-deliberatly as using cookie-based authorization with SockJS simply
+deliberately as using cookie-based authorization with SockJS simply
 doesn't make sense and will lead to security issues.
 
-Cookies are a contract between a browser and a http server, and are
+Cookies are a contract between a browser and an http server, and are
 identified by a domain name. If a browser has a cookie set for
 particular domain, it will pass it as a part of all http requests to
 the host. But to get various transports working, SockJS uses a middleman
