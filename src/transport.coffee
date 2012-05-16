@@ -59,7 +59,7 @@ MAP = {}
 
 class Session
     constructor: (@session_id, server) ->
-        @server_heartbeat_interval = server.options.heartbeat_delay
+        @server_heartbeat_interval = server.options.server_heartbeat_interval
         @disconnect_delay = server.options.disconnect_delay
         @prefix = server.options.prefix
         @send_buffer = []

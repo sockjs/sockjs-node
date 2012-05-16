@@ -133,7 +133,7 @@ Where `options` is a hash which can contain:
   (miscellaneous logs), `info` (requests logs), `error` (serious
   errors, consider filing an issue).</dd>
 
-<dt>heartbeat_delay (milliseconds)</dt>
+<dt>server_heartbeat_interval (milliseconds)</dt>
 <dd>In order to keep proxies and load balancers from closing long
   running http requests we need to pretend that the connecion is
   active and send a heartbeat packet once in a while. This setting
