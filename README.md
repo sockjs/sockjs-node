@@ -140,6 +140,12 @@ Where `options` is a hash which can contain:
   controlls how often this is done. By default a heartbeat packet is
   sent every 25 seconds.  </dd>
 
+<dt>client_heartbeat_interval (milliseconds)</dt>
+<dd>The server may ask the client to periodically send empty data
+  frames to ensure that the client is still present. Set this value to
+  desired interval to enable this functionality. By default sending
+  heartbeats from the client is disabled.</dd>
+
 <dt>disconnect_delay (milliseconds)</dt>
 <dd>The server sends a `close` event when a client receiving
   connection have not been seen for a while. This delay is configured

@@ -143,6 +143,7 @@ class Server extends events.EventEmitter
             jsessionid: false
             disconnect_delay: 5000
             server_heartbeat_interval: 25000
+            client_heartbeat_interval: false
             log: (severity, line) -> console.log(line)
             sockjs_url: 'http://cdn.sockjs.org/sockjs-0.3.min.js'
         if user_options
