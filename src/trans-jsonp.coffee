@@ -74,8 +74,7 @@ exports.app =
         jsonp = transport.Session.bySessionId(req.session)
         if jsonp is null
             throw {status: 404}
-        for message in d
-            jsonp.didMessage(message)
+        jsonp.didMessages(d)
 
         res.setHeader('Content-Length', '2')
         res.setHeader('Content-Type', 'text/plain; charset=UTF-8')

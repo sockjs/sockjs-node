@@ -47,8 +47,7 @@ exports.app =
         jsonp = transport.Session.bySessionId(req.session)
         if not jsonp
             throw {status: 404}
-        for message in d
-            jsonp.didMessage(message)
+        jsonp.didMessages(d)
 
         # FF assumes that the response is XML.
         res.setHeader('Content-Type', 'text/plain; charset=UTF-8')

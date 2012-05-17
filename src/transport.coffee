@@ -177,9 +177,13 @@ class Session
             delete MAP[@session_id]
             @session_id = null
 
-    didMessage: (payload) ->
+    didMessages: (messages) ->
         if @readyState is Transport.OPEN
-            @connection.emit('data', payload)
+            if messages.length > 0
+                for msg in messages
+                    @connection.emit('data', msg)
+            else
+                @connection.emit('heartbeat', null)
         return
 
     send: (payload) ->

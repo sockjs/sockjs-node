@@ -81,10 +81,9 @@ class WebSocketReceiver extends transport.GenericReceiver
             catch x
                 return @didClose(1002, 'Broken framing.')
             if payload[0] is '['
-                for msg in message
-                    @session.didMessage(msg)
+                @session.didMessages(message)
             else
-                @session.didMessage(message)
+                @session.didMessages([message])
 
     doSendFrame: (payload) ->
         if @ws
