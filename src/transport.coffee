@@ -31,6 +31,9 @@ class SockJSConnection extends stream.Stream
     write: (string) ->
         return @_session.send('' + string)
 
+    sendHeartbeat: () ->
+        return @_session.sendHeartbeat()
+
     end: (string) ->
         if string
             @write(string)
@@ -151,9 +154,14 @@ class Session
         return
 
     doHeartbeat: ->
-        if @recv
+        if @sendHeartbeat()
             @to_tref = setTimeout(@heartbeat_cb, @server_heartbeat_interval)
-            @recv.doSendFrame("h")
+
+    sendHeartbeat: ->
+        if not @recv
+            return false
+        @recv.doSendFrame("h")
+        return true
 
 
     didTimeout: ->
@@ -183,7 +191,7 @@ class Session
                 for msg in messages
                     @connection.emit('data', msg)
             else
-                @connection.emit('heartbeat', null)
+                @connection.emit('heartbeat')
         return
 
     send: (payload) ->
