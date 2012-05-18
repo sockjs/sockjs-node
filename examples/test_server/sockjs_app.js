@@ -71,6 +71,27 @@ exports.install = function(opts, server) {
         });
     });
 
+    var sjs_heartbeat = sockjs.createServer(opts);
+    sjs_heartbeat.on('connection', function(conn) {
+        console.log('    [+] heartbeat open  ' + conn);
+        var tref = setInterval(function(){
+            // Send exactly one heartbeat, beware polling transports.
+            if (conn.sendHeartbeat()) {
+                clearInterval(tref);
+            }
+        }, 250);
+        conn.on('close', function() {
+            clearInterval(tref);
+            console.log('    [-] heartbeat close ' + conn);
+        });
+        conn.on('data', function(m) {
+            conn.write('data');
+        });
+        conn.on('heartbeat', function(m) {
+            conn.write('heartbeat');
+        });
+    });
+
 
     sjs_echo.installHandlers(server, {prefix:'/echo',
                                       response_limit: 4096}),
@@ -82,4 +103,5 @@ exports.install = function(opts, server) {
     sjs_ticker.installHandlers(server, {prefix:'/ticker'});
     sjs_amplify.installHandlers(server, {prefix:'/amplify'});
     sjs_broadcast.installHandlers(server, {prefix:'/broadcast'});
+    sjs_heartbeat.installHandlers(server, {prefix:'/heartbeat'});
 };
