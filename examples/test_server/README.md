@@ -11,6 +11,7 @@ the following SockJS services:
 
  * `/echo`
  * `/disabled_websocket_echo`
+ * `/cookie_needed_echo`
  * `/close`
  * `/ticker`
  * `/amplify`
