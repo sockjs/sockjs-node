@@ -19,9 +19,9 @@ chunking_test = require('./chunking-test')
 
 sockjsVersion = ->
     try
-        package = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
+        pkg = fs.readFileSync(__dirname + '/../package.json', 'utf-8')
     catch x
-    return if package then JSON.parse(package).version else null
+    return if pkg then JSON.parse(pkg).version else null
 
 
 class App extends webjs.GenericApp
