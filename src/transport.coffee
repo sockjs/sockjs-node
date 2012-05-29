@@ -63,6 +63,8 @@ MAP = {}
 class Session
     constructor: (@session_id, server) ->
         @server_heartbeat_interval = server.options.server_heartbeat_interval
+        @client_heartbeat_reply    = server.options.client_heartbeat_reply
+        @client_heartbeat_count    = false
         @disconnect_delay = server.options.disconnect_delay
         @prefix = server.options.prefix
         @send_buffer = []
@@ -93,6 +95,9 @@ class Session
             recv.didClose()
             @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
             return
+
+        @client_heartbeat_count = 0
+        @connection.emit('poll')
         # Registering. From now on 'unregister' is responsible for
         # setting the timer.
         @recv = recv
@@ -154,7 +159,12 @@ class Session
         return
 
     doHeartbeat: ->
-        if @sendHeartbeat()
+        @client_heartbeat_count += 1
+        console.log('heartbeat', @client_heartbeat_count)
+        if @client_heartbeat_reply and @client_heartbeat_count is 2
+            console.log("Heartbeat missed")
+            @close(1006, "Heartbeat missed")
+        else if @sendHeartbeat()
             @to_tref = setTimeout(@heartbeat_cb, @server_heartbeat_interval)
 
     sendHeartbeat: ->
@@ -192,6 +202,7 @@ class Session
                     @connection.emit('data', msg)
             else
                 @connection.emit('heartbeat')
+                @client_heartbeat_count = 0
         return
 
     send: (payload) ->

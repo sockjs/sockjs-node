@@ -36,9 +36,10 @@ exports.app =
             origins                   : @options.origins,
             cookie_needed             : not not @options.jsessionid,
             entropy                   : utils.random32(),
-            server_heartbeat_interval : @options.server_heartbeat_interval,
-            client_heartbeat_interval : @options.client_heartbeat_interval,
         }
+
+        if @options.client_heartbeat_reply
+            info.server_heartbeat_interval = @options.server_heartbeat_interval
 
         res.setHeader('Content-Type', 'application/json; charset=UTF-8')
         res.writeHead(200)

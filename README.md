@@ -140,11 +140,19 @@ Where `options` is a hash which can contain:
   controlls how often this is done. By default a heartbeat packet is
   sent every 25 seconds.  </dd>
 
-<dt>client_heartbeat_interval (milliseconds)</dt>
-<dd>The server may ask the client to periodically send empty data
-  frames to ensure that the client is still present. Set this value to
-  desired interval to enable this functionality. By default sending
-  heartbeats from the client is disabled.</dd>
+<dt>client_heartbeat_reply (boolean)</dt>
+<dd>By default SockJS relies on TCP/IP for detecting network
+  issues. This has its problems - due to the nature of TCP/IP timeouts
+  when you physically turn off the server or the browser the other
+  party may not notcie this immediately. In some cases it is
+  neccessary to detect this kind of error conditions in a timely
+  fashion. With this option set to `true`, the server asks the client
+  to respond to its heartbeats and if the response doesn't come - it
+  will automatically close connection. This option also enables
+  similar functionality on the client side - the client will close
+  session if no heartbeats or data is received for longer than
+  `server_heartbeat_interval`. By default relying on heartbeats is
+  disabled and this option is set to `false`.</dd>
 
 <dt>disconnect_delay (milliseconds)</dt>
 <dd>The server sends a `close` event when a client receiving
