@@ -138,11 +138,10 @@ exports.parseCookie = (cookie_header) ->
 
 exports.random32 = () ->
     if rbytes
-        x = rbytes.randomBytes(4)
-        v = [x[0], x[1], x[2], x[3]]
+        foo = rbytes.randomBytes(4)
+        v = [foo[0], foo[1], foo[2], foo[3]]
     else
         foo = -> Math.floor(Math.random()*256)
         v = [foo(), foo(), foo(), foo()]
 
-    x =  v[0] + (v[1]*256 ) + (v[2]*256*256) + (v[3]*256*256*256)
-    return x
+    return  v[0] + (v[1]*256 ) + (v[2]*256*256) + (v[3]*256*256*256)
