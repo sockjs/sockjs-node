@@ -93,42 +93,33 @@ class Timeout
 class SessionTimer extends events.EventEmitter
     constructor: (session, disconnect_delay, send_delay, recv_delay) ->
         doPollTimeout = (m) =>
-            console.log('doPollTimeout',m);
             session.doPollTimeout(m)
         doSendTimeout = (m) =>
-            console.log('doSendTimeout',m);
             session.doSendTimeout(m)
         doRecvTimeout = (m) =>
-            console.log('doRecvTimeout',m);
             session.doRecvTimeout(m)
         @no_poll_tref = new Timeout(doPollTimeout, disconnect_delay)
         @send_tref    = new Timeout(doSendTimeout, send_delay)
         @recv_tref    = new Timeout(doRecvTimeout, recv_delay)
         @no_poll_tref.start()
         @recv_tref.start()
-        console.log('timer: start')
 
     poll_start: () ->
-        console.log('timer: poll start')
         @no_poll_tref.stop()
         @send_tref.start()
         @recv_tref.poke()
 
     poll_end: () ->
-        console.log('timer: poll end')
         @no_poll_tref.start()
         @send_tref.stop()
 
     send: () ->
-        console.log('timer: send')
         @send_tref.poke()
 
     recv: () ->
-        console.log('timer: recv')
         @recv_tref.poke()
 
     close: () ->
-        console.log('timer: close')
         @no_poll_tref.stop()
         @send_tref.stop()
         @recv_tref.stop()
