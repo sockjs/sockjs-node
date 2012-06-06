@@ -176,7 +176,7 @@ class Session
             # Emit the open event, but not right now
             process.nextTick @emit_open
 
-        # At this point the transport might have gotten away (jsonp).
+        # At this point the transport might have gone away (jsonp).
         if not @recv
             return
         @tryFlush()
@@ -224,7 +224,6 @@ class Session
         if missed is 1
             @sendHeartbeat()
         else if missed is 2
-            console.log("Heartbeat missed")
             @close(1006, "Heartbeat missed")
 
     sendHeartbeat: ->
