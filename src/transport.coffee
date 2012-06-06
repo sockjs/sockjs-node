@@ -182,7 +182,7 @@ class Session
         # At this point the transport might have gone away (jsonp).
         if not @recv
             return
-        @tryFlush()
+        @tryFlush(true)
         return
 
     decorateConnection: (req) ->
@@ -211,41 +211,53 @@ class Session
         @recv = @recv.session = null
         @timer.poll_end()
 
-    tryFlush: ->
+    tryFlush: (new_poll) ->
         # We might be here for two reasons:
         # a) a new poll request appeared
         # b) previous poll was hanging and data is to be sent
 
-        if @full_window_flush
-            # Polling, and previous frame was full - timing makes sense
-            td = (+new Date()) - @full_window_flush
-            @adjustWindow(td)
+        if new_poll and @recv.polling and @t0
+            td = (+new Date()) - @t0
+            if @adjustWindow(td, @full_window)
+                console.log('window_size adjusted: ' + @window_size);
 
-        @full_window_flush = null
+        @t0 = (+new Date())
+        @full_window = false
         if @send_buffer.length > 0
-            l = 0
             q_msgs = []
-            serialized = 3
-            while @send_buffer.length > 0
-                qmsg = utils.quote(@send_buffer.shift())
-                serialized += qmsg.length + 1
-                q_msgs.push( qmsg )
-                if @recv.polling and serialized > @window_size
-                    @full_window_flush = +new Date()
-                    break
+            if not @recv.polling
+                q_msgs = (utils.quote(msg) for msg in @send_buffer)
+                @send_buffer = []
+            else
+                msg_count = 0
+                serialized = 3
+                for msg in @send_buffer
+                    msg_count += 1
+                    qmsg = utils.quote(msg)
+                    serialized += qmsg.length + 1
+                    q_msgs.push( qmsg )
+                    if serialized > @window_size
+                        @full_window = true
+                        break
+                # In-place remove first `msg_count` messages from queue
+                @send_buffer.splice(0, msg_count)
             @recv.doSendFrame('a[' + q_msgs.join(',') + ']')
             @timer.send()
         return
 
-    adjustWindow: (td) ->
+    adjustWindow: (td, full_window) ->
         if td > @max_window_time
-            @window_size = Math.max(@init_window_size,
-                                    @window_size / 2)
+            @window_size = Math.max(@window_size / 2,
+                                    @init_window_size)
+            return true
         else
-            if td*2 < @max_window_time
-                @window_size *= 2
-            else
-                @window_size *= 1.1
+            if full_window
+                if td*2 < @max_window_time
+                    @window_size *= 2
+                else
+                    @window_size *= 1.1
+                return true
+        return false
 
     doSendTimeout: ->
         @sendEmptyFrame()
@@ -306,7 +318,7 @@ class Session
             return false
         @send_buffer.push('' + payload)
         if @recv
-            @tryFlush()
+            @tryFlush(false)
         return true
 
     close: (status=1000, reason="Normal closure") ->
