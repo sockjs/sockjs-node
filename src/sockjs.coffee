@@ -144,6 +144,8 @@ class Server extends events.EventEmitter
             disconnect_delay: 5000
             server_heartbeat_interval: 25000
             client_heartbeat_reply: false
+            max_window_time: 4000
+            init_window_size: 4096
             log: (severity, line) -> console.log(line)
             sockjs_url: 'http://cdn.sockjs.org/sockjs-0.3.min.js'
         if user_options

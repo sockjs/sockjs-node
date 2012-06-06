@@ -131,6 +131,9 @@ class Session
         @prefix = server.options.prefix
         @send_buffer = []
         @is_closing = false
+        @max_window_time  = server.options.max_window_time
+        @init_window_size = server.options.init_window_size
+        @window_size      = server.options.init_window_size
         @readyState = Transport.CONNECTING
         if @session_id
             MAP[@session_id] = @
@@ -209,11 +212,40 @@ class Session
         @timer.poll_end()
 
     tryFlush: ->
+        # We might be here for two reasons:
+        # a) a new poll request appeared
+        # b) previous poll was hanging and data is to be sent
+
+        if @full_window_flush
+            # Polling, and previous frame was full - timing makes sense
+            td = (+new Date()) - @full_window_flush
+            @adjustWindow(td)
+
+        @full_window_flush = null
         if @send_buffer.length > 0
-            [sb, @send_buffer] = [@send_buffer, []]
-            @recv.doSendBulk(sb)
+            l = 0
+            q_msgs = []
+            serialized = 3
+            while @send_buffer.length > 0
+                qmsg = utils.quote(@send_buffer.shift())
+                serialized += qmsg.length + 1
+                q_msgs.push( qmsg )
+                if @recv.polling and serialized > @window_size
+                    @full_window_flush = +new Date()
+                    break
+            @recv.doSendFrame('a[' + q_msgs.join(',') + ']')
             @timer.send()
         return
+
+    adjustWindow: (td) ->
+        if td > @max_window_time
+            @window_size = Math.max(@init_window_size,
+                                    @window_size / 2)
+        else
+            if td*2 < @max_window_time
+                @window_size *= 2
+            else
+                @window_size *= 1.1
 
     doSendTimeout: ->
         @sendEmptyFrame()
@@ -335,11 +367,6 @@ class GenericReceiver
             @thingy = null
         if @session
             @session.unregister(status, reason)
-
-    doSendBulk: (messages) ->
-        q_msgs = for m in messages
-                utils.quote(m)
-        @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
 
 
 # Write stuff to response, using chunked encoding if possible.

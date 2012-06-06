@@ -16,6 +16,7 @@ class XhrStreamingReceiver extends transport.ResponseReceiver
 class XhrPollingReceiver extends XhrStreamingReceiver
     protocol: "xhr-polling"
     max_response_size: 1
+    polling: true
 
 
 exports.app =
