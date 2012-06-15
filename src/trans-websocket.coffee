@@ -140,7 +140,7 @@ class RawWebsocketSessionReceiver extends transport.Session
         return true
 
     didClose: ->
-        if @ws
+        if not @ws
             return
         @ws.removeEventListener('message', @_message_cb)
         @ws.removeEventListener('close', @_end_cb)
@@ -148,3 +148,8 @@ class RawWebsocketSessionReceiver extends transport.Session
             @ws.close()
         catch x
         @ws = null
+
+        @readyState = Transport.CLOSED
+        @connection.emit('end')
+        @connection.emit('close')
+        @connection = null
