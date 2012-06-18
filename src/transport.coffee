@@ -189,12 +189,16 @@ class Session
         # Store the last known address.
         unless socket = @recv.connection
             socket = @recv.response.connection
-        @connection.remoteAddress = socket.remoteAddress
-        @connection.remotePort = socket.remotePort
         try
-            @connection.address = socket.address()
+            remoteAddress = socket.remoteAddress
+            remotePort    = socket.remotePort
+            address       = socket.address()
         catch e
-            @connection.address = {}
+            # All-or-nothing
+            return
+        @connection.remoteAddress = remoteAddress
+        @connection.remotePort    = remotePort
+        @connection.address       = address
 
         @connection.url = req.url
         @connection.pathname = req.pathname
