@@ -14,17 +14,26 @@ module.exports = function (uri, cb) {
     
     var stream = new Stream;
     stream.readable = true;
+    stream.writable = true;
+    
+    var ready = false;
+    var buffer = [];
     
     var sock = sockjs(uri);
     stream.sock = sock;
     
     stream.write = function (msg) {
-        sock.send(msg);
+        if (!ready) buffer.push(msg)
+        else sock.send(msg)
     };
     
     sock.onopen = function () {
-        stream.writable = true;
         if (typeof cb === 'function') cb();
+        ready = true;
+        buffer.forEach(function (msg) {
+            sock.send(msg);
+        });
+        buffer = [];
     };
     sock.onmessage = function (e) {
         stream.emit('data', e.data);
