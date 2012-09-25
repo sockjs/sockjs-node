@@ -85,7 +85,7 @@ generate_dispatcher = (options) ->
             ['GET',     p('/websocket'),   ['raw_websocket']],
             ['GET',     t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
             ['POST',    t('/jsonp_send'), ['h_sid', 'expect_form', 'jsonp_send']],
-            ['POST',    t('/xhr'), ['h_sid', 'xhr_cors', 'xhr_poll']],
+            ['POST',    t('/xhr'), ['h_sid', 'h_no_cache', 'xhr_cors', 'xhr_poll']],
             ['OPTIONS', t('/xhr'), opts_filters()],
             ['POST',    t('/xhr_send'), ['h_sid', 'xhr_cors', 'expect_xhr', 'xhr_send']],
             ['OPTIONS', t('/xhr_send'), opts_filters()],
