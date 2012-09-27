@@ -372,6 +372,7 @@ git repo and follow these steps. First you need to install
 dependencies:
 
     cd sockjs-node
+    npm install
     npm install --dev
     ln -s .. node_modules/sockjs
 
