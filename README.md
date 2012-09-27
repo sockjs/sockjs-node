@@ -3,6 +3,29 @@ SockJS family:
   * [SockJS-client](https://github.com/sockjs/sockjs-client) JavaScript client library
   * [SockJS-node](https://github.com/sockjs/sockjs-node) Node.js server
   * [SockJS-erlang](https://github.com/sockjs/sockjs-erlang) Erlang server
+  * [SockJS-lua](https://github.com/luvit/sockjs-luvit) Lua/Luvit server
+  * [SockJS-tornado](https://github.com/MrJoes/sockjs-tornado) Python/Tornado server
+  * [vert.x](https://github.com/purplefox/vert.x) Java/vert.x server
+
+Work in progress:
+
+  * [SockJS-ruby](https://github.com/sockjs/sockjs-ruby)
+  * [SockJS-netty](https://github.com/cgbystrom/sockjs-netty)
+  * [SockJS-gevent](https://github.com/sdiehl/sockjs-gevent)
+  * [pyramid-SockJS](https://github.com/fafhrd91/pyramid_sockjs)
+  * [wildcloud-websockets](https://github.com/wildcloud/wildcloud-websockets)
+  * [SockJS-cyclone](https://github.com/flaviogrossi/sockjs-cyclone)
+  * [SockJS-twisted](https://github.com/Fugiman/sockjs-twisted/)
+  * [wai-SockJS](https://github.com/Palmik/wai-sockjs)
+
+What is SockJS?
+===============
+
+SockJS is a JavaScript library (for browsers) that provides a WebSocket-like
+object. SockJS gives you a coherent, cross-browser, Javascript API
+which creates a low latency, full duplex, cross-domain communication
+channel between the browser and the web server, with WebSockets or without.
+This necessitates the use of a server, which this is one version of, for Node.js.
 
 
 SockJS-node server
