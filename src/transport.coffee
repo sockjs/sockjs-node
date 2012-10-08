@@ -195,9 +195,11 @@ class Session
         @readyState = Transport.CLOSING
         @close_frame = closeFrame(status, reason)
         if @recv
-            # Go away.
+            # Go away. doSendFrame can trigger didClose which can
+            # trigger unregister. Make sure the @recv is not null.
             @recv.doSendFrame(@close_frame)
-            @recv.didClose()
+            if @recv
+                @recv.didClose()
             if @recv
                 @unregister()
         return true
