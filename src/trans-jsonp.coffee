@@ -10,8 +10,8 @@ class JsonpReceiver extends transport.ResponseReceiver
     protocol: "jsonp-polling"
     max_response_size: 1
 
-    constructor: (res, options, @callback) ->
-        super(res, options)
+    constructor: (req, res, options, @callback) ->
+        super(req, res, options)
 
     doSendFrame: (payload) ->
         # Yes, JSONed twice, there isn't a a better way, we must pass
@@ -38,7 +38,7 @@ exports.app =
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
-        transport.register(req, @, new JsonpReceiver(res, @options, callback))
+        transport.register(req, @, new JsonpReceiver(req, res, @options, callback))
         return true
 
     jsonp_send: (req, res, query) ->
