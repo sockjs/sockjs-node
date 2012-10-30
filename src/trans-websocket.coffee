@@ -91,7 +91,7 @@ class WebSocketReceiver extends transport.GenericReceiver
             try
                 @ws.send(payload)
                 return true
-            catch e
+            catch x
         return false
 
     didClose: ->
