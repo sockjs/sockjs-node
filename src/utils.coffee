@@ -9,7 +9,6 @@ crypto = require('crypto')
 try
     rbytes = require('rbytes')
 catch x
-    null
 
 exports.array_intersection = array_intersection = (arr_a, arr_b) ->
     r = []
@@ -34,7 +33,6 @@ exports.verify_origin = (origin, list_of_origins) ->
         if array_intersection(origins, list_of_origins).length > 0
             return true
     catch x
-        null
     return false
 
 exports.escape_selected = (str, chars) ->
