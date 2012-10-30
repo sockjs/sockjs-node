@@ -34,7 +34,7 @@ exports.app =
             }
         try
             d = JSON.parse(data)
-        catch e
+        catch x
             throw {
                 status: 500
                 message: 'Broken JSON encoding.'

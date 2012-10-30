@@ -193,7 +193,7 @@ class Session
             remoteAddress = socket.remoteAddress
             remotePort    = socket.remotePort
             address       = socket.address()
-        catch e
+        catch x
             # All-or-nothing
             return
         @connection.remoteAddress = remoteAddress

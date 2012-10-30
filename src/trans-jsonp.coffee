@@ -51,7 +51,7 @@ exports.app =
         if typeof query is 'string'
             try
                 d = JSON.parse(query)
-            catch e
+            catch x
                 throw {
                     status: 500
                     message: 'Broken JSON encoding.'
@@ -61,7 +61,7 @@ exports.app =
         if typeof d is 'string' and d
             try
                 d = JSON.parse(d)
-            catch e
+            catch x
                 throw {
                     status: 500
                     message: 'Broken JSON encoding.'

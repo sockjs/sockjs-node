@@ -44,12 +44,10 @@ fake_response = (req, res) ->
             r = r.concat(['', ''])
             try
                 res.write(r.join('\r\n'))
-            catch e
-                null
+            catch x
             try
                 res.end()
-            catch e
-                null
+            catch x
         res.setHeader = (k, v) -> headers[k] = v
 
 
@@ -115,7 +113,7 @@ exports.GenericApp = class GenericApp
             try
                 res.writeHead(500, {})
                 res.end("500 - Internal Server Error")
-            catch y
+            catch x
             @log('error', 'Exception on "'+ req.method + ' ' + req.href + '" in filter "' + req.last_fun + '":\n' + (x.stack || x))
         return true
 
