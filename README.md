@@ -11,7 +11,7 @@ Work in progress:
 
   * [SockJS-ruby](https://github.com/sockjs/sockjs-ruby)
   * [SockJS-netty](https://github.com/cgbystrom/sockjs-netty)
-  * [SockJS-gevent](https://github.com/sdiehl/sockjs-gevent)
+  * [SockJS-gevent](https://github.com/sdiehl/sockjs-gevent) ([and a fork](https://github.com/njoyce/sockjs-gevent))
   * [pyramid-SockJS](https://github.com/fafhrd91/pyramid_sockjs)
   * [wildcloud-websockets](https://github.com/wildcloud/wildcloud-websockets)
   * [SockJS-cyclone](https://github.com/flaviogrossi/sockjs-cyclone)
@@ -39,7 +39,11 @@ To install `sockjs-node` run:
 
     npm install sockjs
 
-(If you see `rbytes` dependecy failing, don't worry, it's optional, SockJS-node will work fine without it.)
+For additional security (true random numbers) you might want to
+install `rbytes` package - SockJS will use it if available:
+
+    npm install rbytes
+
 
 An simplified echo SockJS server could look more or less like:
 

@@ -56,5 +56,5 @@ exports.app =
         res.writeHead(200)
         res.write(iframe_template.replace(/{{ callback }}/g, callback));
 
-        transport.register(req, @, new HtmlFileReceiver(res, @options))
+        transport.register(req, @, new HtmlFileReceiver(req, res, @options))
         return true

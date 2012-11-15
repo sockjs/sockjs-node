@@ -1,3 +1,18 @@
+0.3.4
+=====
+
+ * #73 - apparently 'package' is a reserved keyword (use 'pkg' instead)
+ * #93 - Coffescript can leak a variable when the same name is used
+   in catch statement. Let's always use 'x' as the variable in catch.
+ * #76 - decorateConnection could throw an error if remote connection
+   was closed before setup was complete
+ * #90 - Fix "TypeError: 'addListener'" exception (via @pl).
+ * #66 - Failure to post data to /xhr_send should kill the session
+ * remove 'optionalDependencies' section from package.json,
+   'rbytes' was always optional.
+ * #91 - Fix rare null exception.
+
+
 0.3.3
 =====
 
