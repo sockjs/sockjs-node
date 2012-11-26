@@ -113,15 +113,17 @@ class Session
         unless socket = @recv.connection
             socket = @recv.response.connection
         try
-            remoteAddress = socket.remoteAddress
-            remotePort    = socket.remotePort
-            address       = socket.address()
+            remoteAddress     = socket.remoteAddress
+            trueRemoteAddress = req.connection.remoteAddress
+            remotePort        = socket.remotePort
+            address           = socket.address()
         catch x
             # All-or-nothing
             return
-        @connection.remoteAddress = remoteAddress
-        @connection.remotePort    = remotePort
-        @connection.address       = address
+        @connection.remoteAddress     = remoteAddress
+        @connection.trueRemoteAddress = trueRemoteAddress
+        @connection.remotePort        = remotePort
+        @connection.address           = address
 
         @connection.url = req.url
         @connection.pathname = req.pathname
