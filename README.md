@@ -148,7 +148,7 @@ Where `options` is a hash which can contain:
 <dd>Some hosting providers enable sticky sessions only to requests that
   have JSESSIONID cookie set. This setting controls if the server should
   set this cookie to a dummy value. By default setting JSESSIONID cookie
-  is disabled. More sophisticated beaviour can be achieved by supplying
+  is disabled. More sophisticated behaviour can be achieved by supplying
   a function.</dd>
 
 <dt>log (function(severity, message))</dt>
@@ -162,9 +162,9 @@ Where `options` is a hash which can contain:
 
 <dt>heartbeat_delay (milliseconds)</dt>
 <dd>In order to keep proxies and load balancers from closing long
-  running http requests we need to pretend that the connecion is
+  running http requests we need to pretend that the connection is
   active and send a heartbeat packet once in a while. This setting
-  controlls how often this is done. By default a heartbeat packet is
+  controls how often this is done. By default a heartbeat packet is
   sent every 25 seconds.  </dd>
 
 <dt>disconnect_delay (milliseconds)</dt>
@@ -338,7 +338,7 @@ and sticky sessions (aka session affinity).
 Often WebSockets don't play nicely with proxies and load balancers.
 Deploying a SockJS server behind Nginx or Apache could be painful.
 
-Fortunetely recent versions of an excellent load balancer
+Fortunately recent versions of an excellent load balancer
 [HAProxy](http://haproxy.1wt.eu/) are able to proxy WebSocket
 connections. We propose to put HAProxy as a front line load balancer
 and use it to split SockJS traffic from normal HTTP data. Take a look
@@ -351,7 +351,7 @@ names.
 
 ### Sticky sessions
 
-If you plan depling more than one SockJS server, you must make sure
+If you plan deploying more than one SockJS server, you must make sure
 that all HTTP requests for a single session will hit the same server.
 SockJS has two mechanisms that can be usefull to achieve that:
 
@@ -439,7 +439,7 @@ the host. But to get various transports working, SockJS uses a middleman
 - an iframe hosted from target SockJS domain. That means the server
 will receive requests from the iframe, and not from the real
 domain. The domain of an iframe is the same as the SockJS domain. The
-problem is that any website can embedd the iframe and communicate with
+problem is that any website can embed the iframe and communicate with
 it - and request establishing SockJS connection. Using cookies for
 authorization in this scenario will result in granting full access to
 SockJS communication with your website from any website. This is a
