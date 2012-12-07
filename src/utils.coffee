@@ -17,24 +17,6 @@ exports.array_intersection = array_intersection = (arr_a, arr_b) ->
             r.push(a)
     return r
 
-# exports.array_contains = (arr, element) ->
-#     return (arr.indexOf(element) !== -1)
-
-exports.verify_origin = (origin, list_of_origins) ->
-    if list_of_origins.indexOf('*:*') isnt -1
-        return true
-    if not origin
-        return false
-    try
-        parts = url.parse(origin)
-        origins = [parts.host + ':' + parts.port,
-                   parts.host + ':*',
-                   '*:' + parts.port]
-        if array_intersection(origins, list_of_origins).length > 0
-            return true
-    catch x
-    return false
-
 exports.escape_selected = (str, chars) ->
     map = {}
     chars = '%'+chars

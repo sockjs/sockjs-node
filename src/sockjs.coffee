@@ -132,7 +132,6 @@ class Server extends events.EventEmitter
         @options =
             prefix: ''
             response_limit: 128*1024
-            origins: ['*:*']
             websocket: true
             jsessionid: false
             heartbeat_delay: 25000

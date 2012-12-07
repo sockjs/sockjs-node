@@ -25,12 +25,6 @@ exports.app =
                 status: 400
                 message: '"Connection" must be "Upgrade".'
             }
-        origin = req.headers.origin
-        if not utils.verify_origin(origin, @options.origins)
-            throw {
-                status: 400
-                message: 'Unverified origin.'
-            }
 
     sockjs_websocket: (req, connection, head) ->
         @_websocket_check(req, connection, head)
