@@ -228,9 +228,9 @@ has following methods and properties:
 <dt>Property: headers (object)</dt>
 <dd>Hash containing various headers copied from last receiving request
     on that connection. Exposed headers include: `origin`, `referer`
-    and `x-forwarded-for` (and friends). We expliclty do not grant
+    and `x-forwarded-for` (and friends). We explicitly do not grant
     access to `cookie` header, as using it may easily lead to security
-    issues (for details read the section "Authorization").</dd>
+    issues (for details read the section "Authorisation").</dd>
 
 <dt>Property: url (string)</dt>
 <dd><a href="http://nodejs.org/docs/v0.4.10/api/http.html#request.url">Url</a>
@@ -353,16 +353,16 @@ names.
 
 If you plan deploying more than one SockJS server, you must make sure
 that all HTTP requests for a single session will hit the same server.
-SockJS has two mechanisms that can be usefull to achieve that:
+SockJS has two mechanisms that can be useful to achieve that:
 
  * Urls are prefixed with server and session id numbers, like:
    `/resource/<server_number>/<session_id>/transport`.  This is
-   usefull for load balancers that support prefix-based affinity
+   useful for load balancers that support prefix-based affinity
    (HAProxy does).
  * `JSESSIONID` cookie is being set by SockJS-node. Many load
    balancers turn on sticky sessions if that cookie is set. This
    technique is derived from Java applications, where sticky sessions
-   are often neccesary. HAProxy does support this method, as well as
+   are often necessary. HAProxy does support this method, as well as
    some hosting providers, for example CloudFoundry.  In order to
    enable this method on the client side, please supply a
    `cookie:true` option to SockJS constructor.
@@ -426,10 +426,10 @@ source code.
 Various issues and design considerations
 ----------------------------------------
 
-### Authorization
+### Authorisation
 
 SockJS-node does not expose cookies to the application. This is done
-deliberately as using cookie-based authorization with SockJS simply
+deliberately as using cookie-based authorisation with SockJS simply
 doesn't make sense and will lead to security issues.
 
 Cookies are a contract between a browser and an http server, and are
@@ -441,12 +441,12 @@ will receive requests from the iframe, and not from the real
 domain. The domain of an iframe is the same as the SockJS domain. The
 problem is that any website can embed the iframe and communicate with
 it - and request establishing SockJS connection. Using cookies for
-authorization in this scenario will result in granting full access to
+authorisation in this scenario will result in granting full access to
 SockJS communication with your website from any website. This is a
 classic CSRF attack.
 
 Basically - cookies are not suited for SockJS model. If you want to
-authorize a session - provide a unique token on a page, send it as a
+authorise a session - provide a unique token on a page, send it as a
 first thing over SockJS connection and validate it on the server
 side. In essence, this is how cookies work.
 
