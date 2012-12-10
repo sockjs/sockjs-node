@@ -117,11 +117,12 @@ class Session
             remotePort    = socket.remotePort
             address       = socket.address()
         catch x
+
+        if remoteAddress
             # All-or-nothing
-            return
-        @connection.remoteAddress = remoteAddress
-        @connection.remotePort    = remotePort
-        @connection.address       = address
+            @connection.remoteAddress = remoteAddress
+            @connection.remotePort    = remotePort
+            @connection.address       = address
 
         @connection.url = req.url
         @connection.pathname = req.pathname
