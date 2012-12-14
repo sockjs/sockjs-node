@@ -91,7 +91,7 @@ class WebSocketReceiver extends transport.GenericReceiver
     didClose: ->
         super
         try
-            @ws.close()
+            @ws.close(1000, "Normal closure", false)
         catch x
         @ws = null
         @connection = null
@@ -130,7 +130,7 @@ class RawWebsocketSessionReceiver extends transport.Session
         if @readyState isnt Transport.OPEN
             return false
         @readyState = Transport.CLOSING
-        @ws.close(status, reason)
+        @ws.close(status, reason, false)
         return true
 
     didClose: ->
@@ -139,7 +139,7 @@ class RawWebsocketSessionReceiver extends transport.Session
         @ws.removeEventListener('message', @_message_cb)
         @ws.removeEventListener('close', @_end_cb)
         try
-            @ws.close()
+            @ws.close(1000, "Normal closure", false)
         catch x
         @ws = null
 
