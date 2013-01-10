@@ -130,7 +130,7 @@ class Session
 
         headers = {}
         for key in ['referer', 'x-client-ip', 'x-forwarded-for', \
-                    'x-cluster-client-ip', 'via', 'x-real-ip']
+                    'x-cluster-client-ip', 'via', 'x-real-ip', 'user-agent']
             headers[key] = req.headers[key] if req.headers[key]
         if headers
             @connection.headers = headers
