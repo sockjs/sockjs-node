@@ -83,6 +83,7 @@ class Session
             clearTimeout(@to_tref)
             @to_tref = null
         if @readyState is Transport.CLOSING
+            @flushToRecv(recv)
             recv.doSendFrame(@close_frame)
             recv.didClose()
             @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
@@ -143,11 +144,15 @@ class Session
             clearTimeout(@to_tref)
         @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
 
-    tryFlush: ->
+    flushToRecv: (recv) ->
         if @send_buffer.length > 0
             [sb, @send_buffer] = [@send_buffer, []]
-            @recv.doSendBulk(sb)
-        else
+            recv.doSendBulk(sb)
+            return true
+        return false
+
+    tryFlush: ->
+        if not @flushToRecv(@recv)
             if @to_tref
                 clearTimeout(@to_tref)
             x = =>
