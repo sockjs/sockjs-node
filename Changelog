@@ -1,3 +1,8 @@
+0.3.7
+=====
+
+ * Expose "protocol" on raw websocket connection instance, correctly
+
 0.3.6
 =====
 
