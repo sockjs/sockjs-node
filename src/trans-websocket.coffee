@@ -102,12 +102,10 @@ Transport = transport.Transport
 
 # Inheritance only for decorateConnection.
 class RawWebsocketSessionReceiver extends transport.Session
-    protocol: "websocket-raw"
-
     constructor: (req, conn, server, @ws) ->
         @prefix = server.options.prefix
         @readyState = Transport.OPEN
-        @recv = {connection: conn}
+        @recv = {connection: conn, protocol: "websocket-raw"}
 
         @connection = new transport.SockJSConnection(@)
         @decorateConnection(req)
