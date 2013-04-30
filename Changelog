@@ -1,3 +1,14 @@
+0.3.6
+=====
+
+ * When the server closes a connection, make sure the send buffer still
+   gets flushed.
+ * Expose "protocol" on raw websocket connection instance
+ * #105, #109, #113 - expose 'host', 'user-agent', and 'accept-language'
+   headers
+ * Serve SockJS over https CDN by default
+ * Upgrade Faye to 0.4.4 from 0.4.0
+
 0.3.5
 =====
 
