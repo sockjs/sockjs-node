@@ -1,3 +1,4 @@
 .pidfile.pid
 node_modules
 lib/*.js
+*~
