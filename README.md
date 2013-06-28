@@ -46,7 +46,7 @@ install `rbytes` package - SockJS will use it if available:
     npm install rbytes
 
 
-An simplified echo SockJS server could look more or less like:
+A simplified echo SockJS server could look more or less like:
 
 ```javascript
 var http = require('http');
@@ -330,7 +330,7 @@ want to do so).
 Deployment and load balancing
 -----------------------------
 
-There are two issues that needs to be considered when planning a
+There are two issues that need to be considered when planning a
 non-trivial SockJS-node deployment: WebSocket-compatible load balancer
 and sticky sessions (aka session affinity).
 
