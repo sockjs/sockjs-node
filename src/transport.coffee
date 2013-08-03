@@ -214,6 +214,8 @@ class Session
 
 
 Session.bySessionId = (session_id) ->
+    if not session_id
+        return null
     return MAP[session_id] or null
 
 register = (req, server, session_id, receiver) ->
