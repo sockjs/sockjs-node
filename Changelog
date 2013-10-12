@@ -1,3 +1,11 @@
+0.3.8
+=====
+
+ * #118 - Allow servers to specify a base URL in /info
+ * #131 - Don't look up session id undefined
+ * #124 - Small grammar updates for ReadMe
+ * Upgrade Faye to 0.7.0 from 0.4.0
+
 0.3.7
 =====
 
