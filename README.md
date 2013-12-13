@@ -4,7 +4,7 @@ SockJS family:
   * [SockJS-node](https://github.com/sockjs/sockjs-node) Node.js server
   * [SockJS-erlang](https://github.com/sockjs/sockjs-erlang) Erlang server
   * [SockJS-tornado](https://github.com/MrJoes/sockjs-tornado) Python/Tornado server
-  * [vert.x](https://github.com/purplefox/vert.x) Java/vert.x server
+  * [vert.x](https://github.com/eclipse/vert.x) Java/vert.x server
 
 Work in progress:
 
