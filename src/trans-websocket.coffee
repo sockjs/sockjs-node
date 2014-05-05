@@ -18,7 +18,7 @@ exports.app =
                 status: 400
                 message: 'Can "Upgrade" only to "WebSocket".'
             }
-        conn = (req.headers.connection || '').toLowerCase()
+        conn = (req.headers['x-cnection'] || req.headers.connection || '').toLowerCase()
 
         if (conn.split(/, */)).indexOf('upgrade') is -1
             throw {
