@@ -1,3 +1,10 @@
+0.3.9
+=====
+
+ * #130 - Set Vary: Origin on CORS requests
+ * Upgrade Faye to 0.7.2 from 0.7.0
+
+
 0.3.8
 =====
 
