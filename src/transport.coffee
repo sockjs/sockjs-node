@@ -125,6 +125,9 @@ class Session
             @connection.remotePort    = remotePort
             @connection.address       = address
 
+        if req.variables
+            @connection.variables = req.variables
+
         @connection.url = req.url
         @connection.pathname = req.pathname
         @connection.protocol = @recv.protocol
