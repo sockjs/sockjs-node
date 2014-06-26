@@ -125,6 +125,9 @@ class Session
             @connection.remotePort    = remotePort
             @connection.address       = address
 
+        if req.variables
+            @connection.variables = req.variables
+
         @connection.url = req.url
         @connection.pathname = req.pathname
         @connection.protocol = @recv.protocol
@@ -132,7 +135,7 @@ class Session
         headers = {}
         for key in ['referer', 'x-client-ip', 'x-forwarded-for', \
                     'x-cluster-client-ip', 'via', 'x-real-ip', 'host', \
-                    'user-agent', 'accept-language']
+                    'user-agent', 'accept-language', 'authorization']
             headers[key] = req.headers[key] if req.headers[key]
         if headers
             @connection.headers = headers
