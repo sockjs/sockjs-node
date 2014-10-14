@@ -61,12 +61,12 @@ exports.app =
             origin = '*'
         else
             origin = req.headers['origin']
+            res.setHeader('Access-Control-Allow-Credentials', 'true')
         res.setHeader('Access-Control-Allow-Origin', origin)
         res.setHeader('Vary', 'Origin')
         headers = req.headers['access-control-request-headers']
         if headers
             res.setHeader('Access-Control-Allow-Headers', headers)
-        res.setHeader('Access-Control-Allow-Credentials', 'true')
         return content
 
     xhr_poll: (req, res, _, next_filter) ->
