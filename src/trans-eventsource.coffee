@@ -25,7 +25,7 @@ exports.app =
         else
             origin = req.headers['origin']
             res.setHeader('Access-Control-Allow-Credentials', 'true')
-        res.setHeader('Content-Type', 'text/event-stream; charset=UTF-8')
+        res.setHeader('Content-Type', 'text/event-stream')
         res.setHeader('Access-Control-Allow-Origin', origin)
         res.setHeader('Vary', 'Origin')
         headers = req.headers['access-control-request-headers']
