@@ -17,7 +17,8 @@ class JsonpReceiver extends transport.ResponseReceiver
         # Yes, JSONed twice, there isn't a a better way, we must pass
         # a string back, and the script, will be evaled() by the
         # browser.
-        super(@callback + "(" + JSON.stringify(payload) + ");\r\n")
+        # prepend comment to avoid SWF exploit #163
+        super("/**/" + @callback + "(" + JSON.stringify(payload) + ");\r\n")
 
 
 exports.app =
@@ -29,12 +30,14 @@ exports.app =
             }
 
         callback = if 'c' of req.query then req.query['c'] else req.query['callback']
-        if /[^a-zA-Z0-9-_.]/.test(callback)
+        if /[^a-zA-Z0-9-_.]/.test(callback) or callback.length > 32
             throw {
                 status: 500
                 message: 'invalid "callback" parameter'
             }
 
+        # protect against SWF JSONP exploit - #163
+        res.setHeader('X-Content-Type-Options', 'nosniff')
         res.setHeader('Content-Type', 'application/javascript; charset=UTF-8')
         res.writeHead(200)
 
