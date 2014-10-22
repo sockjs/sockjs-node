@@ -5,7 +5,7 @@ var websocket_multiplex = require('websocket-multiplex');
 
 
 // 1. Setup SockJS server
-var sockjs_opts = {sockjs_url: "http://cdn.sockjs.org/sockjs-0.3.min.js"};
+var sockjs_opts = {sockjs_url: "http://cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js"};
 var service = sockjs.createServer(sockjs_opts);
 
 
