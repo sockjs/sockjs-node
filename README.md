@@ -119,7 +119,7 @@ Where `options` is a hash which can contain:
    browser - it makes sense to reuse the sockjs url you're using in
    normally.</dd>
 
-<dt>prefix (string)</dt>
+<dt>prefix (string regex)</dt>
 <dd>A url prefix for the server. All http requests which paths begins
    with selected prefix will be handled by SockJS. All other requests
    will be passed through, to previously registered handlers.</dd>
