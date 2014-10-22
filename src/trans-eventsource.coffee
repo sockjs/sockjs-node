@@ -20,7 +20,18 @@ class EventSourceReceiver extends transport.ResponseReceiver
 
 exports.app =
     eventsource: (req, res) ->
-        res.setHeader('Content-Type', 'text/event-stream; charset=UTF-8')
+        if !req.headers['origin'] or req.headers['origin'] is 'null'
+            origin = '*'
+        else
+            origin = req.headers['origin']
+            res.setHeader('Access-Control-Allow-Credentials', 'true')
+        res.setHeader('Content-Type', 'text/event-stream')
+        res.setHeader('Access-Control-Allow-Origin', origin)
+        res.setHeader('Vary', 'Origin')
+        headers = req.headers['access-control-request-headers']
+        if headers
+            res.setHeader('Access-Control-Allow-Headers', headers)
+
         res.writeHead(200)
         # Opera needs one more new line at the start.
         res.write('\r\n')
