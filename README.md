@@ -40,12 +40,6 @@ To install `sockjs-node` run:
 
     npm install sockjs
 
-For additional security (true random numbers) you might want to
-install `rbytes` package - SockJS will use it if available:
-
-    npm install rbytes
-
-
 A simplified echo SockJS server could look more or less like:
 
 ```javascript
