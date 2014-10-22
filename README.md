@@ -1,3 +1,5 @@
+[![NPM version](https://badge.fury.io/js/sockjs.svg)](http://badge.fury.io/js/sockjs)
+
 SockJS family:
 
   * [SockJS-client](https://github.com/sockjs/sockjs-client) JavaScript client library
