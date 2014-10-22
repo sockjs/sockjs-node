@@ -152,7 +152,7 @@ class Session
         return false
 
     tryFlush: ->
-        if not @flushToRecv(@recv)
+        if not @flushToRecv(@recv) or not @to_tref
             if @to_tref
                 clearTimeout(@to_tref)
             x = =>
