@@ -41,8 +41,8 @@ class SockJSConnection extends stream.Stream
         @_session.close(code, reason)
 
     destroy: () ->
-        @removeAllListeners()
         @end()
+        @removeAllListeners()
 
     destroySoon: () ->
         @destroy()
