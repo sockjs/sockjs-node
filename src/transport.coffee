@@ -21,7 +21,7 @@ closeFrame = (status, reason) ->
 
 class SockJSConnection extends stream.Stream
     constructor: (@_session) ->
-        @id  = uuid()
+        @id  = uuid.v4()
         @headers = {}
         @prefix = @_session.prefix
 
