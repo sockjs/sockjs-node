@@ -73,7 +73,7 @@ class WebSocketReceiver extends transport.GenericReceiver
             try
                 message = JSON.parse(payload)
             catch x
-                return @didClose(1002, 'Broken framing.')
+                return @session.close(1002, 'Broken framing.')
             if payload[0] is '['
                 for msg in message
                     @session.didMessage(msg)

@@ -237,7 +237,7 @@ class GenericReceiver
         @setUp(@thingy)
 
     setUp: ->
-        @thingy_end_cb = () => @didAbort(1006, "Connection closed")
+        @thingy_end_cb = () => @didAbort()
         @thingy.addListener('close', @thingy_end_cb)
         @thingy.addListener('end', @thingy_end_cb)
 
@@ -246,18 +246,18 @@ class GenericReceiver
         @thingy.removeListener('end', @thingy_end_cb)
         @thingy_end_cb = null
 
-    didAbort: (status, reason) ->
+    didAbort: ->
         session = @session
-        @didClose(status, reason)
+        @didClose()
         if session
             session.didTimeout()
 
-    didClose: (status, reason) ->
+    didClose: ->
         if @thingy
             @tearDown(@thingy)
             @thingy = null
         if @session
-            @session.unregister(status, reason)
+            @session.unregister()
 
     doSendBulk: (messages) ->
         q_msgs = for m in messages
