@@ -12,18 +12,10 @@ transport = require('./transport')
 
 exports.app =
     _websocket_check: (req, connection, head) ->
-        # Request via node.js magical 'upgrade' event.
-        if (req.headers.upgrade || '').toLowerCase() isnt 'websocket'
+        if not FayeWebsocket.isWebSocket(req)
             throw {
                 status: 400
-                message: 'Can "Upgrade" only to "WebSocket".'
-            }
-        conn = (req.headers.connection || '').toLowerCase()
-
-        if (conn.split(/, */)).indexOf('upgrade') is -1
-            throw {
-                status: 400
-                message: '"Connection" must be "Upgrade".'
+                message: 'Not a valid websocket request'
             }
 
     sockjs_websocket: (req, connection, head) ->
