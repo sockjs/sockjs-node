@@ -1,3 +1,19 @@
+0.3.10
+======
+
+ * #168 - Add CORS headers for eventsource
+ * #158 - schedule heartbeat timer even if send_buffer is not empty
+ * #96 - remove rbytes dependency
+ * #83 - update documentation for prefix
+ * #163 - add protection to JSON for SWF exploit
+ * #104 - delete unused parameters in code
+ * #106 - update CDN urls
+ * #79 - Don't remove stream listeners until after end so 'close' event is heard
+ * Get rid of need for _sockjs_onload global variable
+ * Use Faye for websocket request validation
+ * Upgrade Faye to 0.7.3
+ * Upgrade node-uuid to 1.4.1
+
 0.3.9
 =====
 
