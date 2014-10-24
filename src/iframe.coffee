@@ -12,11 +12,11 @@ iframe_template = """
 <head>
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script src="{{ sockjs_url }}"></script>
   <script>
     document.domain = document.domain;
-    _sockjs_onload = function(){SockJS.bootstrap_iframe();};
+    SockJS.bootstrap_iframe();
   </script>
-  <script src="{{ sockjs_url }}"></script>
 </head>
 <body>
   <h2>Don't panic!</h2>
