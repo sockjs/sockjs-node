@@ -158,7 +158,7 @@ class Session
             x = =>
                 if @recv
                     @to_tref = setTimeout(x, @heartbeat_delay)
-                    @recv.doSendFrame("h")
+                    @recv.heartbeat()
             @to_tref = setTimeout(x, @heartbeat_delay)
         return
 
@@ -263,6 +263,9 @@ class GenericReceiver
         q_msgs = for m in messages
                 utils.quote(m)
         @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
+
+    heartbeat: ->
+        @doSendFrame('h')
 
 
 # Write stuff to response, using chunked encoding if possible.
