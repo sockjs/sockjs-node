@@ -138,11 +138,15 @@ class Session
             @connection.headers = headers
 
     unregister: ->
+        delay = @recv.delay_disconnect
         @recv.session = null
-        @recv = null
         if @to_tref
             clearTimeout(@to_tref)
-        @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
+
+        if delay
+            @to_tref = setTimeout(@timeout_cb, @disconnect_delay)
+        else
+            @timeout_cb()
 
     flushToRecv: (recv) ->
         if @send_buffer.length > 0
@@ -268,6 +272,7 @@ class GenericReceiver
 # Write stuff to response, using chunked encoding if possible.
 class ResponseReceiver extends GenericReceiver
     max_response_size: undefined
+    delay_disconnect: true
 
     constructor: (@request, @response, @options) ->
         @curr_response_size = 0
