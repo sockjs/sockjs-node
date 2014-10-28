@@ -140,6 +140,7 @@ class Session
     unregister: ->
         delay = @recv.delay_disconnect
         @recv.session = null
+        @recv = null
         if @to_tref
             clearTimeout(@to_tref)
 
