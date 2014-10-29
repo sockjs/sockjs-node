@@ -252,10 +252,7 @@ class GenericReceiver
         @thingy_end_cb = null
 
     didAbort: ->
-        session = @session
         @didClose()
-        if session
-            session.didTimeout()
 
     didClose: ->
         if @thingy
