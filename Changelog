@@ -1,3 +1,9 @@
+0.3.11
+======
+
+ * #133 -  only delay disconnect on non-websocket transports
+ * Upgrade Faye to 0.8.0
+
 0.3.10
 ======
 
