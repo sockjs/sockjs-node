@@ -65,7 +65,7 @@ class WebSocketReceiver extends transport.GenericReceiver
             try
                 message = JSON.parse(payload)
             catch x
-                return @session.close(1002, 'Broken framing.')
+                return @didClose(1002, 'Broken framing.')
             if payload[0] is '['
                 for msg in message
                     @session.didMessage(msg)
@@ -80,10 +80,10 @@ class WebSocketReceiver extends transport.GenericReceiver
             catch x
         return false
 
-    didClose: ->
+    didClose: (status=1000, reason="Normal closure") ->
         super
         try
-            @ws.close(1000, "Normal closure", false)
+            @ws.close(status, reason, false)
         catch x
         @ws = null
         @connection = null

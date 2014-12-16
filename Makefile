@@ -16,8 +16,8 @@ clean:
 
 #### Testing
 
-test_server:
-	node examples/test_server/server.js
+test_server: build
+	node tests/test_server/server.js
 
 serve:
 	@if [ -e .pidfile.pid ]; then		\

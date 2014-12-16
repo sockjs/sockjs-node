@@ -1,4 +1,4 @@
-var sockjs = require('sockjs');
+var sockjs = require('../../index');
 
 exports.install = function(opts, server) {
     var sjs_echo = sockjs.createServer(opts);
