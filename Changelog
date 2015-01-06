@@ -1,3 +1,11 @@
+0.3.12
+======
+
+ * Allow Faye socket constructor options to be passed with
+   faye_server_options option to createServer
+ * Fix websocket bad json tests
+ * Upgrade Faye to allow 0.9.*
+
 0.3.11
 ======
 
