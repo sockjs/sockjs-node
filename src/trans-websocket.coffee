@@ -20,7 +20,8 @@ exports.app =
 
     sockjs_websocket: (req, connection, head) ->
         @_websocket_check(req, connection, head)
-        ws = new FayeWebsocket(req, connection, head)
+        ws = new FayeWebsocket(req, connection, head, null,
+                               @options.faye_server_options)
         ws.onopen = =>
             # websockets possess no session_id
             transport.registerNoSession(req, @,
@@ -35,7 +36,8 @@ exports.app =
                 status: 400
                 message: 'Only supported WebSocket protocol is RFC 6455.'
             }
-        ws = new FayeWebsocket(req, connection, head)
+        ws = new FayeWebsocket(req, connection, head, null,
+                               @options.faye_server_options)
         ws.onopen = =>
             new RawWebsocketSessionReceiver(req, connection, @, ws)
         return true

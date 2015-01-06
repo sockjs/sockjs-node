@@ -133,6 +133,7 @@ class Server extends events.EventEmitter
             prefix: ''
             response_limit: 128*1024
             websocket: true
+            faye_server_options: null
             jsessionid: false
             heartbeat_delay: 25000
             disconnect_delay: 5000
