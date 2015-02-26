@@ -1,3 +1,8 @@
+0.3.13
+======
+
+  * Upgrade faye-websocket to 0.9.3 to fix #171
+
 0.3.12
 ======
 
