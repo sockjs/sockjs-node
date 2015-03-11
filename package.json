@@ -21,7 +21,7 @@
     "node-uuid": "^1.4.1"
   },
   "devDependencies": {
-    "coffee-script": "^1.8.0"
+    "coffee-script": "1.8.0"
   },
   "homepage": "https://github.com/sockjs/sockjs-node",
   "keywords": [
