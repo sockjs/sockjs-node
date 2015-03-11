@@ -108,10 +108,10 @@ generate_dispatcher = (options) ->
 class Listener
     constructor: (@options, emit) ->
         @app = new App()
-        @app.options = options
+        @app.options = @options
         @app.emit = emit
         @app.log('debug', 'SockJS v' + sockjsVersion() + ' ' +
-                          'bound to ' + JSON.stringify(options.prefix))
+                          'bound to ' + JSON.stringify(@options.prefix))
         @dispatcher = generate_dispatcher(@options)
         @webjs_handler = webjs.generateHandler(@app, @dispatcher)
         @path_regexp = new RegExp('^' + @options.prefix  + '([/].+|[/]?)$')
