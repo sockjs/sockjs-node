@@ -138,7 +138,7 @@ class Server extends events.EventEmitter
             heartbeat_delay: 25000
             disconnect_delay: 5000
             log: (severity, line) -> console.log(line)
-            sockjs_url: 'https://cdn.jsdelivr.net/sockjs/0.3.4/sockjs.min.js'
+            sockjs_url: 'https://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js'
         if user_options
             utils.objectExtend(@options, user_options)
 
