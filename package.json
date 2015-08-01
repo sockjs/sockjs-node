@@ -17,7 +17,7 @@
     }
   ],
   "dependencies": {
-    "faye-websocket": "^0.9.3",
+    "faye-websocket": "^0.10.0",
     "node-uuid": "^1.4.1"
   },
   "devDependencies": {
