@@ -75,14 +75,15 @@ generate_dispatcher = (options) ->
         t = (s) => [p('/([^/.]+)/([^/.]+)' + s), 'server', 'session']
         opts_filters = (options_filter='xhr_options') ->
             return ['h_sid', 'xhr_cors', 'cache_for', options_filter, 'expose']
-        dispatcher = [
+        prefix_dispatcher = [
             ['GET',     p(''), ['welcome_screen']],
             ['GET',     p('/iframe[0-9-.a-z_]*.html'), ['iframe', 'cache_for', 'expose']],
             ['OPTIONS', p('/info'), opts_filters('info_options')],
             ['GET',     p('/info'), ['xhr_cors', 'h_no_cache', 'info', 'expose']],
             ['OPTIONS', p('/chunking_test'), opts_filters()],
-            ['POST',    p('/chunking_test'), ['xhr_cors', 'expect_xhr', 'chunking_test']],
-            ['GET',     p('/websocket'),   ['raw_websocket']],
+            ['POST',    p('/chunking_test'), ['xhr_cors', 'expect_xhr', 'chunking_test']]
+        ]
+        transport_dispatcher = [
             ['GET',     t('/jsonp'), ['h_sid', 'h_no_cache', 'jsonp']],
             ['POST',    t('/jsonp_send'), ['h_sid', 'h_no_cache', 'expect_form', 'jsonp_send']],
             ['POST',    t('/xhr'), ['h_sid', 'h_no_cache', 'xhr_cors', 'xhr_poll']],
@@ -97,13 +98,17 @@ generate_dispatcher = (options) ->
 
         # TODO: remove this code on next major release
         if options.websocket
-            dispatcher.push(
+            prefix_dispatcher.push(
+                ['GET', p('/websocket'), ['raw_websocket']])
+            transport_dispatcher.push(
                 ['GET', t('/websocket'), ['sockjs_websocket']])
         else
             # modify urls to return 404
-            dispatcher.push(
+            prefix_dispatcher.push(
+                ['GET', p('/websocket'), ['cache_for', 'disabled_transport']])
+            transport_dispatcher.push(
                 ['GET', t('/websocket'), ['cache_for', 'disabled_transport']])
-        return dispatcher
+        return prefix_dispatcher.concat(transport_dispatcher)
 
 class Listener
     constructor: (@options, emit) ->
