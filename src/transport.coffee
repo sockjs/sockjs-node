@@ -252,6 +252,7 @@ class GenericReceiver
         @thingy_end_cb = null
 
     didAbort: ->
+        @delay_disconnect = false
         @didClose()
 
     didClose: ->
