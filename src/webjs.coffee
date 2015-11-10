@@ -175,7 +175,7 @@ exports.GenericApp = class GenericApp
         return content
 
     h_no_cache: (req, res, content) ->
-        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+        res.setHeader('Cache-Control', 'no-store, no-cache, no-transform, must-revalidate, max-age=0')
         return content
 
     expect_form: (req, res, _data, next_filter) ->
