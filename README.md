@@ -309,6 +309,8 @@ this url. This can be a command line client, external application,
 third party code or even a browser (though I don't know why you would
 want to do so).
 
+Note: This endpoint will *not send any heartbeat packets*.
+
 
 Deployment and load balancing
 -----------------------------
