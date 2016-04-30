@@ -61,6 +61,7 @@ class Session
     constructor: (@session_id, server) ->
         @heartbeat_delay = server.options.heartbeat_delay
         @disconnect_delay = server.options.disconnect_delay
+        @allowed_headers = server.options.allowed_headers
         @prefix = server.options.prefix
         @send_buffer = []
         @is_closing = false
@@ -130,10 +131,7 @@ class Session
         @connection.protocol = @recv.protocol
 
         headers = {}
-        for key in ['referer', 'x-client-ip', 'x-forwarded-for', \
-                    'x-cluster-client-ip', 'via', 'x-real-ip', \
-                    'x-forwarded-proto', 'x-ssl', \
-                    'host', 'user-agent', 'accept-language']
+        for key in @allowed_headers
             headers[key] = req.headers[key] if req.headers[key]
         if headers
             @connection.headers = headers
