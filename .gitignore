@@ -1,5 +1,4 @@
 .pidfile.pid
 node_modules
-lib/*.js
 *~
 package-lock.json
