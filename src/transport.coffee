@@ -131,6 +131,7 @@ class Session
 
         headers = {}
         for key in ['referer', 'x-client-ip', 'x-forwarded-for', \
+                    'x-forwarded-host', 'x-forwarded-port', \
                     'x-cluster-client-ip', 'via', 'x-real-ip', \
                     'x-forwarded-proto', 'x-ssl', \
                     'host', 'user-agent', 'accept-language']
