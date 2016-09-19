@@ -120,8 +120,7 @@ exports.GenericApp = class GenericApp
     log_request: (req, res, data) ->
         td = (new Date()) - req.start_date
         @log('info', req.method + ' ' + req.url + ' ' + td + 'ms ' +
-                (if res.finished and res._header then res._header.split('\r')[0].split(' ')[1] \
-                                  else '(unfinished)'))
+                (if res.finished then res.statusCode else '(unfinished)'))
         return data
 
     log: (severity, line) ->
