@@ -11,7 +11,8 @@ SRVPID=$!
 
 set +e
 
-sockjs-protocol/venv/bin/python sockjs-protocol/sockjs-protocol.py
+cd sockjs-protocol
+./venv/bin/python sockjs-protocol.py
 PASSED=$?
 kill $SRVPID
 exit $PASSED
