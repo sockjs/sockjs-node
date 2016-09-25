@@ -45,10 +45,10 @@ To install `sockjs-node` run:
 A simplified echo SockJS server could look more or less like:
 
 ```javascript
-var http = require('http');
-var sockjs = require('sockjs');
+const http = require('http');
+const sockjs = require('sockjs');
 
-var echo = sockjs.createServer({ sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js' });
+const echo = sockjs.createServer({ sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js' });
 echo.on('connection', function(conn) {
     conn.on('data', function(message) {
         conn.write(message);
@@ -56,7 +56,7 @@ echo.on('connection', function(conn) {
     conn.on('close', function() {});
 });
 
-var server = http.createServer();
+const server = http.createServer();
 echo.installHandlers(server, {prefix:'/echo'});
 server.listen(9999, '0.0.0.0');
 ```
@@ -73,18 +73,18 @@ discussions and support.
 SockJS-node API
 ---------------
 
-The API design is based on common Node APIs like the
-[Streams API](http://nodejs.org/docs/v0.5.8/api/streams.html) or the
-[Http.Server API](http://nodejs.org/docs/v0.5.8/api/http.html#http.Server).
+The API design is based on the common Node API's like
+[Streams API](https://nodejs.org/api/stream.html) or
+[Http.Server API](https://nodejs.org/api/http.html#http_class_http_server).
 
 ### Server class
 
 SockJS module is generating a `Server` class, similar to
-[Node.js http.createServer](http://nodejs.org/docs/v0.5.8/api/http.html#http.createServer)
+[Node.js http.createServer](https://nodejs.org/api/http.html#http_http_createserver_requestlistener)
 module.
 
 ```javascript
-var sockjs_server = sockjs.createServer(options);
+const sockjs_server = sockjs.createServer(options);
 ```
 
 Where `options` is a hash which can contain:
@@ -169,7 +169,7 @@ Where `options` is a hash which can contain:
 ### Server instance
 
 Once you have create `Server` instance you can hook it to the
-[http.Server instance](http://nodejs.org/docs/v0.5.8/api/http.html#http.createServer).
+[http.Server instance](https://nodejs.org/api/http.html#http_class_http_server).
 
 ```javascript
 var http_server = http.createServer();
@@ -181,7 +181,7 @@ Where `options` can overshadow options given when creating `Server`
 instance.
 
 `Server` instance is an
-[EventEmitter](http://nodejs.org/docs/v0.4.10/api/events.html#events.EventEmitter),
+[EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter),
 and emits following event:
 
 <dl>
@@ -197,16 +197,10 @@ handlers. You must install your custom http handlers before calling
 ### Connection instance
 
 A `Connection` instance supports
-[Node Stream API](http://nodejs.org/docs/v0.5.8/api/streams.html) and
+[Node Stream API](https://nodejs.org/api/stream.html) and
 has following methods and properties:
 
 <dl>
-<dt>Property: readable (boolean)</dt>
-<dd>Is the stream readable?</dd>
-
-<dt>Property: writable (boolean)</dt>
-<dd>Is the stream writable?</dd>
-
 <dt>Property: remoteAddress (string)</dt>
 <dd>Last known IP address of the client.</dd>
 
@@ -224,7 +218,7 @@ has following methods and properties:
     issues (for details read the section "Authorisation").</dd>
 
 <dt>Property: url (string)</dt>
-<dd><a href="http://nodejs.org/docs/v0.4.10/api/http.html#request.url">Url</a>
+<dd><a href="https://nodejs.org/api/http.html#http_message_url">Url</a>
     property copied from last request.</dd>
 
 <dt>Property: pathname (string)</dt>

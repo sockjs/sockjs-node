@@ -1,3 +1,12 @@
+Unreleased
+======
+
+  * Convert from coffeescript to ES6.
+  * Update minimum Node.js version to 6.X.
+  * Update SockJSConnection implementation to be compatible with latest Node.js streams.
+  * SockJSConnection properties `readable` and `writable` have been removed. These are used internally by Node.js streams.
+
+
 0.3.19
 ======
 

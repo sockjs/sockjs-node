@@ -1,6 +1,6 @@
 .gitignore
-lib/.placeholder
-VERSION-GEN
-src
+.eslintrc
+.eslintignore
+.nvmrc
 node_modules
 *~
