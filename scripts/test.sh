@@ -8,6 +8,7 @@ make test_deps pycco_deps
 cd ..
 node tests/test_server/server.js &
 SRVPID=$!
+sleep 1
 
 set +e
 
