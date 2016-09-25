@@ -4,7 +4,7 @@ set -e
 
 git clone --depth=1 https://github.com/sockjs/sockjs-protocol.git
 cd sockjs-protocol
-make test_deps
+make test_deps pycco_deps
 cd ..
 node tests/test_server/server.js &
 SRVPID=$!
