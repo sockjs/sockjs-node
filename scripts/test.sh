@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set +e
+set -e
 
 git clone --depth=1 https://github.com/sockjs/sockjs-protocol.git
 cd sockjs-protocol
@@ -9,7 +9,7 @@ cd ..
 node tests/test_server/server.js &
 SRVPID=$$!
 
-set --e
+set +e
 
 sockjs-protocol/venv/bin/python sockjs-protocol.py
 PASSED=$?
