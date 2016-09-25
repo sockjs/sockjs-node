@@ -1,4 +1,4 @@
-[![NPM version](https://badge.fury.io/js/sockjs.svg)](http://badge.fury.io/js/sockjs)[![Build Status](https://img.shields.io/travis/sockjs/sockjs-node/master.svg?style=flat-square)](https://travis-ci.org/sockjs/sockjs-node)[![Dependencies](https://img.shields.io/david/sockjs/sockjs-node.svg?style=flat-square)](https://david-dm.org/sockjs/sockjs-node)
+[![npm version](https://img.shields.io/npm/v/sockjs.svg?style=flat-square)](https://www.npmjs.com/package/sockjs)[![Build Status](https://img.shields.io/travis/sockjs/sockjs-node/master.svg?style=flat-square)](https://travis-ci.org/sockjs/sockjs-node)[![Dependencies](https://img.shields.io/david/sockjs/sockjs-node.svg?style=flat-square)](https://david-dm.org/sockjs/sockjs-node)
 
 SockJS family:
 
