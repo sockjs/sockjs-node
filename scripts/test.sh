@@ -7,11 +7,11 @@ cd sockjs-protocol
 make test_deps
 cd ..
 node tests/test_server/server.js &
-SRVPID=$$!
+SRVPID=$!
 
 set +e
 
-sockjs-protocol/venv/bin/python sockjs-protocol.py
+sockjs-protocol/venv/bin/python sockjs-protocol/sockjs-protocol.py
 PASSED=$?
 kill $SRVPID
 exit $PASSED
