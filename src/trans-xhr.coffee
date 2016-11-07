@@ -57,6 +57,9 @@ exports.app =
         return true
 
     xhr_cors: (req, res, content) ->
+        if @options.disable_cors
+            return
+
         if !req.headers['origin']
             origin = '*'
         else

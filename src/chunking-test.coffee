@@ -33,7 +33,7 @@ exports.app =
     info: (req, res, _) ->
         info = {
             websocket: @options.websocket,
-            origins: ['*:*'],
+            origins: ['*:*'] unless @options.disable_cors,
             cookie_needed: not not @options.jsessionid,
             entropy: utils.random32(),
         }
