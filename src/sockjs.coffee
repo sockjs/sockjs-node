@@ -155,8 +155,15 @@ class Server extends events.EventEmitter
 
     installHandlers: (http_server, handler_options) ->
         handler = @listener(handler_options).getHandler()
-        utils.overshadowListeners(http_server, 'request', handler)
-        utils.overshadowListeners(http_server, 'upgrade', handler)
+
+        old_emit = http_server.emit
+        http_server.emit = (type, req, res, extra) ->
+            if type in ['request', 'upgrade']
+                return true if handler(req, res, extra)
+                return old_emit.call(this, type, req, res, extra)
+            else
+                return old_emit.apply(this, arguments)
+
         return true
 
     middleware: (handler_options) ->

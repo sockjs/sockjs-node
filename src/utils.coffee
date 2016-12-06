@@ -65,20 +65,6 @@ exports.objectExtend = (dst, src) ->
             dst[k] = src[k]
     return dst
 
-exports.overshadowListeners = (ee, event, handler) ->
-    # listeners() returns a reference to the internal array of EventEmitter.
-    # Make a copy, because we're about the replace the actual listeners.
-    old_listeners = ee.listeners(event).slice(0)
-
-    ee.removeAllListeners(event)
-    new_handler = () ->
-        if handler.apply(this, arguments) isnt true
-            for listener in old_listeners
-                listener.apply(this, arguments)
-            return false
-        return true
-    ee.addListener(event, new_handler)
-
 
 escapable = /[\x00-\x1f\ud800-\udfff\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufff0-\uffff]/g
 
