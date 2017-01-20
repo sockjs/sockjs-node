@@ -159,9 +159,9 @@ Where `options` is a hash which can contain:
 
 <dt>disable_cors (boolean)</dt>
 <dd>Enabling this option will prevent
-  <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing" target="_blank">CORS</a>
+  <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a>
   headers from being included in the HTTP response. Can be used when the
-  sockjs client is know to be connecting from the same domain as the 
+  sockjs client is know to be connecting from the same origin as the 
   sockjs server.</dd>
 </dl>
 
