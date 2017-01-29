@@ -17,12 +17,12 @@
     }
   ],
   "dependencies": {
-    "debug": "^2.2.0",
-    "faye-websocket": "^0.11.0",
+    "debug": "^2.6.0",
+    "faye-websocket": "^0.11.1",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "eslint": "^3.6.0"
+    "eslint": "^3.14.1"
   },
   "homepage": "https://github.com/sockjs/sockjs-node",
   "keywords": [
