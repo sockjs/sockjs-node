@@ -2,6 +2,7 @@
 
 set -e
 
+rm -rf sockjs-protocol
 git clone --depth=1 https://github.com/sockjs/sockjs-protocol.git
 cd sockjs-protocol
 make test_deps pycco_deps
