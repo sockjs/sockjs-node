@@ -15,5 +15,7 @@ server.addListener('upgrade', function(req, res){
 
 sockjs_app.install(config.server_opts, server);
 
-console.log(` [*] Listening on ${config.host}:${config.port}`);
-server.listen(config.port, config.host);
+server.listen(config.port, config.host, () => {
+  const addr = server.address();
+  console.log(` [*] Listening on ${addr.address}:${addr.port}`);
+});
