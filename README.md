@@ -161,7 +161,7 @@ Where `options` is a hash which can contain:
 <dd>Enabling this option will prevent
   <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a>
   headers from being included in the HTTP response. Can be used when the
-  sockjs client is know to be connecting from the same origin as the 
+  sockjs client is known to be connecting from the same origin as the 
   sockjs server.</dd>
 </dl>
 
