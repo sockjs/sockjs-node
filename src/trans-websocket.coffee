@@ -52,7 +52,6 @@ class WebSocketReceiver extends transport.GenericReceiver
             @connection.setNoDelay(true)
         catch x
         @ws.addEventListener('message', (m) => @didMessage(m.data))
-        @heartbeat_cb = => @heartbeat_timeout()
         super @connection
 
     setUp: ->
@@ -96,7 +95,7 @@ class WebSocketReceiver extends transport.GenericReceiver
             clearTimeout(hto_ref)
 
         if supportsHeartbeats
-            hto_ref = setTimeout(@heartbeat_cb, 10000)
+            hto_ref = setTimeout (@heartbeat_timeout.bind @), 10000
         else
             super
 
