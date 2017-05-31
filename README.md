@@ -73,8 +73,8 @@ discussions and support.
 SockJS-node API
 ---------------
 
-The API design is based on the common Node API's like
-[Streams API](https://nodejs.org/api/stream.html) or
+The API design is based on common Node APIs like the
+[Streams API](https://nodejs.org/api/stream.html) or the
 [Http.Server API](https://nodejs.org/api/http.html#http_class_http_server).
 
 ### Server class
