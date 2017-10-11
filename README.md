@@ -156,6 +156,13 @@ Where `options` is a hash which can contain:
   connection have not been seen for a while. This delay is configured
   by this setting. By default the `close` event will be emitted when a
   receiving connection wasn't seen for 5 seconds.  </dd>
+
+<dt>allowed_headers (array of strings)</dt>
+<dd>A whitelist of HTTP headers exposed through connection's `headers`
+  object. By default only the following headers are exposed:
+  `referer`, `x-client-ip`, `x-forwarded-for`, `x-cluster-client-ip`,
+  `via`, `x-real-ip`, `x-forwarded-proto`, `x-ssl`, `host`,
+  `user-agent`, and `accept-language`.</dd>
 </dl>
 
 
@@ -212,9 +219,10 @@ has following methods and properties:
 <dt>Property: headers (object)</dt>
 <dd>Hash containing various headers copied from last receiving request
     on that connection. Exposed headers include: `origin`, `referer`
-    and `x-forwarded-for` (and friends). We explicitly do not grant
-    access to `cookie` header, as using it may easily lead to security
-    issues (for details read the section "Authorisation").</dd>
+    and `x-forwarded-for` (and friends). By default we explicitly do not
+    grant access to `cookie` header, as using it may easily lead to security
+    issues (for details read the section "Authorisation"). You can use
+    `allowed_headers` option to configure the whitelist.</dd>
 
 <dt>Property: url (string)</dt>
 <dd><a href="http://nodejs.org/docs/v0.4.10/api/http.html#request.url">Url</a>
@@ -414,9 +422,9 @@ Various issues and design considerations
 
 ### Authorisation
 
-SockJS-node does not expose cookies to the application. This is done
-deliberately as using cookie-based authorisation with SockJS simply
-doesn't make sense and will lead to security issues.
+SockJS-node by default does not expose cookies to the application.
+This is done deliberately as using cookie-based authorisation with
+SockJS simply doesn't make sense and will lead to security issues.
 
 Cookies are a contract between a browser and an http server, and are
 identified by a domain name. If a browser has a cookie set for

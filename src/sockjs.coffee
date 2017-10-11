@@ -142,6 +142,12 @@ class Server extends events.EventEmitter
             jsessionid: false
             heartbeat_delay: 25000
             disconnect_delay: 5000
+            allowed_headers: [
+                'referer', 'x-client-ip', 'x-forwarded-for',
+                'x-cluster-client-ip', 'via', 'x-real-ip',
+                'x-forwarded-proto', 'x-ssl',
+                'host', 'user-agent', 'accept-language'
+            ]
             log: (severity, line) -> console.log(line)
             sockjs_url: 'https://cdn.jsdelivr.net/sockjs/1/sockjs.min.js'
         if user_options
