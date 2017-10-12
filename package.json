@@ -33,5 +33,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/sockjs/sockjs-node.git"
+  },
+  "scripts": {
+    "version": "make build && git add Changelog",
+    "postversion": "npm publish",
+    "postpublish": "git push origin --all && git push origin --tags"
   }
 }
