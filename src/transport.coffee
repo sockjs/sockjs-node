@@ -5,7 +5,7 @@
 # ***** END LICENSE BLOCK *****
 
 stream = require('stream')
-uuid = require('uuid')
+uuidv4 = require('uuid/v4')
 utils = require('./utils')
 
 class Transport
@@ -21,7 +21,7 @@ closeFrame = (status, reason) ->
 
 class SockJSConnection extends stream.Stream
     constructor: (@_session) ->
-        @id  = uuid.v4()
+        @id  = uuidv4()
         @headers = {}
         @prefix = @_session.prefix
 
