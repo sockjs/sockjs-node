@@ -8,6 +8,7 @@ events = require('events')
 fs = require('fs')
 webjs = require('./webjs')
 utils = require('./utils')
+urlParser = require("url")
 
 trans_websocket = require('./trans-websocket')
 trans_jsonp = require('./trans-jsonp')
@@ -123,7 +124,8 @@ class Listener
 
     handler: (req, res, extra) =>
         # All urls that match the prefix must be handled by us.
-        if not req.url.match(@path_regexp)
+        url = urlParser.parse(req.url).pathname
+        if not url.match(@path_regexp)
             return false
         @webjs_handler(req, res, extra)
         return true
