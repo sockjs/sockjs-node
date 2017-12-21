@@ -65,6 +65,10 @@ exports.app =
         else
             origin = req.headers['origin']
             res.setHeader('Access-Control-Allow-Credentials', 'true')
+
+        if @options.custom_cors
+            origin = options.custom_cors(origin)
+
         res.setHeader('Access-Control-Allow-Origin', origin)
         res.setHeader('Vary', 'Origin')
         headers = req.headers['access-control-request-headers']
