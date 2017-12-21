@@ -67,7 +67,7 @@ exports.app =
             res.setHeader('Access-Control-Allow-Credentials', 'true')
 
         if @options.custom_cors
-            origin = options.custom_cors(origin)
+            origin = @options.custom_cors(origin)
 
         res.setHeader('Access-Control-Allow-Origin', origin)
         res.setHeader('Vary', 'Origin')
