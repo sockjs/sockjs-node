@@ -1,8 +1,8 @@
 {
-  "name": "sockjs",
+  "name": "sockjs-uws",
   "description": "SockJS-node is a server counterpart of SockJS-client a JavaScript library that provides a WebSocket-like object in the browser. SockJS gives you a coherent, cross-browser, Javascript API which creates a low latency, full duplex, cross-domain communication channel between the browser and the web server.",
-  "version": "0.3.19",
-  "author": "Marek Majkowski",
+  "version": "0.3.23",
+  "author": "Maxim Makarov",
   "bugs": {
     "url": "https://github.com/sockjs/sockjs-node/issues"
   },
@@ -17,8 +17,8 @@
     }
   ],
   "dependencies": {
-    "faye-websocket": "^0.10.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "uws": "^9.14.0"
   },
   "devDependencies": {
     "coffee-script": "^1.8.0"
