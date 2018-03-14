@@ -4,41 +4,29 @@
 # For the license see COPYING.
 # ***** END LICENSE BLOCK *****
 
-FayeWebsocket = require('faye-websocket')
+WebSocketServer = require('uws').Server
+webSocketServer = new WebSocketServer({ noServer: true })
 
 utils = require('./utils')
 transport = require('./transport')
 
 
 exports.app =
-    _websocket_check: (req, connection, head) ->
-        if not FayeWebsocket.isWebSocket(req)
-            throw {
-                status: 400
-                message: 'Not a valid websocket request'
-            }
-
     sockjs_websocket: (req, connection, head) ->
-        @_websocket_check(req, connection, head)
-        ws = new FayeWebsocket(req, connection, head, null,
-                               @options.faye_server_options)
-        ws.onopen = =>
+        webSocketServer.handleUpgrade req, connection, head, (ws) =>
             # websockets possess no session_id
             transport.registerNoSession(req, @,
                                         new WebSocketReceiver(ws, connection))
         return true
 
     raw_websocket: (req, connection, head) ->
-        @_websocket_check(req, connection, head)
         ver = req.headers['sec-websocket-version'] or ''
         if ['8', '13'].indexOf(ver) is -1
             throw {
                 status: 400
                 message: 'Only supported WebSocket protocol is RFC 6455.'
             }
-        ws = new FayeWebsocket(req, connection, head, null,
-                               @options.faye_server_options)
-        ws.onopen = =>
+        webSocketServer.handleUpgrade req, connection, head, (ws) =>
             new RawWebsocketSessionReceiver(req, connection, @, ws)
         return true
 
@@ -51,16 +39,16 @@ class WebSocketReceiver extends transport.GenericReceiver
             @connection.setKeepAlive(true, 5000)
             @connection.setNoDelay(true)
         catch x
-        @ws.addEventListener('message', (m) => @didMessage(m.data))
+        @ws.on('message', (m) => @didMessage(m))
         @heartbeat_cb = => @heartbeat_timeout()
         super @connection
 
     setUp: ->
         super
-        @ws.addEventListener('close', @thingy_end_cb)
+        @ws.on('close', @thingy_end_cb)
 
     tearDown: ->
-        @ws.removeEventListener('close', @thingy_end_cb)
+        @ws.removeListener('close', @thingy_end_cb)
         super
 
     didMessage: (payload) ->
@@ -119,9 +107,9 @@ class RawWebsocketSessionReceiver extends transport.Session
         @decorateConnection(req)
         server.emit('connection', @connection)
         @_end_cb = => @didClose()
-        @ws.addEventListener('close', @_end_cb)
+        @ws.on('close', @_end_cb)
         @_message_cb = (m) => @didMessage(m)
-        @ws.addEventListener('message', @_message_cb)
+        @ws.on('message', @_message_cb)
 
     didMessage: (m) ->
         if @readyState is Transport.OPEN
@@ -144,8 +132,8 @@ class RawWebsocketSessionReceiver extends transport.Session
     didClose: ->
         if not @ws
             return
-        @ws.removeEventListener('message', @_message_cb)
-        @ws.removeEventListener('close', @_end_cb)
+        @ws.removeListener('message', @_message_cb)
+        @ws.removeListener('close', @_end_cb)
         try
             @ws.close(1000, "Normal closure", false)
         catch x
