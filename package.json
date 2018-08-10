@@ -37,7 +37,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "version": "make build && git add Changelog",
+    "version": "git add CHANGELOG.MD",
     "postversion": "npm publish",
     "postpublish": "git push origin --all && git push origin --tags"
   }
