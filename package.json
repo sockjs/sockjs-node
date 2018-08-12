@@ -40,5 +40,8 @@
     "version": "git add CHANGELOG.MD",
     "postversion": "npm publish",
     "postpublish": "git push origin --all && git push origin --tags"
+  },
+  "engines": {
+    "node": ">=6.5.0"
   }
 }
