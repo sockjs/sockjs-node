@@ -6,6 +6,8 @@ Unreleased
   * Update SockJSConnection implementation to be compatible with latest Node.js streams.
   * SockJSConnection properties `readable` and `writable` have been removed. These are used internally by Node.js streams.
   * Remove `console.log` logging by default.
+  * Remove usage of exceptions for flow control.
+  * Add `debug` logs for easier troubleshooting.
 
 
 0.3.19
