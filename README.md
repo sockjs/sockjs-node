@@ -35,8 +35,7 @@ SockJS-node server
 ==================
 
 SockJS-node is a Node.js server side counterpart of
-[SockJS-client browser library](https://github.com/sockjs/sockjs-client)
-written in CoffeeScript.
+[SockJS-client browser library](https://github.com/sockjs/sockjs-client).
 
 To install `sockjs-node` run:
 
@@ -364,51 +363,28 @@ dependencies:
 
     cd sockjs-node
     npm install
-    npm install --dev
-    ln -s .. node_modules/sockjs
-
-You're ready to compile CoffeeScript:
-
-    make build
 
 If compilation succeeds you may want to test if your changes pass all
-the tests. Currently, there are two separate test suites. For both of
-them you need to start a SockJS-node test server (by default listening
-on port 8081):
-
-    make test_server
+the tests. Currently, there are two separate test suites.
 
 ### SockJS-protocol Python tests
 
 To run it run something like:
 
-    cd sockjs-protocol
-    make test_deps
-    ./venv/bin/python sockjs-protocol.py
+    ./scripts/test.sh
 
 For details see
 [SockJS-protocol README](https://github.com/sockjs/sockjs-protocol#readme).
 
-### SockJS-client QUnit tests
+### SockJS-client Karma tests
 
-You need to start a second web server (by default listening on 8080)
-that is serving various static html and javascript files:
+To run it run something like:
 
     cd sockjs-client
-    make test
-
-At that point you should have two web servers running: sockjs-node on
-8081 and sockjs-client on 8080. When you open the browser on
-[http://localhost:8080/](http://localhost:8080/) you should be able
-run the QUnit tests against your sockjs-node server.
+    npm run test:browser_local
 
 For details see
 [SockJS-client README](https://github.com/sockjs/sockjs-client#readme).
-
-Additionally, if you're doing more serious development consider using
-`make serve`, which will automatically the server when you modify the
-source code.
-
 
 Various issues and design considerations
 ----------------------------------------
