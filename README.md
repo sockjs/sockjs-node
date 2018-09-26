@@ -21,6 +21,9 @@ Work in progress:
   * [SockJS-perl](https://github.com/vti/sockjs-perl)
   * [SockJS-go](https://github.com/igm/sockjs-go/)
 
+⚠️️ **ATTENTION** This is pre-release documentation. The documentation for the 
+latest stable release is at: https://github.com/sockjs/sockjs-node/tree/v0.3.19 ️⚠️
+
 What is SockJS?
 ===============
 
