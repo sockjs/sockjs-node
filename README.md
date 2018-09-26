@@ -47,16 +47,16 @@ A simplified echo SockJS server could look more or less like:
 const http = require('http');
 const sockjs = require('sockjs');
 
-const echo = sockjs.createServer({ sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js' });
+const echo = sockjs.createServer({ prefix:'/echo', sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1/sockjs.min.js' });
 echo.on('connection', function(conn) {
-    conn.on('data', function(message) {
-        conn.write(message);
-    });
-    conn.on('close', function() {});
+  conn.on('data', function(message) {
+    conn.write(message);
+  });
+  conn.on('close', function() {});
 });
 
 const server = http.createServer();
-echo.installHandlers(server, {prefix:'/echo'});
+echo.attach(server);
 server.listen(9999, '0.0.0.0');
 ```
 
@@ -98,7 +98,7 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
-   <a href="http://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js">
+   <a href="http://cdn.jsdelivr.net/sockjs/1/sockjs.min.js">
    the latest minified SockJS client release</a>, this is the default).
    You must explicitly specify this url on the server side for security
    reasons - we don't want the possibility of running any foreign
@@ -122,10 +122,10 @@ Where `options` is a hash which can contain:
    streaming and will make streaming transports to behave like polling
    transports. The default value is 128K.</dd>
 
-<dt>websocket (boolean)</dt>
-<dd>Some load balancers don't support websockets. This option can be used
-   to disable websockets support by the server. By default websockets are
-   enabled.</dd>
+<dt>transports (Array of strings)</dt>
+<dd>List of transports to enable. Select from `eventsource`, `htmlfile`,
+`jsonp-polling`, `websocket`, `websocket-raw`, `xhr-polling`, 
+and `xhr-streaming`.</dd>
 
 <dt>jsessionid (boolean or function)</dt>
 <dd>Some hosting providers enable sticky sessions only to requests that
@@ -137,7 +137,7 @@ Where `options` is a hash which can contain:
 <dt>log (function(severity, message))</dt>
 <dd>It's quite useful, especially for debugging, to see some messages
   printed by a SockJS-node library. This is done using this `log`
-  function, which is by default set to `console.log`. If this
+  function, which is by default set to nothing. If this
   behaviour annoys you for some reason, override `log` setting with a
   custom handler.  The following `severities` are used: `debug`
   (miscellaneous logs), `info` (requests logs), `error` (serious
@@ -161,7 +161,7 @@ Where `options` is a hash which can contain:
   <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a>
   headers from being included in the HTTP response. Can be used when the
   sockjs client is known to be connecting from the same origin as the 
-  sockjs server.</dd>
+  sockjs server. This also disables the iframe HTML endpoint.</dd>
 </dl>
 
 
@@ -172,12 +172,9 @@ Once you have create `Server` instance you can hook it to the
 
 ```javascript
 var http_server = http.createServer();
-sockjs_server.installHandlers(http_server, options);
+sockjs_server.attach(http_server);
 http_server.listen(...);
 ```
-
-Where `options` can overshadow options given when creating `Server`
-instance.
 
 `Server` instance is an
 [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter),
@@ -191,7 +188,7 @@ and emits following event:
 All http requests that don't go under the path selected by `prefix`
 will remain unanswered and will be passed to previously registered
 handlers. You must install your custom http handlers before calling
-`installHandlers`.
+`attach`.
 
 ### Connection instance
 
@@ -266,14 +263,13 @@ For example:
 
 ```javascript
 sockjs_server.on('connection', function(conn) {
-    console.log('connection' + conn);
-    conn.on('close', function() {
-        console.log('close ' + conn);
-    });
-    conn.on('data', function(message) {
-        console.log('message ' + conn,
-                    message);
-    });
+  console.log('connection' + conn);
+  conn.on('close', function() {
+    console.log('close ' + conn);
+  });
+  conn.on('data', function(message) {
+    console.log('message ' + conn, message);
+  });
 });
 ```
 
