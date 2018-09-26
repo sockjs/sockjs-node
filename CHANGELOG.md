@@ -1,6 +1,13 @@
-Unreleased
-======
+# Unreleased
 
+## **BREAKING CHANGES**
+  * `installHandlers(server, options)` renamed to `attach(server)` and only takes a single argument.
+  This means you cannot use the same SockJS server installed at multiple prefixes.
+  In practice this was confusing and not common.
+  * `websocket` option is deprecated, but still respected. Please use       the new `transports` option.
+  * Node.js `>= 6.5.0` is required.
+
+## Other Fixes/Changes
   * Convert from coffeescript to ES6.
   * Update minimum Node.js version to 6.X.
   * Update SockJSConnection implementation to be compatible with latest Node.js streams.
@@ -8,6 +15,10 @@ Unreleased
   * Remove `console.log` logging by default.
   * Remove usage of exceptions for flow control.
   * Add `debug` logs for easier troubleshooting.
+  * Added `transports` option to allow selection of specific transports.
+  * Added `detach(server)` function to remove SockJS from a HTTP server instance.
+  * Update dependencies.
+  * Examples have been updated to use latest versions of libraries.
 
 
 0.3.19

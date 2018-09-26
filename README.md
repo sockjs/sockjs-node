@@ -191,7 +191,7 @@ and emits following event:
 All http requests that don't go under the path selected by `prefix`
 will remain unanswered and will be passed to previously registered
 handlers. You must install your custom http handlers before calling
-`attach`.
+`attach`. You can remove the SockJS handler later with `detach`.
 
 ### Connection instance
 
