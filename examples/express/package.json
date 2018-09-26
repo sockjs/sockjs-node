@@ -1,8 +1,9 @@
 {
-        "name": "sockjs-express",
-        "version": "0.0.0-unreleasable",
-        "dependencies": {
-                "express": "<3",
-                "sockjs": "*"
-        }
+  "name": "sockjs-express",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "^4.16.3",
+    "sockjs": "^0.4.0"
+  },
+  "private": true
 }

@@ -1,9 +1,10 @@
 {
   "name": "sockjs-hapi",
-  "version": "0.0.0-unreleasable",
+  "version": "0.0.1",
   "dependencies": {
-    "hapi": "15.x.x",
-    "inert": "4.x.x",
-    "sockjs": "*"
-  }
+    "hapi": "^17.6.0",
+    "inert": "^5.1.0",
+    "sockjs": "^0.4.0"
+  },
+  "private": true
 }

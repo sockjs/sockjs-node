@@ -1,8 +1,9 @@
 {
   "name": "sockjs-koa",
-  "version": "0.0.0-unreleasable",
+  "version": "0.0.1",
   "dependencies": {
-    "koa": "^0.21.0",
-    "sockjs": "*"
-  }
+    "koa": "^2.5.3",
+    "sockjs": "^0.4.0"
+  },
+  "private": true
 }
