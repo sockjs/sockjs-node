@@ -289,7 +289,7 @@ If you want to see samples of running code, take a look at:
 
  * [./examples/echo](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
    directory, which contains a full example of a echo server.
- * [./examples/test_server](https://github.com/sockjs/sockjs-node/tree/master/examples/test_server) a standard SockJS test server.
+ * [./tests/test_server](https://github.com/sockjs/sockjs-node/tree/master/tests/test_server) a standard SockJS test server.
 
 
 Connecting to SockJS-node without the client

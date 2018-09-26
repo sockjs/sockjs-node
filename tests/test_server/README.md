@@ -19,12 +19,4 @@ the following SockJS services:
 
 If you just want to quickly run it:
 
-    npm install
     node server.js
-
-
-If you want to run do development it's recommended to run `make
-test_server` from the top `sockjs-node` directory:
-
-    cd ../..
-    make test_server
