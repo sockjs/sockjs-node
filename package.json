@@ -22,7 +22,8 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "eslint": "^5.6.0"
+    "eslint": "^5.6.0",
+    "prettier": "1.14.3"
   },
   "homepage": "https://github.com/sockjs/sockjs-node",
   "keywords": [
@@ -37,6 +38,7 @@
   },
   "scripts": {
     "lint": "eslint .",
+    "fmt": "prettier --write '{lib,examples,tests}/**/*.js'",
     "version": "git add CHANGELOG.MD",
     "postversion": "npm publish",
     "postpublish": "git push origin --all && git push origin --tags"

@@ -8,7 +8,7 @@ const path = require('path');
 
 // 1. Echo sockjs server
 const sockjs_opts = {
-  prefix:'/echo',
+  prefix: '/echo',
   sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1/sockjs.min.js'
 };
 const sockjs_echo = sockjs.createServer(sockjs_opts);
@@ -33,4 +33,4 @@ const server = http.createServer(app.callback());
 sockjs_echo.attach(server);
 
 server.listen(9999, '0.0.0.0');
-console.log(' [*] Listening on 0.0.0.0:9999' );
+console.log(' [*] Listening on 0.0.0.0:9999');

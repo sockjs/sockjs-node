@@ -9,7 +9,7 @@ server.addListener('request', function(req, res) {
   res.writeHead(404);
   res.end('404 - Nothing here (via sockjs-node test_server)');
 });
-server.addListener('upgrade', function(req, res){
+server.addListener('upgrade', function(req, res) {
   res.end();
 });
 

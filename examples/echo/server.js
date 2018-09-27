@@ -25,11 +25,11 @@ const server = http.createServer();
 server.addListener('request', function(req, res) {
   static_directory.serve(req, res);
 });
-server.addListener('upgrade', function(req,res){
+server.addListener('upgrade', function(req, res) {
   res.end();
 });
 
 sockjs_echo.attach(server);
 
-console.log(' [*] Listening on 0.0.0.0:9999' );
+console.log(' [*] Listening on 0.0.0.0:9999');
 server.listen(9999, '0.0.0.0');

@@ -25,7 +25,7 @@ ann.on('connection', function(conn) {
 
 const bob = multiplexer.registerChannel('bob');
 bob.on('connection', function(conn) {
-  conn.write('Bob doesn\'t agree.');
+  conn.write("Bob doesn't agree.");
   conn.on('data', function(data) {
     conn.write('Bob says no to: ' + data);
   });
@@ -40,7 +40,7 @@ carl.on('connection', function(conn) {
 
 // 3. Express server
 const app = express();
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
@@ -48,5 +48,5 @@ const server = http.createServer(app);
 service.attach(server);
 
 server.listen(9999, '0.0.0.0', () => {
-  console.log(' [*] Listening on 0.0.0.0:9999' );
+  console.log(' [*] Listening on 0.0.0.0:9999');
 });

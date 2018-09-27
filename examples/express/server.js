@@ -19,7 +19,7 @@ sockjs_echo.on('connection', function(conn) {
 
 // 2. Express server
 const app = express();
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
@@ -27,5 +27,5 @@ const server = http.createServer(app);
 sockjs_echo.attach(server);
 
 server.listen(9999, '0.0.0.0', () => {
-  console.log(' [*] Listening on 0.0.0.0:9999' );
+  console.log(' [*] Listening on 0.0.0.0:9999');
 });
