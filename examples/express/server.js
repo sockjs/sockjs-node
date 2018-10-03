@@ -1,27 +1,20 @@
 'use strict';
 
-const express = require('express');
 const http = require('http');
+const express = require('express');
 const sockjs = require('sockjs');
 
-// 1. Echo sockjs server
 const sockjs_opts = {
-  prefix: '/echo',
-  sockjs_url: 'https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js'
+  prefix: '/echo'
 };
 
-var sockjs_echo = sockjs.createServer(sockjs_opts);
-sockjs_echo.on('connection', function(conn) {
-  conn.on('data', function(message) {
-    conn.write(message);
-  });
+const sockjs_echo = sockjs.createServer(sockjs_opts);
+sockjs_echo.on('connection', conn => {
+  conn.on('data', msg => conn.write(msg));
 });
 
-// 2. Express server
 const app = express();
-app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/index.html');
-});
+app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 
 const server = http.createServer(app);
 sockjs_echo.attach(server);

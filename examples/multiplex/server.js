@@ -7,8 +7,7 @@ const websocket_multiplex = require('websocket-multiplex');
 
 // 1. Setup SockJS server
 const sockjs_opts = {
-  prefix: '/multiplex',
-  sockjs_url: 'https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js'
+  prefix: '/multiplex'
 };
 const service = sockjs.createServer(sockjs_opts);
 

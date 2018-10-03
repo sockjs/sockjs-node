@@ -50,7 +50,7 @@ A simplified echo SockJS server could look more or less like:
 const http = require('http');
 const sockjs = require('sockjs');
 
-const echo = sockjs.createServer({ prefix:'/echo', sockjs_url: 'https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js' });
+const echo = sockjs.createServer({ prefix:'/echo' });
 echo.on('connection', function(conn) {
   conn.on('data', function(message) {
     conn.write(message);

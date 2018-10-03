@@ -6,8 +6,7 @@ const Inert = require('inert');
 
 // 1. Echo sockjs server
 const sockjs_opts = {
-  prefix: '/echo',
-  sockjs_url: 'https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js'
+  prefix: '/echo'
 };
 
 const sockjs_echo = sockjs.createServer(sockjs_opts);
