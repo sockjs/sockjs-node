@@ -50,7 +50,7 @@ A simplified echo SockJS server could look more or less like:
 const http = require('http');
 const sockjs = require('sockjs');
 
-const echo = sockjs.createServer({ prefix:'/echo', sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1/sockjs.min.js' });
+const echo = sockjs.createServer({ prefix:'/echo', sockjs_url: 'https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js' });
 echo.on('connection', function(conn) {
   conn.on('data', function(message) {
     conn.write(message);
@@ -101,7 +101,7 @@ Where `options` is a hash which can contain:
    domain local to the SockJS server. This iframe also does need to
    load SockJS javascript client library, and this option lets you specify
    its url (if you're unsure, point it to
-   <a href="http://cdn.jsdelivr.net/sockjs/1/sockjs.min.js">
+   <a href="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js">
    the latest minified SockJS client release</a>, this is the default).
    You must explicitly specify this url on the server side for security
    reasons - we don't want the possibility of running any foreign
