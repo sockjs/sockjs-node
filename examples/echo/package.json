@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "dependencies": {
     "node-static": "^0.7.11",
-    "sockjs": "^0.4.0"
+    "sockjs": "^0.3.19"
   },
   "private": true
 }
