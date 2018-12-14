@@ -1,19 +1,16 @@
 'use strict';
 
-const http = require('http');
-const sockjs = require('sockjs');
+var http = require('http');
+var sockjs = require('sockjs');
 const node_static = require('node-static');
 
-// 1. Echo sockjs server
-const sockjs_opts = {
-  prefix: '/echo'
-};
 
-const sockjs_echo = sockjs.createServer(sockjs_opts);
-sockjs_echo.on('connection', function(conn) {
-  conn.on('data', function(message) {
-    conn.write(message);
-  });
+var echo = sockjs.createServer({ sockjs_url: 'http://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js' });
+echo.on('connection', function(conn) {
+    conn.on('data', function(message) {
+        conn.write(message);
+    });
+    conn.on('close', function() {});
 });
 
 // 2. Static files server
@@ -28,7 +25,5 @@ server.addListener('upgrade', function(req, res) {
   res.end();
 });
 
-sockjs_echo.attach(server);
-
-console.log(' [*] Listening on 0.0.0.0:9999');
-server.listen(9999, '0.0.0.0');
+echo.installHandlers(server, {prefix:'/echo'});
+server.listen(5435, '0.0.0.0');
