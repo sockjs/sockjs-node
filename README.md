@@ -1,6 +1,14 @@
+# SockJS-node
+
 [![npm version](https://img.shields.io/npm/v/sockjs.svg?style=flat-square)](https://www.npmjs.com/package/sockjs)[![Build Status](https://img.shields.io/travis/sockjs/sockjs-node/master.svg?style=flat-square)](https://travis-ci.org/sockjs/sockjs-node)[![Dependencies](https://img.shields.io/david/sockjs/sockjs-node.svg?style=flat-square)](https://david-dm.org/sockjs/sockjs-node)
 
-SockJS family:
+# Supporting SockJS
+
+Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
+
+[Get supported sockjs with the Tidelift Subscription](https://tidelift.com/subscription/pkg/npm-sockjs?utm_source=npm-sockjs&utm_medium=referral&utm_campaign=readme)
+
+# SockJS family
 
   * [SockJS-client](https://github.com/sockjs/sockjs-client) JavaScript client library
   * [SockJS-node](https://github.com/sockjs/sockjs-node) Node.js server
@@ -24,8 +32,7 @@ Work in progress:
 ⚠️️ **ATTENTION** This is pre-release documentation. The documentation for the 
 latest stable release is at: https://github.com/sockjs/sockjs-node/tree/v0.3.19 ️⚠️
 
-What is SockJS?
-===============
+# What is SockJS?
 
 SockJS is a JavaScript library (for browsers) that provides a WebSocket-like
 object. SockJS gives you a coherent, cross-browser, Javascript API
@@ -34,8 +41,7 @@ channel between the browser and the web server, with WebSockets or without.
 This necessitates the use of a server, which this is one version of, for Node.js.
 
 
-SockJS-node server
-==================
+# SockJS-node server
 
 SockJS-node is a Node.js server side counterpart of
 [SockJS-client browser library](https://github.com/sockjs/sockjs-client).
@@ -72,14 +78,13 @@ Subscribe to
 discussions and support.
 
 
-SockJS-node API
----------------
+# SockJS-node API
 
 The API design is based on common Node APIs like the
 [Streams API](https://nodejs.org/api/stream.html) or the
 [Http.Server API](https://nodejs.org/api/http.html#http_class_http_server).
 
-### Server class
+## Server class
 
 SockJS module is generating a `Server` class, similar to
 [Node.js http.createServer](https://nodejs.org/api/http.html#http_http_createserver_requestlistener)
@@ -168,7 +173,7 @@ and `xhr-streaming`.</dd>
 </dl>
 
 
-### Server instance
+## Server instance
 
 Once you have create `Server` instance you can hook it to the
 [http.Server instance](https://nodejs.org/api/http.html#http_class_http_server).
@@ -193,7 +198,7 @@ will remain unanswered and will be passed to previously registered
 handlers. You must install your custom http handlers before calling
 `attach`. You can remove the SockJS handler later with `detach`.
 
-### Connection instance
+## Connection instance
 
 A `Connection` instance supports
 [Node Stream API](https://nodejs.org/api/stream.html) and
@@ -276,14 +281,14 @@ sockjs_server.on('connection', function(conn) {
 });
 ```
 
-### Footnote
+## Footnote
 
 A fully working echo server does need a bit more boilerplate (to
 handle requests unanswered by SockJS), see the
 [`echo` example](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
 for a complete code.
 
-### Examples
+# Examples
 
 If you want to see samples of running code, take a look at:
 
@@ -292,8 +297,7 @@ If you want to see samples of running code, take a look at:
  * [./tests/test_server](https://github.com/sockjs/sockjs-node/tree/master/tests/test_server) a standard SockJS test server.
 
 
-Connecting to SockJS-node without the client
---------------------------------------------
+# Connecting to SockJS-node without the client
 
 Although the main point of SockJS it to enable browser-to-server
 connectivity, it is possible to connect to SockJS from an external
@@ -311,14 +315,13 @@ want to do so).
 Note: This endpoint will *not send any heartbeat packets*.
 
 
-Deployment and load balancing
------------------------------
+# Deployment and load balancing
 
 There are two issues that need to be considered when planning a
 non-trivial SockJS-node deployment: WebSocket-compatible load balancer
 and sticky sessions (aka session affinity).
 
-### WebSocket compatible load balancer
+## WebSocket compatible load balancer
 
 Often WebSockets don't play nicely with proxies and load balancers.
 Deploying a SockJS server behind Nginx or Apache could be painful.
@@ -334,7 +337,7 @@ The config also shows how to use HAproxy balancing to split traffic
 between multiple Node.js servers. You can also do balancing using dns
 names.
 
-### Sticky sessions
+## Sticky sessions
 
 If you plan deploying more than one SockJS server, you must make sure
 that all HTTP requests for a single session will hit the same server.
@@ -353,8 +356,7 @@ SockJS has two mechanisms that can be useful to achieve that:
    `cookie:true` option to SockJS constructor.
 
 
-Development and testing
------------------------
+# Development and testing
 
 If you want to work on SockJS-node source code, you need to clone the
 git repo and follow these steps. First you need to install
@@ -366,7 +368,7 @@ dependencies:
 If compilation succeeds you may want to test if your changes pass all
 the tests. Currently, there are two separate test suites.
 
-### SockJS-protocol Python tests
+## SockJS-protocol Python tests
 
 To run it run something like:
 
@@ -375,7 +377,7 @@ To run it run something like:
 For details see
 [SockJS-protocol README](https://github.com/sockjs/sockjs-protocol#readme).
 
-### SockJS-client Karma tests
+## SockJS-client Karma tests
 
 To run it run something like:
 
@@ -385,10 +387,9 @@ To run it run something like:
 For details see
 [SockJS-client README](https://github.com/sockjs/sockjs-client#readme).
 
-Various issues and design considerations
-----------------------------------------
+# Various issues and design considerations
 
-### Authorisation
+## Authorisation
 
 SockJS-node does not expose cookies to the application. This is done
 deliberately as using cookie-based authorisation with SockJS simply
@@ -413,7 +414,7 @@ first thing over SockJS connection and validate it on the server
 side. In essence, this is how cookies work.
 
 
-### Deploying SockJS on Heroku
+## Deploying SockJS on Heroku
 
 Long polling is known to cause problems on Heroku, but
 [workaround for SockJS is available](https://github.com/sockjs/sockjs-node/issues/57#issuecomment-5242187).
