@@ -65,7 +65,7 @@ echo.on('connection', function(conn) {
 });
 
 const server = http.createServer();
-echo.attach(server);
+echo.installHandlers(server);
 server.listen(9999, '0.0.0.0');
 ```
 
