@@ -3,4 +3,5 @@
 .eslintignore
 .nvmrc
 node_modules
+examples
 *~
