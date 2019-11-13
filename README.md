@@ -28,6 +28,7 @@ Work in progress:
   * [wai-SockJS](https://github.com/Palmik/wai-sockjs)
   * [SockJS-perl](https://github.com/vti/sockjs-perl)
   * [SockJS-go](https://github.com/igm/sockjs-go/)
+  * [actix/sockjs](https://github.com/actix/sockjs) for Rust
 
 ⚠️️ **ATTENTION** This is pre-release documentation. The documentation for the 
 latest stable release is at: https://github.com/sockjs/sockjs-node/tree/v0.3.19 ️⚠️
