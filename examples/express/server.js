@@ -2,9 +2,7 @@ var express = require('express');
 var sockjs  = require('sockjs');
 
 // 1. Echo sockjs server
-var sockjs_opts = {sockjs_url: "http://cdn.jsdelivr.net/sockjs/1.0.1/sockjs.min.js"};
-
-var sockjs_echo = sockjs.createServer(sockjs_opts);
+var sockjs_echo = sockjs.createServer();
 sockjs_echo.on('connection', function(conn) {
     conn.on('data', function(message) {
         conn.write(message);
