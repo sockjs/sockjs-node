@@ -1,3 +1,11 @@
+0.3.20
+======
+  * Updated `node-uuid` and `coffeescript`
+  * Exclude `examples`, `tests`, and `Makefile` from npm package
+  * Update examples to use latest jQuery and sockjs-client #271
+  * Don't call `res.end` in `writeHead` #266
+  * Pin `websocket-driver` as later versions cause some tests from `sockjs-protocol` to fail
+
 0.3.19
 ======
 
