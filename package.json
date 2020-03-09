@@ -18,7 +18,8 @@
   ],
   "dependencies": {
     "faye-websocket": "^0.10.0",
-    "uuid": "^3.4.0"
+    "uuid": "^3.4.0",
+    "websocket-driver": "0.6.5"
   },
   "devDependencies": {
     "coffeescript": "^1.12.7"
