@@ -1,7 +1,7 @@
 .gitignore
 lib/.placeholder
+Makefile
 src
-node_modules
 examples
 tests
 *~
