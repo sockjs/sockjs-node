@@ -18,10 +18,10 @@
   ],
   "dependencies": {
     "faye-websocket": "^0.10.0",
-    "uuid": "^3.0.1"
+    "uuid": "^3.4.0"
   },
   "devDependencies": {
-    "coffee-script": "^1.8.0"
+    "coffeescript": "^1.12.7"
   },
   "homepage": "https://github.com/sockjs/sockjs-node",
   "keywords": [
