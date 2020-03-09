@@ -45,9 +45,6 @@ fake_response = (req, res) ->
             try
                 res.write(r.join('\r\n'))
             catch x
-            try
-                res.end()
-            catch x
         res.setHeader = (k, v) -> headers[k] = v
 
 
