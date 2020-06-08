@@ -4,12 +4,12 @@ const config = require('./config').config;
 const sockjs_app = require('./sockjs_app');
 
 const server = http.createServer();
-server.addListener('request', function(req, res) {
+server.addListener('request', function (req, res) {
   res.setHeader('Content-Type', 'text/plain');
   res.writeHead(404);
   res.end('404 - Nothing here (via sockjs-node test_server)');
 });
-server.addListener('upgrade', function(req, res) {
+server.addListener('upgrade', function (req, res) {
   res.end();
 });
 

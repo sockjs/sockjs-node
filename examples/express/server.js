@@ -9,8 +9,8 @@ const sockjs_opts = {
 };
 
 const sockjs_echo = sockjs.createServer(sockjs_opts);
-sockjs_echo.on('connection', conn => {
-  conn.on('data', msg => conn.write(msg));
+sockjs_echo.on('connection', (conn) => {
+  conn.on('data', (msg) => conn.write(msg));
 });
 
 const app = express();

@@ -11,8 +11,8 @@ const sockjs_opts = {
   prefix: '/echo'
 };
 const sockjs_echo = sockjs.createServer(sockjs_opts);
-sockjs_echo.on('connection', function(conn) {
-  conn.on('data', function(message) {
+sockjs_echo.on('connection', function (conn) {
+  conn.on('data', function (message) {
     conn.write(message);
   });
 });
@@ -20,7 +20,7 @@ sockjs_echo.on('connection', function(conn) {
 // 2. koa server
 const app = new Koa();
 
-app.use(function(ctx, next) {
+app.use(function (ctx, next) {
   return next().then(() => {
     const filePath = __dirname + '/index.html';
     ctx.response.type = path.extname(filePath);

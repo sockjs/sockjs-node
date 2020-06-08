@@ -10,8 +10,8 @@ const sockjs_opts = {
 };
 
 const sockjs_echo = sockjs.createServer(sockjs_opts);
-sockjs_echo.on('connection', function(conn) {
-  conn.on('data', function(message) {
+sockjs_echo.on('connection', function (conn) {
+  conn.on('data', function (message) {
     conn.write(message);
   });
 });

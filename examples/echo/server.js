@@ -10,8 +10,8 @@ const sockjs_opts = {
 };
 
 const sockjs_echo = sockjs.createServer(sockjs_opts);
-sockjs_echo.on('connection', function(conn) {
-  conn.on('data', function(message) {
+sockjs_echo.on('connection', function (conn) {
+  conn.on('data', function (message) {
     conn.write(message);
   });
 });
@@ -21,10 +21,10 @@ const static_directory = new node_static.Server(__dirname);
 
 // 3. Usual http stuff
 const server = http.createServer();
-server.addListener('request', function(req, res) {
+server.addListener('request', function (req, res) {
   static_directory.serve(req, res);
 });
-server.addListener('upgrade', function(req, res) {
+server.addListener('upgrade', function (req, res) {
   res.end();
 });
 
