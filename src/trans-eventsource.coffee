@@ -14,7 +14,7 @@ class EventSourceReceiver extends transport.ResponseReceiver
     doSendFrame: (payload) ->
         # Beware of leading whitespace
         data = ['data: ',
-                utils.escape_selected(payload, '\r\n\x00'),
+                utils.escape_selected(payload, '%\r\n\x00'),
                 '\r\n\r\n']
         super(data.join(''))
 
