@@ -9,7 +9,7 @@ module.exports.createServer = function createServer(options) {
 module.exports.listen = function listen(http_server, options) {
   const srv = exports.createServer(options);
   if (http_server) {
-    srv.installHandlers(http_server);
+    srv.attach(http_server);
   }
   return srv;
 };
