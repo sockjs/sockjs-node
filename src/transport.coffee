@@ -28,8 +28,12 @@ class SockJSConnection extends stream.Stream
     toString: ->
         return '<SockJSConnection ' + @id + '>'
 
-    write: (string) ->
-        return @_session.send('' + string)
+    write: (data) ->
+        # 二进制数据
+        if(data instanceof Buffer)
+            return @_session.send(data)
+        else 
+            return @_session.send('' + data)
 
     end: (string) ->
         if string
@@ -198,7 +202,10 @@ class Session
     send: (payload) ->
         if @readyState isnt Transport.OPEN
             return false
-        @send_buffer.push('' + payload)
+        if payload instanceof Buffer
+            @send_buffer.push(payload)
+        else 
+            @send_buffer.push('' + payload)
         if @recv
             @tryFlush()
         return true
@@ -265,9 +272,17 @@ class GenericReceiver
             @session.unregister()
 
     doSendBulk: (messages) ->
-        q_msgs = for m in messages
-                utils.quote(m)
-        @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
+        q_msgs = []
+        for m in messages
+            if !(m instanceof Buffer)
+                q_msgs.push(utils.quote(m))
+            else
+                if q_msgs.length > 0
+                    @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
+                q_msgs = []
+                @doSendFrame(m)
+        if q_msgs.length > 0
+             @doSendFrame('a' + '[' + q_msgs.join(',') + ']')
 
     heartbeat: ->
         @doSendFrame('h')
