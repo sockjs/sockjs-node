@@ -29,7 +29,7 @@ class SockJSConnection extends stream.Stream
         return '<SockJSConnection ' + @id + '>'
 
     write: (data) ->
-        # 二进制数据
+        # binary buffer
         if(data instanceof Buffer)
             return @_session.send(data)
         else 
