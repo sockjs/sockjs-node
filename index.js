@@ -94,7 +94,7 @@ i++)
 'salvarImagem'(a)
 {
 	   # $
-	   'let 
+	   
 	'arquivo = document.
 	'getElementById(
 	'arquivo')
