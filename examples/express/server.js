@@ -17,7 +17,7 @@ const app = express();
 app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
 
 const server = http.createServer(app);
-sockjs_echo.attach(server);
+sockjs_echo.attachServer(server);
 
 server.listen(9999, '0.0.0.0', () => {
   console.log(' [*] Listening on 0.0.0.0:9999');
