@@ -71,7 +71,7 @@ server.listen(9999, '0.0.0.0');
 ```
 
 (Take look at
-[examples](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
+[examples](https://github.com/sockjs/sockjs-node/tree/main/examples/echo)
 directory for a complete version.)
 
 Subscribe to
@@ -286,16 +286,16 @@ sockjs_server.on('connection', function(conn) {
 
 A fully working echo server does need a bit more boilerplate (to
 handle requests unanswered by SockJS), see the
-[`echo` example](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
+[`echo` example](https://github.com/sockjs/sockjs-node/tree/main/examples/echo)
 for a complete code.
 
 # Examples
 
 If you want to see samples of running code, take a look at:
 
- * [./examples/echo](https://github.com/sockjs/sockjs-node/tree/master/examples/echo)
+ * [./examples/echo](https://github.com/sockjs/sockjs-node/tree/main/examples/echo)
    directory, which contains a full example of a echo server.
- * [./tests/test_server](https://github.com/sockjs/sockjs-node/tree/master/tests/test_server) a standard SockJS test server.
+ * [./tests/test_server](https://github.com/sockjs/sockjs-node/tree/main/tests/test_server) a standard SockJS test server.
 
 
 # Connecting to SockJS-node without the client
@@ -332,7 +332,7 @@ Fortunately recent versions of an excellent load balancer
 connections. We propose to put HAProxy as a front line load balancer
 and use it to split SockJS traffic from normal HTTP data. Take a look
 at the sample
-[SockJS HAProxy configuration](https://github.com/sockjs/sockjs-node/blob/master/examples/haproxy.cfg).
+[SockJS HAProxy configuration](https://github.com/sockjs/sockjs-node/blob/main/examples/haproxy.cfg).
 
 The config also shows how to use HAproxy balancing to split traffic
 between multiple Node.js servers. You can also do balancing using dns
