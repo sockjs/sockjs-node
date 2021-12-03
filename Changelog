@@ -1,3 +1,7 @@
+0.3.24
+======
+  * Remove excess file from npm package
+
 0.3.23
 ======
   * Fix `uuid` usage
