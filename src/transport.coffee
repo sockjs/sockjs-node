@@ -5,7 +5,7 @@
 # ***** END LICENSE BLOCK *****
 
 stream = require('stream')
-uuidv4 = require('uuid/v4')
+{ v4: uuidv4 } = require('uuid')
 utils = require('./utils')
 
 class Transport
