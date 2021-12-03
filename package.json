@@ -18,7 +18,7 @@
   ],
   "dependencies": {
     "faye-websocket": "^0.11.3",
-    "uuid": "^3.4.0",
+    "uuid": "^8.3.2",
     "websocket-driver": "^0.7.4"
   },
   "devDependencies": {
