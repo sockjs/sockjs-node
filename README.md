@@ -66,7 +66,7 @@ echo.on('connection', function(conn) {
 });
 
 const server = http.createServer();
-echo.attach(server);
+echo.installHandlers(server);
 server.listen(9999, '0.0.0.0');
 ```
 
@@ -181,7 +181,7 @@ Once you have create `Server` instance you can hook it to the
 
 ```javascript
 var http_server = http.createServer();
-sockjs_server.attach(http_server);
+sockjs_server.installHandlers(http_server);
 http_server.listen(...);
 ```
 
@@ -197,7 +197,7 @@ and emits following event:
 All http requests that don't go under the path selected by `prefix`
 will remain unanswered and will be passed to previously registered
 handlers. You must install your custom http handlers before calling
-`attach`. You can remove the SockJS handler later with `detach`.
+`installHandlers`. You can remove the SockJS handler later with `detach`.
 
 ## Connection instance
 
