@@ -5,7 +5,7 @@
   This means you cannot use the same SockJS server installed at multiple prefixes.
   In practice this was confusing and not common.
   * `websocket` option is deprecated, but still respected. Please use       the new `transports` option.
-  * Node.js `>= 6.5.0` is required.
+  * Node.js `>= 18.0.0` is required.
 
 ## Other Fixes/Changes
   * Convert from coffeescript to ES6.
@@ -19,7 +19,7 @@
   * Added `detach(server)` function to remove SockJS from a HTTP server instance.
   * Update dependencies.
   * Examples have been updated to use latest versions of libraries.
-
+  * Remove `uuid` dependency, replaced with Node.js `crypto.randomUUID()`.
 
 0.3.19
 ======
