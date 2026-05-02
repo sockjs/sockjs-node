@@ -19,7 +19,7 @@
   * Added `detach(server)` function to remove SockJS from a HTTP server instance.
   * Update dependencies.
   * Examples have been updated to use latest versions of libraries.
-  * Remove `uuid` dependency, replaced with Node.js `crypto.randomUUID()`.
+  * Remove the internal UUID helper and use Node.js `crypto.randomUUID()` directly.
 
 0.3.19
 ======
