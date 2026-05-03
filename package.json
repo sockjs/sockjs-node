@@ -21,10 +21,12 @@
     "faye-websocket": "^0.11.3"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
-    "prettier": "^2.0.5"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.5",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3"
   },
   "homepage": "https://github.com/sockjs/sockjs-node",
   "keywords": [
@@ -38,7 +40,7 @@
     "url": "https://github.com/sockjs/sockjs-node.git"
   },
   "scripts": {
-    "lint": "eslint .",
+    "lint": "eslint",
     "fmt": "prettier --write '{lib,examples,tests}/**/*.js'",
     "version": "git add CHANGELOG.MD",
     "postversion": "npm publish",
