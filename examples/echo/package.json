@@ -1,9 +1,10 @@
 {
   "name": "sockjs-echo",
   "version": "0.0.1",
+  "type": "module",
   "dependencies": {
     "node-static": "^0.7.11",
-    "sockjs": "^0.4.0"
+    "sockjs": "../../"
   },
   "private": true
 }

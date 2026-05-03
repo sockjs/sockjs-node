@@ -1,8 +1,8 @@
-'use strict';
+import createDebug from 'debug';
 
-const debug = require('debug')('sockjs:test-server:app');
+const debug = createDebug('sockjs:test-server:app');
 
-exports.config = {
+export default {
   server_opts: {
     sockjs_url: 'http://localhost:8080/lib/sockjs.js',
     websocket: true,

@@ -16,6 +16,7 @@
       "email": "deadbeef@popcount.org"
     }
   ],
+  "type": "module",
   "dependencies": {
     "debug": "^4.3.1",
     "faye-websocket": "^0.11.3"

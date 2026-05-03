@@ -1,9 +1,10 @@
 {
   "name": "sockjs-koa",
   "version": "0.0.1",
+  "type": "module",
   "dependencies": {
     "koa": "^2.5.3",
-    "sockjs": "^0.4.0"
+    "sockjs": "../.."
   },
   "private": true
 }

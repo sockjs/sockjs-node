@@ -1,8 +1,10 @@
-'use strict';
+import http from 'node:http';
+import path from 'node:path';
+import url from 'node:url';
+import sockjs from 'sockjs';
+import node_static from 'node-static';
 
-const http = require('http');
-const sockjs = require('sockjs');
-const node_static = require('node-static');
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 // 1. Echo sockjs server
 const sockjs_opts = {

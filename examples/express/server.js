@@ -1,8 +1,10 @@
-'use strict';
+import path from 'node:path';
+import http from 'node:http';
+import url from 'node:url';
+import express from 'express';
+import sockjs from 'sockjs';
 
-const http = require('http');
-const express = require('express');
-const sockjs = require('sockjs');
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 const sockjs_opts = {
   prefix: '/echo'
@@ -14,7 +16,7 @@ sockjs_echo.on('connection', (conn) => {
 });
 
 const app = express();
-app.get('/', (req, res) => res.sendFile(__dirname + '/index.html'));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
 const server = http.createServer(app);
 sockjs_echo.attach(server);

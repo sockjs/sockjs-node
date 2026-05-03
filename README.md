@@ -30,7 +30,7 @@ Work in progress:
   * [SockJS-go](https://github.com/igm/sockjs-go/)
   * [actix/sockjs](https://github.com/actix/sockjs) for Rust
 
-⚠️️ **ATTENTION** This is pre-release documentation. The documentation for the 
+⚠️️ **ATTENTION** This is pre-release documentation. The documentation for the
 latest stable release is at: https://github.com/sockjs/sockjs-node/tree/v0.3.19 ️⚠️
 
 # What is SockJS?
@@ -54,8 +54,8 @@ To install `sockjs-node` run:
 A simplified echo SockJS server could look more or less like:
 
 ```javascript
-const http = require('http');
-const sockjs = require('sockjs');
+import http from 'node:http';
+import sockjs from 'sockjs';
 
 const echo = sockjs.createServer({ prefix:'/echo' });
 echo.on('connection', function(conn) {
@@ -133,7 +133,7 @@ Where `options` is a hash which can contain:
 
 <dt>transports (Array of strings)</dt>
 <dd>List of transports to enable. Select from `eventsource`, `htmlfile`,
-`jsonp-polling`, `websocket`, `websocket-raw`, `xhr-polling`, 
+`jsonp-polling`, `websocket`, `websocket-raw`, `xhr-polling`,
 and `xhr-streaming`.</dd>
 
 <dt>jsessionid (boolean or function)</dt>
@@ -169,7 +169,7 @@ and `xhr-streaming`.</dd>
 <dd>Enabling this option will prevent
   <a href="https://en.wikipedia.org/wiki/Cross-origin_resource_sharing">CORS</a>
   headers from being included in the HTTP response. Can be used when the
-  sockjs client is known to be connecting from the same origin as the 
+  sockjs client is known to be connecting from the same origin as the
   sockjs server. This also disables the iframe HTML endpoint.</dd>
 </dl>
 
