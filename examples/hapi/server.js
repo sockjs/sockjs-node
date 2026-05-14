@@ -1,8 +1,6 @@
-'use strict';
-
-const sockjs = require('sockjs');
-const Hapi = require('hapi');
-const Inert = require('inert');
+import sockjs from 'sockjs';
+import Hapi from 'hapi';
+import Inert from 'inert';
 
 // 1. Echo sockjs server
 const sockjs_opts = {

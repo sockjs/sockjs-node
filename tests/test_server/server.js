@@ -1,7 +1,6 @@
-'use strict';
-const http = require('http');
-const config = require('./config').config;
-const sockjs_app = require('./sockjs_app');
+import http from 'node:http';
+import config from './config.js';
+import * as sockjs_app from './sockjs_app.js';
 
 const server = http.createServer();
 server.addListener('request', function (req, res) {

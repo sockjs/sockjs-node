@@ -6,6 +6,7 @@
   In practice this was confusing and not common.
   * `websocket` option is deprecated, but still respected. Please use       the new `transports` option.
   * Node.js `>= 18.0.0` is required.
+  * Project now uses ESM and is type "module".
 
 ## Other Fixes/Changes
   * Convert from coffeescript to ES6.

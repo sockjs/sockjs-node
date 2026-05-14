@@ -1,9 +1,11 @@
-'use strict';
+import path from 'node:path';
+import http from 'node:http';
+import url from 'node:url';
+import express from 'express';
+import sockjs from 'sockjs';
+import websocket_multiplex from 'websocket-multiplex';
 
-const http = require('http');
-const express = require('express');
-const sockjs = require('sockjs');
-const websocket_multiplex = require('websocket-multiplex');
+const __dirname = path.dirname(url.fileURLToPath(import.meta.url));
 
 // 1. Setup SockJS server
 const sockjs_opts = {
@@ -40,7 +42,7 @@ carl.on('connection', function (conn) {
 // 3. Express server
 const app = express();
 app.get('/', function (req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 const server = http.createServer(app);

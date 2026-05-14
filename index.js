@@ -1,15 +1,16 @@
-'use strict';
+import Server from './lib/server.js';
 
-const Server = require('./lib/server');
-
-module.exports.createServer = function createServer(options) {
+function createServer(options) {
   return new Server(options);
-};
+}
 
-module.exports.listen = function listen(http_server, options) {
-  const srv = exports.createServer(options);
+function listen(http_server, options) {
+  const srv = createServer(options);
   if (http_server) {
     srv.attach(http_server);
   }
   return srv;
-};
+}
+
+export default { createServer, listen };
+export { createServer, listen };

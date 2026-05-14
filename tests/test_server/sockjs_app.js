@@ -1,8 +1,9 @@
-'use strict';
-const sockjs = require('../../index');
-const debug = require('debug')('sockjs:test-server:app');
+import sockjs from '../../index.js';
+import createDebug from 'debug';
 
-exports.install = function (opts, server) {
+const debug = createDebug('sockjs:test-server:app');
+
+export function install(opts, server) {
   const echoHandler = function (conn) {
     debug(`    [+] echo open    ${conn}`);
     conn.on('close', function () {
@@ -94,4 +95,4 @@ exports.install = function (opts, server) {
     });
   });
   sjs_amplify.attach(server);
-};
+}
