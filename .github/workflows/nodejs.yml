@@ -25,3 +25,17 @@ jobs:
         ./scripts/test.sh
       env:
         CI: true
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Use Node.js
+      uses: actions/setup-node@v6
+
+    - name: npm install and lint
+      run: |
+        npm ci
+        npm run lint
